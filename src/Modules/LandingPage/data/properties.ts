@@ -1,0 +1,42 @@
+import type { Property } from '../types/property'
+
+export const featuredProperties: Property[] = [
+  {
+    id: 1,
+    title: 'Uptown Loft Apts',
+    location: 'Centro Histórico, Zona 1',
+    price: 550,
+    currency: 'USD',
+    image: 'https://img.rocket.new/generatedImages/rocket_gen_img_11b6adde3-1774944660194.png',
+    rating: 4.7,
+    reviews: 24,
+    available: true,
+    services: ['Agua caliente', 'Electricidad estable', 'WiFi rápido'],
+  },
+  {
+    id: 2,
+    title: 'Vista Skyline Towers',
+    location: 'Distrito Financiero, Zona 4',
+    price: 850,
+    currency: 'USD',
+    image: 'https://img.rocket.new/generatedImages/rocket_gen_img_19858e960-1772784214417.png',
+    rating: 4.9,
+    reviews: 56,
+    available: true,
+    verified: true,
+    services: ['Seguridad 24h', 'Electricidad estable', 'WiFi rápido'],
+  },
+  {
+    id: 3,
+    title: 'Casa Jardín Universitaria',
+    location: 'Zona Universitaria, Zona 10',
+    price: 420,
+    currency: 'USD',
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80',
+    rating: 4.6,
+    reviews: 18,
+    available: true,
+    verified: true,
+    services: ['Agua caliente', 'WiFi rápido', 'Cerca de universidad'],
+  },
+]
