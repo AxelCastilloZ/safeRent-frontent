@@ -14,12 +14,16 @@ import PropertyMap from './PropertyMap'
 import {
   coordinates,
   getProperties,
+  getServices,
   normalize,
   photoUrl,
   priceLabel,
   type Property,
+  type PropertyService,
 } from './properties'
 import './explore.css'
+
+const EMPTY_PROPERTIES: Property[] = []
 
 export default function ExplorePage() {
   const params = new URLSearchParams(window.location.search)
@@ -30,45 +34,79 @@ export default function ExplorePage() {
   const [rooms, setRooms] = useState('')
   const [services, setServices] = useState<number[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
-  const [properties, setProperties] = useState<Property[]>([])
+  const [result, setResult] = useState<{
+    key: string
+    properties: Property[]
+    error: string
+  } | null>(null)
+  const [availableServices, setAvailableServices] = useState<PropertyService[]>(
+    [],
+  )
+  const [servicesLoading, setServicesLoading] = useState(true)
+  const [servicesError, setServicesError] = useState('')
+  const [servicesAttempt, setServicesAttempt] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
   const [mobileView, setMobileView] = useState('list')
+  const requestKey = `${attempt}:${services.join(',')}`
+  const loading = result?.key !== requestKey
+  const error = !loading ? result?.error || '' : ''
+  const properties =
+    !loading && !error
+      ? result?.properties || EMPTY_PROPERTIES
+      : EMPTY_PROPERTIES
 
   useEffect(() => {
     const controller = new AbortController()
-    getProperties(controller.signal)
-      .then(setProperties)
+    getProperties(controller.signal, services)
+      .then((properties) => {
+        if (!controller.signal.aborted)
+          setResult({ key: requestKey, properties, error: '' })
+      })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted)
-          setError(
+          setResult({
+            key: requestKey,
+            properties: [],
+            error:
+              reason instanceof Error
+                ? reason.message
+                : 'No se pudo conectar con el servidor.',
+          })
+      })
+    return () => controller.abort()
+  }, [requestKey, services])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    getServices(controller.signal)
+      .then((catalog) => {
+        if (!controller.signal.aborted) setAvailableServices(catalog)
+      })
+      .catch((reason: unknown) => {
+        if (!controller.signal.aborted)
+          setServicesError(
             reason instanceof Error
               ? reason.message
-              : 'No se pudo conectar con el servidor.',
+              : 'No se pudo cargar el catálogo de servicios.',
           )
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false)
+        if (!controller.signal.aborted) setServicesLoading(false)
       })
     return () => controller.abort()
-  }, [attempt])
-
-  const availableServices = useMemo(
-    () => [
-      ...new Map(
-        properties.flatMap((p) => p.services || []).map((s) => [s.id, s]),
-      ).values(),
-    ],
-    [properties],
-  )
+  }, [servicesAttempt])
   const currencies = useMemo(
     () =>
       [
-        ...new Set(['CRC', 'USD', ...properties.map((p) => p.typeOfCoin)]),
+        ...new Set([
+          'CRC',
+          'USD',
+          currency,
+          ...properties.map((p) => p.typeOfCoin),
+        ]),
       ].filter(Boolean),
-    [properties],
+    [properties, currency],
   )
   const filtered = useMemo(
     () =>
@@ -84,15 +122,15 @@ export default function ExplorePage() {
           (!currency ||
             !maxPrice ||
             Number(property.cost) <= Number(maxPrice)) &&
-          (!rooms || property.rooms >= Number(rooms)) &&
-          services.every((id) =>
-            property.services?.some((service) => service.id === id),
-          ),
+          (!rooms || property.rooms >= Number(rooms)),
       ),
-    [properties, query, currency, minPrice, maxPrice, rooms, services],
+    [properties, query, currency, minPrice, maxPrice, rooms],
   )
   const activeProperty = filtered.find((p) => p.id === selected)
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
+  const hasFilters = Boolean(
+    query || currency || minPrice || maxPrice || rooms || services.length,
+  )
   const selectFromMap = useCallback((id: number) => {
     setSelected(id)
     document
@@ -184,13 +222,13 @@ export default function ExplorePage() {
             </div>
             {filtersOpen && (
               <div id="explore-filters" className="expanded-filters">
-                <p>
+                {/* <p>
                   Precio mensual{' '}
                   {currency
                     ? `en ${currency}`
                     : '· elige una moneda para filtrar'}
-                </p>
-                <div className="price-inputs">
+                </p> */}
+                {/* <div className="price-inputs">
                   <label>
                     Desde
                     <input
@@ -213,21 +251,46 @@ export default function ExplorePage() {
                       onChange={(e) => setMaxPrice(e.target.value)}
                     />
                   </label>
-                </div>
-                {currency &&
+                </div> */}
+                {/* {currency &&
                   minPrice &&
                   maxPrice &&
                   Number(minPrice) > Number(maxPrice) && (
                     <p role="status">
                       El precio mínimo debe ser menor o igual al máximo.
-                    </p>
-                  )}
-                {availableServices.length > 0 && (
-                  <fieldset>
-                    <legend>Servicios incluidos</legend>
+                    </p> */}
+                  
+                <fieldset aria-busy={servicesLoading}>
+                  {/* <legend>Servicios incluidos</legend> */}
+                  <p>
+                    La propiedad debe contar con todos los servicios
+                    seleccionados.
+                  </p>
+                  {servicesLoading ? (
+                    <p role="status">Cargando servicios…</p>
+                  ) : servicesError ? (
+                    <div role="alert">
+                      <p>{servicesError}</p>
+                      <button
+                        className="text-button"
+                        onClick={() => {
+                          setServicesLoading(true)
+                          setServicesError('')
+                          setServicesAttempt((n) => n + 1)
+                        }}
+                      >
+                        Reintentar servicios
+                      </button>
+                    </div>
+                  ) : availableServices.length === 0 ? (
+                    <p>No hay servicios en el catálogo todavía.</p>
+                  ) : (
                     <div className="service-filters">
                       {availableServices.map((service) => (
-                        <label key={service.id}>
+                        <label
+                          key={service.id}
+                          title={service.description || undefined}
+                        >
                           <input
                             type="checkbox"
                             checked={services.includes(service.id)}
@@ -243,8 +306,8 @@ export default function ExplorePage() {
                         </label>
                       ))}
                     </div>
-                  </fieldset>
-                )}
+                  )}
+                </fieldset>
                 <button className="text-button" onClick={resetFilters}>
                   Limpiar filtros
                 </button>
@@ -254,7 +317,9 @@ export default function ExplorePage() {
           <div className="result-summary" role="status">
             {loading
               ? 'Buscando tu próximo hogar…'
-              : `${filtered.length} ${filtered.length === 1 ? 'propiedad disponible' : 'propiedades disponibles'}`}
+              : error
+                ? 'Búsqueda no disponible'
+                : `${filtered.length} ${filtered.length === 1 ? 'propiedad disponible' : 'propiedades disponibles'}`}
             <span>
               <span className="status-dot" /> Publicadas
             </span>
@@ -272,8 +337,6 @@ export default function ExplorePage() {
                 <p>{error}</p>
                 <button
                   onClick={() => {
-                    setLoading(true)
-                    setError('')
                     setAttempt((n) => n + 1)
                   }}
                 >
@@ -285,11 +348,11 @@ export default function ExplorePage() {
                 <Search size={36} />
                 <h2>No hay propiedades disponibles</h2>
                 <p>
-                  {properties.length
+                  {hasFilters
                     ? 'Prueba otra zona o ajusta tus filtros.'
                     : 'Las nuevas publicaciones aparecerán aquí.'}
                 </p>
-                {properties.length > 0 && (
+                {hasFilters && (
                   <button onClick={resetFilters}>Limpiar filtros</button>
                 )}
               </div>
@@ -340,7 +403,8 @@ export default function ExplorePage() {
                           </span>
                           <span>
                             <Users size={16} />
-                            {property.guest} {property.guest === 1 ? 'persona' : 'personas'}
+                            {property.guest}{' '}
+                            {property.guest === 1 ? 'persona' : 'personas'}
                           </span>
                         </div>
                         <div className="property-bottom">

@@ -2,11 +2,12 @@
 
 Abre `/explorar` o usa **Explorar**, **Ver todas** o el buscador de la página de inicio.
 
-- Inicia el backend en el puerto 3000 y el frontend con `pnpm dev`.
+- Inicia el backend en el puerto 4000 y el frontend con `pnpm dev`.
 - Durante desarrollo, Vite envía `/api` al backend local. En producción configura `VITE_API_URL` con la URL pública del backend antes de compilar, o publica un proxy `/api` en el mismo dominio.
 - El alojamiento del frontend debe servir `index.html` para `/explorar`.
-- La pantalla consulta `GET /properties`: utiliza publicaciones activas, archivos de imagen y servicios. La respuesta 404 de este endpoint se interpreta como una colección vacía, de acuerdo con el contrato actual.
-- Los filtros se aplican a la colección en el cliente. Los límites de precio requieren elegir una moneda para evitar comparar CRC con USD.
+- La pantalla consulta `GET /services` para mostrar el catálogo completo y `GET /properties?serviceIds=1,2` para buscar publicaciones activas que tengan todos los servicios elegidos. Sin coincidencias, el backend devuelve `200` con `[]`.
+- El filtro de servicios se aplica en el backend; lista y mapa muestran la misma respuesta. Los cambios de selección cancelan la solicitud anterior y los errores del catálogo o de búsqueda se pueden reintentar de forma independiente.
+- Los filtros de texto, moneda, precio y habitaciones se aplican a los resultados en el cliente. Los límites de precio requieren elegir una moneda para evitar comparar CRC con USD.
 
 ## Ubicaciones
 
