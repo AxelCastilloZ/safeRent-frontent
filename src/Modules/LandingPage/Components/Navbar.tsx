@@ -2,7 +2,7 @@ import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
 const navigationItems = [
-  { label: 'Explorar', href: '#properties' },
+  { label: 'Explorar', href: '/explorar' },
   { label: 'Cómo funciona', href: '#how-it-works' },
   { label: 'Para propietarios', href: '#owner-cta' },
 ]

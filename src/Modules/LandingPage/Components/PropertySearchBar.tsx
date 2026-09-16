@@ -6,7 +6,20 @@ const priceRanges = ['Cualquier precio', 'Hasta $300', '$300 - $500', '$500 - $8
 export default function PropertySearchBar() {
   const [location, setLocation] = useState('')
   const [price, setPrice] = useState(priceRanges[0])
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault() }
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const params = new URLSearchParams({ q: location })
+    const ranges: Record<string, [string, string]> = {
+      'Hasta $300': ['', '300'], '$300 - $500': ['300', '500'],
+      '$500 - $800': ['500', '800'], 'Más de $800': ['800', ''],
+    }
+    if (ranges[price]) {
+      params.set('currency', 'USD')
+      params.set('min', ranges[price][0])
+      params.set('max', ranges[price][1])
+    }
+    window.location.assign(`/explorar?${params}`)
+  }
 
   return <section className="-mt-1 bg-surface px-4 pb-4 sm:px-6"><form className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-2 shadow-lg shadow-slate-200/70" onSubmit={handleSubmit}>
     <div className="flex flex-col gap-2 md:flex-row">
