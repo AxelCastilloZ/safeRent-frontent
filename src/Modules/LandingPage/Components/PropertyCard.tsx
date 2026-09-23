@@ -46,7 +46,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 mb-4 flex items-center gap-2">
           {serviceIcons.map((Icon, index) =>
             property.services[index] ? (
               <span

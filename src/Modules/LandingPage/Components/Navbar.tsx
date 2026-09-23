@@ -1,26 +1,55 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 
-const navigationItems = [
-  { label: 'Explorar', href: '/explorar' },
-  { label: 'Cómo funciona', href: '#how-it-works' },
-  { label: 'Para propietarios', href: '#owner-cta' },
-]
+type NavItem = { kind: 'route'; label: string; to: string } | { kind: 'anchor'; label: string; href: string }
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const closeMenu = () => setIsOpen(false)
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
+
+  // "Cómo funciona" y "Para propietarios" son anclas dentro de la landing: si ya
+  // estamos ahí, se mantienen como anclas puras (mismo comportamiento de siempre);
+  // si no, apuntan a "/#..." para volver al inicio y hacer scroll — el mismo
+  // patrón que ya usa el header de ExplorePage.
+  const navigationItems: NavItem[] = [
+    { kind: 'route', label: 'Explorar', to: '/explorar' },
+    { kind: 'anchor', label: 'Cómo funciona', href: isHome ? '#how-it-works' : '/#how-it-works' },
+    { kind: 'anchor', label: 'Para propietarios', href: isHome ? '#owner-cta' : '/#owner-cta' },
+  ]
+
+  const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
+    `border-b-2 py-1 text-sm font-medium transition ${isActive ? 'border-secondary text-primary' : 'border-transparent text-neutral hover:border-secondary hover:text-primary'}`
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label="Navegación principal">
-        <a href="#top" className="flex items-center gap-2 font-bold text-ink" aria-label="SafeRent, inicio" onClick={closeMenu}>
-          <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg object-contain" />
-          <span className="text-xl tracking-tight">SafeRent</span>
-        </a>
+        {isHome ? (
+          <a href="#top" className="flex items-center gap-2 font-bold text-ink" aria-label="SafeRent, inicio" onClick={closeMenu}>
+            <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg object-contain" />
+            <span className="text-xl tracking-tight">SafeRent</span>
+          </a>
+        ) : (
+          <Link to="/" className="flex items-center gap-2 font-bold text-ink" aria-label="SafeRent, inicio" onClick={closeMenu}>
+            <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg object-contain" />
+            <span className="text-xl tracking-tight">SafeRent</span>
+          </Link>
+        )}
 
         <div className="hidden items-center gap-7 md:flex">
-          {navigationItems.map((item, index) => <a key={item.href} href={item.href} className={`border-b-2 py-1 text-sm font-medium transition ${index === 0 ? 'border-secondary text-primary' : 'border-transparent text-neutral hover:border-secondary hover:text-primary'}`}>{item.label}</a>)}
+          {navigationItems.map((item) =>
+            item.kind === 'route' ? (
+              <NavLink key={item.to} to={item.to} className={navLinkClassName}>
+                {item.label}
+              </NavLink>
+            ) : (
+              <a key={item.href} href={item.href} className="border-b-2 border-transparent py-1 text-sm font-medium text-neutral transition hover:border-secondary hover:text-primary">
+                {item.label}
+              </a>
+            ),
+          )}
         </div>
         <div className="hidden items-center gap-3 md:flex">
           <button type="button" className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</button>
@@ -32,7 +61,17 @@ export default function Navbar() {
       </nav>
       {isOpen && <div className="border-t border-slate-100 bg-white px-4 py-4 shadow-lg md:hidden">
         <div className="mx-auto flex max-w-7xl flex-col gap-1">
-          {navigationItems.map((item) => <a key={item.href} href={item.href} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">{item.label}</a>)}
+          {navigationItems.map((item) =>
+            item.kind === 'route' ? (
+              <NavLink key={item.to} to={item.to} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">
+                {item.label}
+              </NavLink>
+            ) : (
+              <a key={item.href} href={item.href} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">
+                {item.label}
+              </a>
+            ),
+          )}
           <div className="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
             <button type="button" className="rounded-lg px-3 py-2.5 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</button>
             <button type="button" className="rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white">Registrarse</button>
