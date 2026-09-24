@@ -2,6 +2,7 @@ import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
 import LandingPage from "../Modules/LandingPage/LandingPage";
 import { LoginRoute, RegisterRoute } from "../Modules/Auth/routes/AuthRoutes";
+import { propertyDetailsRoute, propertyIndexRoute, propertyNewMediaRoute, propertyNewRoute, propertyPublishRoute, PropertyRoute } from "../Modules/Property/routes/PropertyRoutes";
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -12,5 +13,12 @@ const indexRoute = createRoute({
 export const routeTree = rootRoute.addChildren([
     indexRoute,
     LoginRoute,
-    RegisterRoute
+    RegisterRoute,
+    PropertyRoute.addChildren([
+        propertyIndexRoute,
+        propertyNewRoute,
+        propertyNewMediaRoute,
+        propertyDetailsRoute,
+        propertyPublishRoute
+    ])
 ])
