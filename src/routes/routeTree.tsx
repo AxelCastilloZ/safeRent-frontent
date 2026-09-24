@@ -2,6 +2,7 @@ import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
 import LandingPage from "../Modules/LandingPage/LandingPage";
 import { LoginRoute, RegisterRoute } from "../Modules/Auth/routes/AuthRoutes";
+import { ExplorerRoute } from "../Modules/Explore/routes/ExplorerRoutes";
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -12,5 +13,6 @@ const indexRoute = createRoute({
 export const routeTree = rootRoute.addChildren([
     indexRoute,
     LoginRoute,
-    RegisterRoute
+    RegisterRoute,
+    ExplorerRoute
 ])
