@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "saferent-frontend",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite"],
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
       "port": 5173
     }
   ]
