@@ -25,7 +25,7 @@ export const PrivacyPolicyRoute = createRoute({
 
 export const TermOfServiceRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "terminos-de-servicio",
+  path: "terminos-del-servicio",
   component: TermsOfServicePage,
 });
 
