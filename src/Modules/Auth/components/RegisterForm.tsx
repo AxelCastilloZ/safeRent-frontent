@@ -16,7 +16,7 @@ const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
 const legalLinkClass =
   'rounded-sm text-[#000f22] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]';
 
-const CreateAccountForm = () => {
+const RegisterForm = () => {
   const form = useForm({
     defaultValues: createAccountDefaultValues,
     validators: { onBlur: createAccountSchema, onSubmit: createAccountSchema },
@@ -252,4 +252,4 @@ const CreateAccountForm = () => {
   );
 };
 
-export default CreateAccountForm;
+export default RegisterForm;
