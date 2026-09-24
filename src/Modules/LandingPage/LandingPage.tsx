@@ -16,8 +16,8 @@ export default function LandingPage() {
         <HeroSection />
         <PropertySearchBar />
         <QuickFilters />
-        <BenefitsSection />
         <FeaturedProperties />
+        <BenefitsSection />
         <HowItWorks />
         <OwnerCTA />
       </main>
