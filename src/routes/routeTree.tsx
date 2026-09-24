@@ -21,6 +21,6 @@ export const routeTree = rootRoute.addChildren([
         propertyNewMediaRoute,
         propertyDetailsRoute,
         propertyPublishRoute
-    ])
+    ]),
     ExplorerRoute
 ])

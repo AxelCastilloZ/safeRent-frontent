@@ -29,7 +29,7 @@ export default function CreatePropertyStep2Page() {
 
   useEffect(() => {
     if (!propertyId) {
-      navigate('/propietario/propiedades/nueva')
+      navigate('/properties/new')
       return
     }
     loadServices()
@@ -102,7 +102,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate(`/propietario/propiedades/${propertyId}`)
+      navigate(`properties/detail/${propertyId}`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {

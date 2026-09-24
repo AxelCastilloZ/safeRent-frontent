@@ -97,7 +97,7 @@ export default function CreatePropertyStep1Page() {
         rooms: form.rooms ? Number(form.rooms) : undefined,
         ownerId: MOCK_OWNER_ID,
       })
-      navigate('/propietario/propiedades/nueva/media', { state: { propertyId: property.id } })
+      navigate('/properties/new/media', { state: { propertyId: property.id } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
     } finally {

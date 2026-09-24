@@ -37,7 +37,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         <button
           type="button"
           className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-primary transition-colors hover:border-primary hover:bg-primary/5"
-          onClick={() => navigate(`/propietario/propiedades/${property.id}`)}
+          onClick={() => navigate(`/properties/detail/${property.id}`)}
         >
           <Pencil size={15} />
           Editar

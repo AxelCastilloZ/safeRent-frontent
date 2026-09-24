@@ -1,11 +1,11 @@
-import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
+import { createRoute, lazyRouteComponent, Outlet } from "@tanstack/react-router";
 import { rootRoute } from "../../../routes/rootRoute";
 import OwnerLayout from "../Components/OwnerLayout";
 
 export const PropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "properties",
-  component: OwnerLayout,
+  component: Outlet,
 });
 
 export const propertyIndexRoute = createRoute({

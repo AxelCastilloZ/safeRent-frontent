@@ -61,7 +61,7 @@ export default function PropertyPage() {
         title="Publica tu primera propiedad"
         description="Un buen SafeRent Score atrae mejores arrendatarios."
         actionLabel="Nueva propiedad"
-        onAction={() => navigate('/propietario/propiedades/nueva')}
+        onAction={() => navigate('/properties/new')}
       />
     )
   }
@@ -78,7 +78,7 @@ export default function PropertyPage() {
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-xl bg-secondary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark"
-          onClick={() => navigate('/propietario/propiedades/nueva')}
+          onClick={() => navigate('/properties/new')}
         >
           <Plus size={16} />
           Nueva propiedad
