@@ -1,7 +1,7 @@
+import { listServices } from '../../Services/services/service.service'
 import { api } from './api'
 import type {
   Property,
-  Service,
   CreatePropertyPayload,
   UpdatePropertyPayload,
   PropertyFile,
@@ -37,5 +37,5 @@ export const propertyService = {
 }
 
 export const serviceService = {
-  getAll: () => api.get<Service[]>('/services'),
+  getAll: () => listServices(),
 }

@@ -1,3 +1,4 @@
+import ServiceIcon from '../Services/components/ServiceIcon'
 import { useCallback, useMemo, useState } from 'react'
 import {
   BedDouble,
@@ -246,7 +247,7 @@ export default function ExplorePage() {
                               )
                             }
                           />
-                          {service.name}
+                          <ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}
                         </label>
                       ))}
                     </div>
@@ -354,7 +355,7 @@ export default function ExplorePage() {
                         <div className="property-bottom">
                           <div className="property-services">
                             {property.services?.slice(0, 3).map((service) => (
-                              <span key={service.id}>{service.name}</span>
+                              <span key={service.id}><ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}</span>
                             ))}
                           </div>
                           <span

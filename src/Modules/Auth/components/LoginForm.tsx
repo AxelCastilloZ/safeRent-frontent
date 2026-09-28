@@ -3,17 +3,13 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 import logo from '../../../assets/saferent-logo.svg';
-import { paths } from '../../../routes/paths';
 import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
-import { Link } from '@tanstack/react-router';
 
 const labelClass = 'text-sm leading-[16.8px] font-medium tracking-[0.7px] text-[#45474c]';
 const inputClass =
   'h-14 w-full rounded-lg border border-[#c5c6cd]/40 bg-white pl-10 text-base text-[#191c1d] outline-none transition-colors placeholder:text-[#45474c]/50 hover:border-[#c5c6cd] focus:border-[#091426] focus:ring-2 focus:ring-[#091426]/15 aria-invalid:border-[#ba1a1a] aria-invalid:focus:ring-[#ba1a1a]/15';
 const iconClass = 'pointer-events-none absolute top-1/2 left-3 size-[17px] -translate-y-1/2 text-[#45474c]';
 const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
-const linkClass =
-  'rounded-sm font-semibold text-[#091426] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426]';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);

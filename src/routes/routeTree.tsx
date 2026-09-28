@@ -1,3 +1,4 @@
+import { servicesAdminRoute } from '../Modules/Services/routes/ServicesRoutes';
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
 import LandingPage from "../Modules/LandingPage/LandingPage";
@@ -14,6 +15,7 @@ const indexRoute = createRoute({
 
 export const routeTree = rootRoute.addChildren([
     indexRoute,
+    servicesAdminRoute,
     LoginRoute,
     RegisterRoute,
     PropertyRoute.addChildren([
@@ -27,5 +29,6 @@ export const routeTree = rootRoute.addChildren([
     SobreNosotrosRoute,
     SoporteRoute,
     PrivacyPolicyRoute,
-    TermOfServiceRoute
+    TermOfServiceRoute,
+    // servicesAdminRoute
 ])

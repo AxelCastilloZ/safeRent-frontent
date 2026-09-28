@@ -13,12 +13,8 @@ export interface TypeOfProperty {
   icon: string
 }
 
-export interface Service {
-  id: number
-  name: string
-  icono: string
-  description: string
-}
+export type { Service } from '../../Services/interfaces/service.interface'
+import type { Service } from '../../Services/interfaces/service.interface'
 
 export interface PropertyFile {
   id: number
