@@ -54,12 +54,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           ))}
         </div>
 
-        <button
-          type="button"
+        <a href={`/property_detail/${property.id}`}
           className="mt-auto inline-flex w-full items-center justify-center rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-secondary-dark transition-colors hover:border-secondary hover:bg-secondary/5"
         >
           Ver detalles
-        </button>
+        </a>
       </div>
     </article>
   )

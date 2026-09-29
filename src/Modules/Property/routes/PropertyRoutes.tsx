@@ -37,3 +37,8 @@ export const propertyPublishRoute = createRoute({
   path: "$propertyId/publish",
   component: lazyRouteComponent(() => import("../PropertyPublishedPage")),
 });
+export const publicPropertyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'property_detail/$propertyId',
+  component: lazyRouteComponent(() => import('../PublicPropertyPage')),
+});

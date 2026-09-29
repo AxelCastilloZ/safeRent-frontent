@@ -1,3 +1,4 @@
+import { publicPropertyRoute } from '../Modules/Property/routes/PropertyRoutes';
 import { servicesAdminRoute } from '../Modules/Services/routes/ServicesRoutes';
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
@@ -15,6 +16,7 @@ const indexRoute = createRoute({
 
 export const routeTree = rootRoute.addChildren([
     indexRoute,
+    publicPropertyRoute,
     servicesAdminRoute,
     LoginRoute,
     RegisterRoute,
