@@ -40,7 +40,11 @@ function isService(value: unknown): value is Service {
 }
 
 export async function listServices(signal?: AbortSignal): Promise<Service[]> {
-  const data = await readResponse(await fetch(baseUrl + '/service', { signal }))
+  const token = localStorage.getItem('token')
+  const data = await readResponse(await fetch(baseUrl + '/service', {
+    signal,
+    headers: token ? { Authorization: 'Bearer ' + token } : {},
+  }))
   if (!Array.isArray(data) || !data.every(isService))
     throw new Error('El catálogo recibido no tiene el formato esperado.')
   return data

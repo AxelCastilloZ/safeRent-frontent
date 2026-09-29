@@ -79,7 +79,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate('/propietario/propiedades')
+      navigate('/properties')
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al guardar')
     } finally {
@@ -103,7 +103,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate(`properties/detail/${propertyId}`)
+      navigate(`/properties/detail/${propertyId}`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {

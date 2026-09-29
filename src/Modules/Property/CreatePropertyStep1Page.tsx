@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AlertCircle } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService } from './services/propertyService'
@@ -36,12 +36,44 @@ function validate(data: FormData): FormErrors {
 
 export default function CreatePropertyStep1Page() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const editId = (location.state as { editId?: number })?.editId ?? null
+
   const [form, setForm] = useState<FormData>({
     title: '', cost: '', address: '', zona: '', rooms: '', m2: '', description: '',
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [loadingProperty, setLoadingProperty] = useState(!!editId)
+
+  useEffect(() => {
+    if (!editId) return
+    let cancelled = false
+    async function load() {
+      try {
+        const p = await propertyService.getById(editId!)
+        if (cancelled) return
+        setForm({
+          title: p.title ?? '',
+          cost: p.cost ? String(p.cost) : '',
+          address: p.address ?? '',
+          zona: '',
+          rooms: p.rooms ? String(p.rooms) : '',
+          m2: '',
+          description: p.description ?? '',
+        })
+      } catch (err) {
+        if (!cancelled) {
+          setApiError(err instanceof ApiError ? err.message : 'No se pudo cargar la propiedad')
+        }
+      } finally {
+        if (!cancelled) setLoadingProperty(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [editId])
 
   const errorCount = Object.keys(errors).length
 
@@ -60,15 +92,25 @@ export default function CreatePropertyStep1Page() {
     setSaving(true)
     setApiError(null)
     try {
-      await propertyService.create({
-        title: form.title || 'Sin título',
-        description: form.description || '',
-        cost: Number(form.cost) || 0,
-        address: form.address || '',
-        rooms: form.rooms ? Number(form.rooms) : undefined,
-        ownerId: MOCK_OWNER_ID,
-      })
-      navigate('/propietario/propiedades')
+      if (editId) {
+        await propertyService.update(editId, {
+          title: form.title || 'Sin título',
+          description: form.description || '',
+          cost: Number(form.cost) || 0,
+          address: form.address || '',
+          rooms: form.rooms ? Number(form.rooms) : undefined,
+        })
+      } else {
+        await propertyService.create({
+          title: form.title || 'Sin título',
+          description: form.description || '',
+          cost: Number(form.cost) || 0,
+          address: form.address || '',
+          rooms: form.rooms ? Number(form.rooms) : undefined,
+          ownerId: MOCK_OWNER_ID,
+        })
+      }
+      navigate('/properties')
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al guardar borrador')
     } finally {
@@ -89,15 +131,28 @@ export default function CreatePropertyStep1Page() {
     setSaving(true)
 
     try {
-      const property = await propertyService.create({
-        title: form.title,
-        description: form.description,
-        cost: Number(form.cost),
-        address: form.address,
-        rooms: form.rooms ? Number(form.rooms) : undefined,
-        ownerId: MOCK_OWNER_ID,
-      })
-      navigate('/properties/new/media', { state: { propertyId: property.id } })
+      let propertyId: number
+      if (editId) {
+        await propertyService.update(editId, {
+          title: form.title,
+          description: form.description,
+          cost: Number(form.cost),
+          address: form.address,
+          rooms: form.rooms ? Number(form.rooms) : undefined,
+        })
+        propertyId = editId
+      } else {
+        const property = await propertyService.create({
+          title: form.title,
+          description: form.description,
+          cost: Number(form.cost),
+          address: form.address,
+          rooms: form.rooms ? Number(form.rooms) : undefined,
+          ownerId: MOCK_OWNER_ID,
+        })
+        propertyId = property.id
+      }
+      navigate('/properties/new/media', { state: { propertyId } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
     } finally {
@@ -108,10 +163,14 @@ export default function CreatePropertyStep1Page() {
   const inputBase = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-primary outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10'
   const inputError = 'border-red-400 focus:border-red-500 focus:ring-red-100'
 
+  if (loadingProperty) {
+    return <div className="flex items-center justify-center py-24 text-sm text-slate-400">Cargando propiedad...</div>
+  }
+
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-primary">Nueva propiedad</h1>
+        <h1 className="text-2xl font-bold text-primary">{editId ? 'Editar propiedad' : 'Nueva propiedad'}</h1>
         <Stepper steps={STEPS} currentStep={1} />
       </div>
 
