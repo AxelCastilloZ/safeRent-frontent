@@ -1,6 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import logo from '../../../assets/saferent-logo.svg';
 import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
@@ -11,16 +12,31 @@ const inputClass =
 const iconClass = 'pointer-events-none absolute top-1/2 left-3 size-[17px] -translate-y-1/2 text-[#45474c]';
 const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
 
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: loginDefaultValues,
     validators: { onBlur: loginSchema, onSubmit: loginSchema },
     onSubmit: async ({ value }) => {
+      setLoginError('');
       const payload = loginSchema.parse(value);
-      // TODO: conectar con el servicio/mutation de autenticación cuando exista el endpoint.
-      void payload;
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginError(data.message ?? 'Credenciales inválidas');
+        return;
+      }
+      localStorage.setItem('token', data.access_token);
+      navigate('/properties');
     },
   });
 
@@ -35,6 +51,10 @@ const LoginForm = () => {
           </h1>
           <p className="text-base leading-[25.6px] text-[#45474c]">Sign in to your SafeRent account</p>
         </header>
+
+        {loginError && (
+          <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-600">{loginError}</p>
+        )}
 
         <form
           noValidate
