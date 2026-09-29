@@ -6,7 +6,6 @@ import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 
 const STEPS = ['Datos', 'Imágenes', 'Publicar']
-const MOCK_OWNER_ID = 1
 
 interface FormData {
   title: string
@@ -107,7 +106,6 @@ export default function CreatePropertyStep1Page() {
           cost: Number(form.cost) || 0,
           address: form.address || '',
           rooms: form.rooms ? Number(form.rooms) : undefined,
-          ownerId: MOCK_OWNER_ID,
         })
       }
       navigate('/properties')
@@ -148,7 +146,6 @@ export default function CreatePropertyStep1Page() {
           cost: Number(form.cost),
           address: form.address,
           rooms: form.rooms ? Number(form.rooms) : undefined,
-          ownerId: MOCK_OWNER_ID,
         })
         propertyId = property.id
       }
