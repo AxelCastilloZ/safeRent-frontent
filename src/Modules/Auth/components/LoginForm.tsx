@@ -1,170 +1,47 @@
-import { useForm } from '@tanstack/react-form';
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import { useForm } from '@tanstack/react-form'
+import { ArrowRight, Eye, EyeOff } from 'lucide-react'
+import logo from '../../../assets/saferent-logo.svg'
+import { loginDefaultValues, loginSchema } from '../schemas/login.schema'
+import { login } from '../services/auth.service'
 
-import logo from '../../../assets/saferent-logo.svg';
-import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
-
-const labelClass = 'text-sm leading-[16.8px] font-medium tracking-[0.7px] text-[#45474c]';
-const inputClass =
-  'h-14 w-full rounded-lg border border-[#c5c6cd]/40 bg-white pl-10 text-base text-[#191c1d] outline-none transition-colors placeholder:text-[#45474c]/50 hover:border-[#c5c6cd] focus:border-[#091426] focus:ring-2 focus:ring-[#091426]/15 aria-invalid:border-[#ba1a1a] aria-invalid:focus:ring-[#ba1a1a]/15';
-const iconClass = 'pointer-events-none absolute top-1/2 left-3 size-[17px] -translate-y-1/2 text-[#45474c]';
-const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
-
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-
-const LoginForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const navigate = useNavigate();
-
+export default function LoginForm() {
+  const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const form = useForm({
     defaultValues: loginDefaultValues,
     validators: { onBlur: loginSchema, onSubmit: loginSchema },
     onSubmit: async ({ value }) => {
-      setLoginError('');
-      const payload = loginSchema.parse(value);
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setLoginError(data.message ?? 'Credenciales inválidas');
-        return;
+      setError('')
+      try {
+        const payload = loginSchema.parse(value)
+        await login(payload.email, payload.password)
+        const next = new URLSearchParams(window.location.search).get('next')
+        window.location.assign(next && /^\/property_detail\/\d+$/.test(next) ? next : '/')
+      } catch (reason) {
+        setError(reason instanceof Error ? reason.message : 'No pudimos iniciar sesión.')
       }
-      localStorage.setItem('token', data.access_token);
-      navigate('/properties');
     },
-  });
-
-  return (
-    <main className="flex min-h-svh flex-col items-center justify-center bg-[#f8f9fa] px-4 py-12 font-sans">
-      <img src={logo} alt="SafeRent" width={298} height={143} className="mb-8 h-auto w-[240px] sm:w-[298px]" />
-
-      <section className="flex w-full max-w-[448px] flex-col gap-[23px] rounded-xl bg-white px-5 py-6 shadow-xl sm:px-6">
-        <header className="flex flex-col gap-[7px] text-center">
-          <h1 className="text-[28px] leading-9 font-semibold tracking-[-0.32px] text-[#191c1d] sm:text-[32px] sm:leading-[38.4px]">
-            Welcome back
-          </h1>
-          <p className="text-base leading-[25.6px] text-[#45474c]">Sign in to your SafeRent account</p>
-        </header>
-
-        {loginError && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-600">{loginError}</p>
-        )}
-
-        <form
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!form.state.isSubmitting) void form.handleSubmit();
-          }}
-          className="flex flex-col gap-3"
-        >
-          {/* Email */}
-          <form.Field name="email">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="login-email" className={labelClass}>Email address</label>
-                  <div className="relative">
-                    <Mail aria-hidden="true" className={iconClass} />
-                    <input
-                      id="login-email"
-                      name={field.name}
-                      type="email"
-                      autoComplete="email"
-                      placeholder="name@company.com"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid || undefined}
-                      aria-describedby={isInvalid ? 'login-email-error' : undefined}
-                      className={`${inputClass} pr-4`}
-                    />
-                  </div>
-                  {isInvalid && (
-                    <p id="login-email-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
-                  )}
-                </div>
-              );
-            }}
-          </form.Field>
-
-          {/* Password */}
-          <form.Field name="password">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="login-password" className={labelClass}>Password</label>
-                    {/* <Link to={paths.forgotPassword} className={`${linkClass} text-xs leading-3`}> */}
-                      Forgot Password?
-                    {/* </Link> */}
-                  </div>
-                  <div className="relative">
-                    <Lock aria-hidden="true" className={iconClass} />
-                    <input
-                      id="login-password"
-                      name={field.name}
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
-                      placeholder="••••••••"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid || undefined}
-                      aria-describedby={isInvalid ? 'login-password-error' : undefined}
-                      className={`${inputClass} pr-11`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      aria-pressed={showPassword}
-                      className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-[#45474c] transition-colors hover:text-[#191c1d] focus-visible:outline-2 focus-visible:outline-[#091426]"
-                    >
-                      {showPassword ? <Eye className="size-[18px]" /> : <EyeOff className="size-[18px]" />}
-                    </button>
-                  </div>
-                  {isInvalid && (
-                    <p id="login-password-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
-                  )}
-                </div>
-              );
-            }}
-          </form.Field>
-
-          <form.Subscribe selector={(state) => state.isSubmitting}>
-            {(isSubmitting) => (
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                aria-busy={isSubmitting}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#091426] py-4 text-sm leading-[16.8px] font-medium tracking-[0.7px] text-white shadow-md transition-colors hover:bg-[#15243d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426] active:bg-[#050b16] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isSubmitting ? 'Signing in…' : 'Sign In'}
-                {!isSubmitting && <ArrowRight aria-hidden="true" className="size-3" />}
-              </button>
-            )}
-          </form.Subscribe>
-        </form>
-
-        <p className="text-center text-base leading-[25.6px] text-[#45474c]">
-          Don't have an account?{' '}
-          {/* <Link to={paths.createAccount} className={`${linkClass} text-sm tracking-[0.7px]`}> */}
-            Sign up
-          {/* </Link> */}
-        </p>
-      </section>
-    </main>
-  );
-};
-
-export default LoginForm;
+  })
+  return <main className="flex min-h-svh flex-col items-center justify-center bg-surface px-4 py-12 text-primary">
+    <a href="/"><img src={logo} alt="SafeRent, inicio" className="mb-8 w-60" /></a>
+    <section className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <h1 className="text-center text-3xl font-bold">Bienvenido de nuevo</h1>
+      <p className="mt-2 text-center text-neutral">Inicia sesión en tu cuenta de SafeRent</p>
+      {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+      <form className="mt-6 space-y-4" noValidate onSubmit={(event) => { event.preventDefault(); if (!form.state.isSubmitting) void form.handleSubmit() }}>
+        <form.Field name="email">{(field) => <label className="block text-sm font-medium">Correo electrónico
+          <input type="email" autoComplete="email" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => field.handleChange(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3" />
+          {field.state.meta.errors[0] && <span className="mt-1 block text-xs text-red-700">{field.state.meta.errors[0].message}</span>}
+        </label>}</form.Field>
+        <form.Field name="password">{(field) => <div><label htmlFor="login-password" className="text-sm font-medium">Contraseña</label>
+          <div className="relative mt-2"><input id="login-password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => field.handleChange(event.target.value)} className="w-full rounded-lg border border-slate-300 py-3 pl-4 pr-12" />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="absolute right-3 top-3">{showPassword ? <EyeOff /> : <Eye />}</button></div>
+          {field.state.meta.errors[0] && <span className="mt-1 block text-xs text-red-700">{field.state.meta.errors[0].message}</span>}
+        </div>}</form.Field>
+        <form.Subscribe selector={(state) => state.isSubmitting}>{(busy) => <button disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-4 font-bold text-white disabled:opacity-60">{busy ? 'Iniciando sesión...' : 'Iniciar sesión'}<ArrowRight size={18} /></button>}</form.Subscribe>
+      </form>
+      <p className="mt-6 text-center text-sm">¿No tienes cuenta? <a href="/register" className="font-bold text-secondary">Regístrate</a></p>
+    </section>
+  </main>
+}
