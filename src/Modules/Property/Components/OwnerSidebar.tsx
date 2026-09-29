@@ -5,10 +5,10 @@ import type { LucideIcon } from 'lucide-react'
 type NavItem = { to: string; label: string; Icon: LucideIcon }
 
 const navItems: NavItem[] = [
-  { to: '/propietario/propiedades', label: 'Propiedades', Icon: Building2 },
-  { to: '/propietario/calendario', label: 'Calendario', Icon: CalendarDays },
-  { to: '/propietario/mensajes', label: 'Mensajes', Icon: MessageSquare },
-  { to: '/propietario/ajustes', label: 'Ajustes', Icon: Settings },
+  { to: '/properties', label: 'Propiedades', Icon: Building2 },
+  { to: '/calendario', label: 'Calendario', Icon: CalendarDays },
+  { to: '/mensajes', label: 'Mensajes', Icon: MessageSquare },
+  { to: '/ajustes', label: 'Ajustes', Icon: Settings },
 ]
 
 export default function OwnerSidebar() {

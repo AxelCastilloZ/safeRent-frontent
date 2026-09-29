@@ -68,7 +68,7 @@ export default function CreatePropertyStep1Page() {
         rooms: form.rooms ? Number(form.rooms) : undefined,
         ownerId: MOCK_OWNER_ID,
       })
-      navigate('/propietario/propiedades')
+      navigate('/properties')
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al guardar borrador')
     } finally {
