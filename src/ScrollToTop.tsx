@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from '@tanstack/react-router'
 
 /**
- * React Router doesn't reset scroll position between route changes the way a
+ * Client-side routing doesn't reset scroll position between route changes the way a
  * full page load does, so navigating (e.g. from the Footer) can land the new
  * page scrolled to wherever the previous one was left. This restores that
  * behavior globally: on every pathname change, jump to the top instantly.

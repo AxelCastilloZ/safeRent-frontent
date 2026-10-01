@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { useParams } from '@tanstack/react-router'
 import { CheckCircle2, Circle } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
@@ -37,7 +37,7 @@ export default function PropertyDetailPage() {
     setPublishing(true)
     try {
       await propertyService.publish(property.id)
-      navigate(`/properties/${property.id}/publish`)
+      navigate({ to: '/properties/$propertyId/publish', params: { propertyId: String(property.id) } })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al publicar')
     } finally {
@@ -56,7 +56,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate('/properties')}
+          onClick={() => navigate({ to: '/properties' })}
         >
           Volver a mis propiedades
         </button>
@@ -146,7 +146,7 @@ export default function PropertyDetailPage() {
             <button
               type="button"
               className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-              onClick={() => navigate('/properties/new', { state: { editId: property.id } })}
+              onClick={() => navigate({ to: '/properties/new', search: { editId: property.id } })}
             >
               Seguir editando
             </button>
@@ -165,7 +165,7 @@ export default function PropertyDetailPage() {
           <button
             type="button"
             className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-            onClick={() => navigate('/properties')}
+            onClick={() => navigate({ to: '/properties' })}
           >
             Mis propiedades
           </button>

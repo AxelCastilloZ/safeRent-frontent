@@ -1,6 +1,6 @@
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, Check, ImagePlus, X } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService, serviceService } from './services/propertyService'
@@ -17,8 +17,7 @@ interface PreviewFile {
 
 export default function CreatePropertyStep2Page() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const propertyId = (location.state as { propertyId?: number })?.propertyId
+  const { propertyId } = useSearch({ from: '/properties/new/media' })
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -30,7 +29,7 @@ export default function CreatePropertyStep2Page() {
 
   useEffect(() => {
     if (!propertyId) {
-      navigate('/properties/new')
+      navigate({ to: '/properties/new', replace: true })
       return
     }
     loadServices()
@@ -79,7 +78,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate('/properties')
+      navigate({ to: '/properties' })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al guardar')
     } finally {
@@ -103,7 +102,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate(`/properties/detail/${propertyId}`)
+      navigate({ to: '/properties/detail/$propertyId', params: { propertyId: String(propertyId) } })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {
@@ -199,7 +198,7 @@ export default function CreatePropertyStep2Page() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate({ to: '/properties/new', search: { editId: propertyId } })}
         >
           Atrás
         </button>

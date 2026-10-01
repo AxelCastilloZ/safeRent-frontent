@@ -1,6 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from '@tanstack/react-router'
 
 type NavItem = { kind: 'route'; label: string; to: string } | { kind: 'anchor'; label: string; href: string }
 
@@ -41,9 +41,9 @@ export default function Navbar() {
         <div className="hidden items-center gap-7 md:flex">
           {navigationItems.map((item) =>
             item.kind === 'route' ? (
-              <NavLink key={item.to} to={item.to} className={navLinkClassName}>
+              <Link key={item.to} to={item.to} className={navLinkClassName({ isActive: pathname === item.to || pathname.startsWith(`${item.to}/`) })}>
                 {item.label}
-              </NavLink>
+              </Link>
             ) : (
               <a key={item.href} href={item.href} className="border-b-2 border-transparent py-1 text-sm font-medium text-neutral transition hover:border-secondary hover:text-primary">
                 {item.label}
@@ -63,9 +63,9 @@ export default function Navbar() {
         <div className="mx-auto flex max-w-7xl flex-col gap-1">
           {navigationItems.map((item) =>
             item.kind === 'route' ? (
-              <NavLink key={item.to} to={item.to} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">
+              <Link key={item.to} to={item.to} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">
                 {item.label}
-              </NavLink>
+              </Link>
             ) : (
               <a key={item.href} href={item.href} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">
                 {item.label}
