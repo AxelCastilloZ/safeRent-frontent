@@ -1,4 +1,5 @@
 import { useForm } from '@tanstack/react-form';
+import { Link } from '@tanstack/react-router';
 
 import logo from '../../../assets/saferent-logo.svg';
 import { useRegister } from '../hooks/authHooks';
@@ -13,6 +14,8 @@ const labelClass = 'text-sm leading-5 font-semibold tracking-[0.7px] text-[#111c
 const inputClass =
   'h-[38px] w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-sm text-[#111c2d] shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] outline-none transition-colors hover:border-[#cbd5e1] focus:border-[#0a2540] focus:ring-2 focus:ring-[#0a2540]/15 aria-invalid:border-[#ba1a1a] aria-invalid:focus:ring-[#ba1a1a]/15';
 const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
+const legalLinkClass =
+  'rounded-sm font-semibold text-[#0a2540] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]';
 
 const RegisterForm = () => {
   const register = useRegister();
