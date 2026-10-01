@@ -9,19 +9,13 @@ import {
   createAccountSchema,
   PASSWORD_MIN_LENGTH,
 } from '../schemas/create-account.schema';
-import { Link } from '@tanstack/react-router';
 
 const labelClass = 'text-sm leading-5 font-semibold tracking-[0.7px] text-[#111c2d]';
 const inputClass =
   'h-[38px] w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-sm text-[#111c2d] shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] outline-none transition-colors hover:border-[#cbd5e1] focus:border-[#0a2540] focus:ring-2 focus:ring-[#0a2540]/15 aria-invalid:border-[#ba1a1a] aria-invalid:focus:ring-[#ba1a1a]/15';
 const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
-<<<<<<< HEAD
-const linkClass =
-  'rounded-sm font-semibold text-[#091426] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426]';
-=======
 const legalLinkClass =
   'rounded-sm font-semibold text-[#0a2540] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]';
->>>>>>> 2822a4079f1e63943bab18998f340069d928acce
 
 const RegisterForm = () => {
   const register = useRegister();
@@ -299,9 +293,9 @@ const RegisterForm = () => {
                     />
                     <label htmlFor="accept-terms" className="pl-2 text-xs leading-4 text-[#43474d]">
                       I agree to the{' '}
-                      <Link to="/terminos-del-servicio" className={linkClass}>Terms of Service</Link>{' '}
+                      <Link to="/terminos-del-servicio" className={legalLinkClass}>Terms of Service</Link>{' '}
                       and{' '}
-                      <Link to="/politica-de-privacidad" className={linkClass}>Privacy Policy</Link>
+                      <Link to="/politica-de-privacidad" className={legalLinkClass}>Privacy Policy</Link>
                     </label>
                   </div>
                   {isInvalid && (
