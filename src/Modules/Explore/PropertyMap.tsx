@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { LocateFixed, Maximize } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
-import { coordinates, priceLabel, type Property } from './properties'
+import type { Property } from './interfaces/property.interface'
+import { coordinates, priceLabel } from './utils/property.utils'
 
 interface Props {
   properties: Property[]

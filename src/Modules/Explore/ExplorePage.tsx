@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import ServiceIcon from '../Services/components/ServiceIcon'
+import { useCallback, useMemo, useState } from 'react'
 import {
   BedDouble,
   Building2,
@@ -11,16 +12,10 @@ import {
   X,
 } from 'lucide-react'
 import PropertyMap from './PropertyMap'
-import {
-  coordinates,
-  getProperties,
-  getServices,
-  normalize,
-  photoUrl,
-  priceLabel,
-  type Property,
-  type PropertyService,
-} from './properties'
+import { useProperties } from './hooks/useProperties'
+import { useServices } from './hooks/useServices'
+import type { Property } from './interfaces/property.interface'
+import { coordinates, normalize, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
 
 const EMPTY_PROPERTIES: Property[] = []
@@ -34,68 +29,20 @@ export default function ExplorePage() {
   const [rooms, setRooms] = useState('')
   const [services, setServices] = useState<number[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
-  const [result, setResult] = useState<{
-    key: string
-    properties: Property[]
-    error: string
-  } | null>(null)
-  const [availableServices, setAvailableServices] = useState<PropertyService[]>(
-    [],
-  )
-  const [servicesLoading, setServicesLoading] = useState(true)
-  const [servicesError, setServicesError] = useState('')
   const [servicesAttempt, setServicesAttempt] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
   const [mobileView, setMobileView] = useState('list')
-  const requestKey = `${attempt}:${services.join(',')}`
-  const loading = result?.key !== requestKey
-  const error = !loading ? result?.error || '' : ''
-  const properties =
-    !loading && !error
-      ? result?.properties || EMPTY_PROPERTIES
-      : EMPTY_PROPERTIES
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getProperties(controller.signal, services)
-      .then((properties) => {
-        if (!controller.signal.aborted)
-          setResult({ key: requestKey, properties, error: '' })
-      })
-      .catch((reason: unknown) => {
-        if (!controller.signal.aborted)
-          setResult({
-            key: requestKey,
-            properties: [],
-            error:
-              reason instanceof Error
-                ? reason.message
-                : 'No se pudo conectar con el servidor.',
-          })
-      })
-    return () => controller.abort()
-  }, [requestKey, services])
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getServices(controller.signal)
-      .then((catalog) => {
-        if (!controller.signal.aborted) setAvailableServices(catalog)
-      })
-      .catch((reason: unknown) => {
-        if (!controller.signal.aborted)
-          setServicesError(
-            reason instanceof Error
-              ? reason.message
-              : 'No se pudo cargar el catálogo de servicios.',
-          )
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setServicesLoading(false)
-      })
-    return () => controller.abort()
-  }, [servicesAttempt])
+  const { properties: loadedProperties, loading, error } = useProperties(
+    services,
+    attempt,
+  )
+  const {
+    services: availableServices,
+    loading: servicesLoading,
+    error: servicesError,
+  } = useServices(servicesAttempt)
+  const properties = loading || error ? EMPTY_PROPERTIES : loadedProperties
   const currencies = useMemo(
     () =>
       [
@@ -274,8 +221,6 @@ export default function ExplorePage() {
                       <button
                         className="text-button"
                         onClick={() => {
-                          setServicesLoading(true)
-                          setServicesError('')
                           setServicesAttempt((n) => n + 1)
                         }}
                       >
@@ -302,7 +247,7 @@ export default function ExplorePage() {
                               )
                             }
                           />
-                          {service.name}
+                          <ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}
                         </label>
                       ))}
                     </div>
@@ -410,7 +355,7 @@ export default function ExplorePage() {
                         <div className="property-bottom">
                           <div className="property-services">
                             {property.services?.slice(0, 3).map((service) => (
-                              <span key={service.id}>{service.name}</span>
+                              <span key={service.id}><ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}</span>
                             ))}
                           </div>
                           <span

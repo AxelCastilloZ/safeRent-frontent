@@ -1,6 +1,7 @@
+import ServiceIcon from '../Services/components/ServiceIcon'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { AlertCircle, Check, ImagePlus, Plus, X } from 'lucide-react'
+import { AlertCircle, Check, ImagePlus, X } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService, serviceService } from './services/propertyService'
 import { ApiError } from './services/api'
@@ -78,7 +79,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate('/propietario/propiedades')
+      navigate('/properties')
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al guardar')
     } finally {
@@ -102,7 +103,7 @@ export default function CreatePropertyStep2Page() {
       if (images.length > 0) {
         await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
       }
-      navigate(`properties/detail/${propertyId}`)
+      navigate(`/properties/detail/${propertyId}`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {
@@ -179,9 +180,10 @@ export default function CreatePropertyStep2Page() {
                     ? 'bg-secondary text-white'
                     : 'border border-slate-200 bg-white text-slate-600 hover:border-secondary hover:text-secondary'
                 }`}
+                aria-pressed={selected}
                 onClick={() => toggleService(service.id)}
               >
-                {selected ? <Check size={14} /> : <Plus size={14} />}
+                <ServiceIcon name={service.icono} size={18} />{selected && <Check size={14} />}
                 {service.name}
               </button>
             )

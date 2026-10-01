@@ -1,4 +1,4 @@
-import { normalize } from '../../Explore/properties'
+import { normalize } from '../../Explore/utils/property.utils'
 import type { FaqItem } from '../types/faq'
 
 export const faqItems: FaqItem[] = [

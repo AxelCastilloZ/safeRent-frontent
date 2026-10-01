@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from '@tanstack/react-router'
 import { CheckCircle } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import type { Property } from './types/property'
 
 export default function PropertyPublishedPage() {
-  const { id } = useParams<{ id: string }>()
+  const { propertyId } = useParams({ strict: false }) as { propertyId: string }
   const navigate = useNavigate()
   const [property, setProperty] = useState<Property | null>(null)
 
   useEffect(() => {
-    if (!id) return
-    propertyService.getById(Number(id)).then(setProperty).catch(() => {})
-  }, [id])
+    if (!propertyId) return
+    propertyService.getById(Number(propertyId)).then(setProperty).catch(() => {})
+  }, [propertyId])
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -42,14 +43,14 @@ export default function PropertyPublishedPage() {
         <button
           type="button"
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-          onClick={() => property && navigate(`/propietario/propiedades/${property.id}`)}
+          onClick={() => property && navigate(`/properties/detail/${property.id}`)}
         >
           Ver como inquilino
         </button>
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate('/propietario/propiedades')}
+          onClick={() => navigate('/properties')}
         >
           Mis propiedades
         </button>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from '@tanstack/react-router'
 import { CheckCircle2, Circle } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
@@ -7,7 +8,7 @@ import { ApiError } from './services/api'
 import type { Property } from './types/property'
 
 export default function PropertyDetailPage() {
-  const { id } = useParams<{ id: string }>()
+  const { propertyId } = useParams({ strict: false }) as { propertyId: string }
   const navigate = useNavigate()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
@@ -15,9 +16,9 @@ export default function PropertyDetailPage() {
   const [publishing, setPublishing] = useState(false)
 
   useEffect(() => {
-    if (!id) return
-    loadProperty(Number(id))
-  }, [id])
+    if (!propertyId) return
+    loadProperty(Number(propertyId))
+  }, [propertyId])
 
   async function loadProperty(propertyId: number) {
     try {
@@ -36,7 +37,7 @@ export default function PropertyDetailPage() {
     setPublishing(true)
     try {
       await propertyService.publish(property.id)
-      navigate(`/propietario/propiedades/${property.id}/publicada`)
+      navigate(`/properties/${property.id}/publish`)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al publicar')
     } finally {
@@ -55,7 +56,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate('/propietario/propiedades')}
+          onClick={() => navigate('/properties')}
         >
           Volver a mis propiedades
         </button>
@@ -145,7 +146,7 @@ export default function PropertyDetailPage() {
             <button
               type="button"
               className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-              onClick={() => navigate('/propietario/propiedades/nueva', { state: { editId: property.id } })}
+              onClick={() => navigate('/properties/new', { state: { editId: property.id } })}
             >
               Seguir editando
             </button>
@@ -164,7 +165,7 @@ export default function PropertyDetailPage() {
           <button
             type="button"
             className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-            onClick={() => navigate('/propietario/propiedades')}
+            onClick={() => navigate('/properties')}
           >
             Mis propiedades
           </button>

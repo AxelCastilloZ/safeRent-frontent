@@ -1,10 +1,10 @@
-import { createRoute, lazyRouteComponent, Outlet } from "@tanstack/react-router";
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { rootRoute } from "../../../routes/rootRoute";
 
 export const PropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "properties",
-  component: Outlet,
+  component: OwnerLayout,
 });
 
 export const propertyIndexRoute = createRoute({
@@ -35,4 +35,9 @@ export const propertyPublishRoute = createRoute({
   getParentRoute: () => PropertyRoute,
   path: "$propertyId/publish",
   component: lazyRouteComponent(() => import("../PropertyPublishedPage")),
+});
+export const publicPropertyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'property_detail/$propertyId',
+  component: lazyRouteComponent(() => import('../PublicPropertyPage')),
 });

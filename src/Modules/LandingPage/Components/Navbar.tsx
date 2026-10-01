@@ -52,8 +52,8 @@ export default function Navbar() {
           )}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <button type="button" className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</button>
-          <button type="button" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark">Registrarse</button>
+          <Link to="/login" className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</Link>
+          <Link to="/register" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark">Registrarse</Link>
         </div>
         <button type="button" className="rounded-lg p-2 text-ink hover:bg-slate-100 md:hidden" aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
           {isOpen ? <X size={23} /> : <Menu size={23} />}
@@ -73,8 +73,8 @@ export default function Navbar() {
             ),
           )}
           <div className="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
-            <button type="button" className="rounded-lg px-3 py-2.5 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</button>
-            <button type="button" className="rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white">Registrarse</button>
+            <Link to="/login" onClick={closeMenu} className="rounded-lg px-3 py-2.5 text-center text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</Link>
+            <Link to="/register" onClick={closeMenu} className="rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-white">Registrarse</Link>
           </div>
         </div>
       </div>}
