@@ -1,6 +1,8 @@
 import { useForm } from '@tanstack/react-form';
 
 import logo from '../../../assets/saferent-logo.svg';
+import { useRegister } from '../hooks/authHooks';
+import { getAuthErrorMessage } from '../services/aurhServices';
 import {
   createAccountDefaultValues,
   createAccountSchema,
@@ -13,13 +15,20 @@ const inputClass =
 const errorClass = 'text-xs leading-4 text-[#ba1a1a]';
 
 const RegisterForm = () => {
+  const register = useRegister();
   const form = useForm({
     defaultValues: createAccountDefaultValues,
     validators: { onBlur: createAccountSchema, onSubmit: createAccountSchema },
     onSubmit: async ({ value }) => {
-      const payload = createAccountSchema.parse(value);
-      // TODO: conectar con el servicio/mutation de registro cuando exista el endpoint.
-      void payload;
+      const parsed = createAccountSchema.parse(value);
+      const { acceptTerms, surname2, ...payload } = parsed;
+      void acceptTerms;
+      try {
+        await register.mutateAsync({ ...payload, ...(surname2 ? { surname2 } : {}) });
+      } catch {
+        return;
+      }
+      form.reset();
     },
   });
 
@@ -46,17 +55,17 @@ const RegisterForm = () => {
           className="flex flex-col gap-6"
         >
           <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-            {/* Full Name */}
-            <form.Field name="fullName">
+            {/* Name */}
+            <form.Field name="name">
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label htmlFor="full-name" className={labelClass}>Full Name</label>
+                    <label htmlFor="full-name" className={labelClass}>Name</label>
                     <input
                       id="full-name"
                       name={field.name}
-                      autoComplete="name"
+                      autoComplete="given-name"
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -72,26 +81,104 @@ const RegisterForm = () => {
               }}
             </form.Field>
 
-            {/* Username */}
-            <form.Field name="username">
+            {/* Identification card */}
+            <form.Field name="idCard">
               {(field) => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="username" className={labelClass}>Username</label>
+                    <label htmlFor="idCard" className={labelClass}>Identification card</label>
                     <input
-                      id="username"
+                      id="idCard"
                       name={field.name}
-                      autoComplete="username"
+                      autoComplete="off"
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid || undefined}
-                      aria-describedby={isInvalid ? 'username-error' : undefined}
+                      aria-describedby={isInvalid ? 'idCard-error' : undefined}
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="username-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="idCard-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    )}
+                  </div>
+                );
+              }}
+            </form.Field>
+
+            {/* First surname */}
+            <form.Field name="surname1">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="surname1" className={labelClass}>First surname</label>
+                    <input
+                      id="surname1"
+                      name={field.name}
+                      autoComplete="off"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid || undefined}
+                      aria-describedby={isInvalid ? 'surname1-error' : undefined}
+                      className={inputClass}
+                    />
+                    {isInvalid && (
+                      <p id="surname1-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    )}
+                  </div>
+                );
+              }}
+            </form.Field>
+
+            {/* Second surname (optional) */}
+            <form.Field name="surname2">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="surname2" className={labelClass}>Second surname (optional)</label>
+                    <input
+                      id="surname2"
+                      name={field.name}
+                      autoComplete="off"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid || undefined}
+                      aria-describedby={isInvalid ? 'surname2-error' : undefined}
+                      className={inputClass}
+                    />
+                    {isInvalid && (
+                      <p id="surname2-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    )}
+                  </div>
+                );
+              }}
+            </form.Field>
+
+            {/* Birthdate */}
+            <form.Field name="birthdate">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="birthdate" className={labelClass}>Birthdate</label>
+                    <input
+                      id="birthdate"
+                      name={field.name}
+                      type="date" autoComplete="bday"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid || undefined}
+                      aria-describedby={isInvalid ? 'birthdate-error' : undefined}
+                      className={inputClass}
+                    />
+                    {isInvalid && (
+                      <p id="birthdate-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
                     )}
                   </div>
                 );
@@ -172,7 +259,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     <p id="password-hint" className="pt-1 text-xs leading-4 text-[#43474d]">
-                      Must be at least {PASSWORD_MIN_LENGTH} characters long.
+                      Use {PASSWORD_MIN_LENGTH}–72 characters (up to 72 UTF-8 bytes), including uppercase, lowercase, a number and a special character: !@#$%^&amp;*(),.?&quot;:&#123;&#125;|&lt;&gt;
                     </p>
                     {isInvalid && (
                       <p id="password-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
@@ -203,9 +290,9 @@ const RegisterForm = () => {
                     />
                     <label htmlFor="accept-terms" className="pl-2 text-xs leading-4 text-[#43474d]">
                       I agree to the{' '}
-                      {/* <Link to={paths.termsOfService} className={legalLinkClass}>Terms of Service</Link>{' '} */}
+                      <Link to="/terminos-del-servicio" className={legalLinkClass}>Terms of Service</Link>{' '}
                       and{' '}
-                      {/* <Link to={paths.privacyPolicy} className={legalLinkClass}>Privacy Policy</Link> */}
+                      <Link to="/politica-de-privacidad" className={legalLinkClass}>Privacy Policy</Link>
                     </label>
                   </div>
                   {isInvalid && (
@@ -216,6 +303,8 @@ const RegisterForm = () => {
             }}
           </form.Field>
 
+          {register.isError && <p role="alert" className={errorClass}>{getAuthErrorMessage(register.error)}</p>}
+          {register.isSuccess && <p role="status">Your account has been created. Sign in to continue.</p>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
@@ -237,15 +326,16 @@ const RegisterForm = () => {
           <span className="relative bg-white px-2 text-xs leading-4 text-[#43474d]">Already have an account?</span>
         </div>
 
-        {/* <Link
-          to={paths.signIn}
+        <Link
+          to="/login"
           className="w-full rounded-lg border border-[#e2e8f0] bg-white px-[17px] py-[13px] text-center text-sm leading-5 font-semibold tracking-[0.7px] text-[#0a2540] drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#f9f9ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#f1f3fb]"
         >
           Sign In
-        </Link> */}
+        </Link>
       </section>
     </main>
   );
 };
 
 export default RegisterForm;
+
