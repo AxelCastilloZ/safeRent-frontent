@@ -4,7 +4,6 @@ import LandingPage from "../Modules/LandingPage/LandingPage";
 import { LoginRoute, RegisterRoute } from "../Modules/Auth/routes/AuthRoutes";
 import { propertyDetailsRoute, propertyIndexRoute, propertyNewMediaRoute, propertyNewRoute, propertyPublishRoute, PropertyRoute } from "../Modules/Property/routes/PropertyRoutes";
 import { ExplorerRoute } from "../Modules/Explore/routes/ExplorerRoutes";
-import AboutPage from "../Modules/About/AboutPage";
 import { PrivacyPolicyRoute, SobreNosotrosRoute, SoporteRoute, TermOfServiceRoute } from "../Modules/LandingPage/Routes/LandingRoutes";
 
 const indexRoute = createRoute({

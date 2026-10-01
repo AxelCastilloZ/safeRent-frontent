@@ -3,9 +3,10 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 import logo from '../../../assets/saferent-logo.svg';
-import { paths } from '../../../routes/paths';
 import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useLogin } from '../hooks/authHooks';
+import { getAuthErrorMessage } from '../services/aurhServices';
 
 const labelClass = 'text-sm leading-[16.8px] font-medium tracking-[0.7px] text-[#45474c]';
 const inputClass =
@@ -17,14 +18,20 @@ const linkClass =
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const login = useLogin();
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: loginDefaultValues,
     validators: { onBlur: loginSchema, onSubmit: loginSchema },
     onSubmit: async ({ value }) => {
       const payload = loginSchema.parse(value);
-      // TODO: conectar con el servicio/mutation de autenticación cuando exista el endpoint.
-      void payload;
+      try {
+        await login.mutateAsync(payload);
+      } catch {
+        return;
+      }
+      await navigate({ to: '/' });
     },
   });
 
@@ -125,6 +132,7 @@ const LoginForm = () => {
             }}
           </form.Field>
 
+          {login.isError && <p role="alert" className={errorClass}>{getAuthErrorMessage(login.error)}</p>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
@@ -142,9 +150,9 @@ const LoginForm = () => {
 
         <p className="text-center text-base leading-[25.6px] text-[#45474c]">
           Don't have an account?{' '}
-          {/* <Link to={paths.createAccount} className={`${linkClass} text-sm tracking-[0.7px]`}> */}
+          <Link to="/register" className={`${linkClass} text-sm tracking-[0.7px]`}>
             Sign up
-          {/* </Link> */}
+          </Link>
         </p>
       </section>
     </main>
