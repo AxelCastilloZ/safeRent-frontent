@@ -1,13 +1,13 @@
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AlertCircle, Check, ImagePlus, X } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService, serviceService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { PropertyFile, Service } from './types/property'
 
-const STEPS = ['Datos', 'Imágenes', 'Publicar']
+import { PROPERTY_STEPS as STEPS } from './constants/propertySteps'
 const MIN_IMAGES = 3
 
 interface NewFile {
@@ -17,8 +17,8 @@ interface NewFile {
 
 export default function CreatePropertyStep2Page() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const propertyIdFromState = (location.state as Record<string, unknown>)?.propertyId as number | undefined
+  const search = useSearch({ from: '/properties/new/media' })
+  const propertyIdFromState = search.propertyId
   const propertyIdRef = useRef(propertyIdFromState)
   const propertyId = propertyIdRef.current
 
@@ -146,7 +146,7 @@ export default function CreatePropertyStep2Page() {
     <div className="mx-auto max-w-2xl">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-primary">Nueva propiedad</h1>
-        <Stepper steps={STEPS} currentStep={2} />
+        <Stepper steps={STEPS} currentStep={3} />
       </div>
 
       {error && (
@@ -243,7 +243,7 @@ export default function CreatePropertyStep2Page() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => window.history.back()}
+          onClick={() => navigate({ to: '/properties/new/location', search: { propertyId } })}
         >
           Atrás
         </button>
@@ -267,3 +267,4 @@ export default function CreatePropertyStep2Page() {
     </div>
   )
 }
+

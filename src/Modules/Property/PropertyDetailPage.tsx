@@ -5,6 +5,8 @@ import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { Property } from './types/property'
+import Stepper from './Components/Stepper'
+import { PROPERTY_STEPS } from './constants/propertySteps'
 
 export default function PropertyDetailPage() {
   const { propertyId } = useParams({ strict: false }) as { propertyId: string }
@@ -66,12 +68,18 @@ export default function PropertyDetailPage() {
   const hasData = !!(property.title && property.description && property.address)
   const hasImages = (property.files?.length ?? 0) >= 3
   const hasServices = (property.services?.length ?? 0) > 0
-  const canPublish = hasData && hasImages && hasServices
+  const hasLocation = typeof property.latitude === 'number' && typeof property.longitude === 'number' && Number.isFinite(property.latitude) && Number.isFinite(property.longitude)
+  const canPublish = hasData && hasImages && hasServices && hasLocation
 
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
     <div className="mx-auto max-w-3xl">
+      {!property.isActive && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
+      {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        Confirma la ubicación en el mapa para publicar.
+        <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
+      </div>}
       <div className="mb-6 flex items-start justify-between">
         <h1 className="text-2xl font-bold text-primary">{property.title || 'Sin título'}</h1>
         <StatusBadge variant={property.isActive ? 'active' : 'draft'} />
@@ -90,7 +98,7 @@ export default function PropertyDetailPage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
-            onClick={() => navigate({ to: '/properties/new', state: { editId: property.id } })}
+            onClick={() => navigate({ to: '/properties/new', search: { editId: property.id } })}
           >
             <Pencil size={13} />
             Editar datos
@@ -223,3 +231,4 @@ export default function PropertyDetailPage() {
     </div>
   )
 }
+

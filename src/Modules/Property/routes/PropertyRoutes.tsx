@@ -29,6 +29,15 @@ export const propertyNewRoute = createRoute({
   component: lazyRouteComponent(() => import("../CreatePropertyStep1Page")),
 });
 
+export const propertyNewLocationRoute = createRoute({
+  getParentRoute: () => PropertyRoute,
+  path: "new/location",
+  validateSearch: (search: Record<string, unknown>): { propertyId?: number } => ({
+    propertyId: optionalPropertyId(search.propertyId),
+  }),
+  component: lazyRouteComponent(() => import("../CreatePropertyLocationPage")),
+});
+
 export const propertyNewMediaRoute = createRoute({
   getParentRoute: () => PropertyRoute,
   path: "new/media",

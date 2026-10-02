@@ -39,6 +39,8 @@ export interface Property {
   description: string
   cost: number
   typeOfCoin: string
+  latitude?: number | null
+  longitude?: number | null
   address: string
   guest: number
   rooms: number
@@ -55,7 +57,9 @@ export interface CreatePropertyPayload {
   description: string
   cost: number
   typeOfCoin?: string
-  address: string
+  latitude?: number | null
+  longitude?: number | null
+  address?: string
   guest?: number
   rooms?: number
   ownerId?: number
@@ -68,6 +72,8 @@ export interface UpdatePropertyPayload {
   description?: string
   cost?: number
   typeOfCoin?: string
+  latitude?: number | null
+  longitude?: number | null
   address?: string
   guest?: number
   rooms?: number
@@ -76,3 +82,4 @@ export interface UpdatePropertyPayload {
   typeOfPropertyId?: number
   serviceIds?: number[]
 }
+

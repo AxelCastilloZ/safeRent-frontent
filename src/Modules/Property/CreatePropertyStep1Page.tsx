@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 
-const STEPS = ['Datos', 'Imágenes', 'Publicar']
+import { PROPERTY_STEPS as STEPS } from './constants/propertySteps'
 
 interface FormData {
   title: string
   cost: string
-  address: string
   zona: string
   rooms: string
   m2: string
@@ -20,7 +19,6 @@ interface FormData {
 interface FormErrors {
   title?: string
   cost?: string
-  address?: string
   description?: string
 }
 
@@ -28,18 +26,17 @@ function validate(data: FormData): FormErrors {
   const errors: FormErrors = {}
   if (!data.title.trim()) errors.title = 'El título es obligatorio'
   if (!data.cost.trim() || Number(data.cost) <= 0) errors.cost = 'Debe ser mayor a 0'
-  if (!data.address.trim()) errors.address = 'La dirección es obligatoria'
   if (!data.description.trim()) errors.description = 'La descripción es obligatoria'
   return errors
 }
 
 export default function CreatePropertyStep1Page() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const editId = (location.state as Record<string, unknown>)?.editId as number | undefined ?? null
+  const search = useSearch({ from: '/properties/new' })
+  const editId = search.editId ?? null
 
   const [form, setForm] = useState<FormData>({
-    title: '', cost: '', address: '', zona: '', rooms: '', m2: '', description: '',
+    title: '', cost: '', zona: '', rooms: '', m2: '', description: '',
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
@@ -56,7 +53,6 @@ export default function CreatePropertyStep1Page() {
         setForm({
           title: p.title ?? '',
           cost: p.cost ? String(p.cost) : '',
-          address: p.address ?? '',
           zona: '',
           rooms: p.rooms ? String(p.rooms) : '',
           m2: '',
@@ -96,7 +92,6 @@ export default function CreatePropertyStep1Page() {
           title: form.title || 'Sin título',
           description: form.description || '',
           cost: Number(form.cost) || 0,
-          address: form.address || '',
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
       } else {
@@ -104,7 +99,6 @@ export default function CreatePropertyStep1Page() {
           title: form.title || 'Sin título',
           description: form.description || '',
           cost: Number(form.cost) || 0,
-          address: form.address || '',
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
       }
@@ -135,7 +129,6 @@ export default function CreatePropertyStep1Page() {
           title: form.title,
           description: form.description,
           cost: Number(form.cost),
-          address: form.address,
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
         propertyId = editId
@@ -144,12 +137,11 @@ export default function CreatePropertyStep1Page() {
           title: form.title,
           description: form.description,
           cost: Number(form.cost),
-          address: form.address,
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
         propertyId = property.id
       }
-      navigate({ to: '/properties/new/media', state: { propertyId } })
+      navigate({ to: '/properties/new/location', search: { propertyId } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
     } finally {
@@ -208,18 +200,6 @@ export default function CreatePropertyStep1Page() {
             />
             {errors.cost && <span className="mt-1 block text-xs text-red-500">{errors.cost}</span>}
           </div>
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-primary">Dirección</label>
-          <input
-            type="text"
-            className={`${inputBase} ${errors.address ? inputError : ''}`}
-            value={form.address}
-            onChange={(e) => handleChange('address', e.target.value)}
-            placeholder="Dirección completa"
-          />
-          {errors.address && <span className="mt-1 block text-xs text-red-500">{errors.address}</span>}
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -291,3 +271,4 @@ export default function CreatePropertyStep1Page() {
     </div>
   )
 }
+
