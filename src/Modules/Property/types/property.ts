@@ -58,7 +58,7 @@ export interface CreatePropertyPayload {
   address: string
   guest?: number
   rooms?: number
-  ownerId: number
+  ownerId?: number
   typeOfPropertyId?: number
   serviceIds?: number[]
 }
