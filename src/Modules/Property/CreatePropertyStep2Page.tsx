@@ -1,27 +1,31 @@
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useEffect, useRef, useState } from 'react'
-import { useSearch, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { AlertCircle, Check, ImagePlus, X } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService, serviceService } from './services/propertyService'
 import { ApiError } from './services/api'
-import type { Service } from './types/property'
+import type { PropertyFile, Service } from './types/property'
 
 const STEPS = ['Datos', 'Imágenes', 'Publicar']
 const MIN_IMAGES = 3
 
-interface PreviewFile {
+interface NewFile {
   file: File
   url: string
 }
 
 export default function CreatePropertyStep2Page() {
   const navigate = useNavigate()
-  const { propertyId } = useSearch({ from: '/properties/new/media' })
+  const location = useLocation()
+  const propertyIdFromState = (location.state as Record<string, unknown>)?.propertyId as number | undefined
+  const propertyIdRef = useRef(propertyIdFromState)
+  const propertyId = propertyIdRef.current
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [images, setImages] = useState<PreviewFile[]>([])
+  const [existingFiles, setExistingFiles] = useState<PropertyFile[]>([])
+  const [newImages, setNewImages] = useState<NewFile[]>([])
   const [availableServices, setAvailableServices] = useState<Service[]>([])
   const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([])
   const [saving, setSaving] = useState(false)
@@ -29,11 +33,27 @@ export default function CreatePropertyStep2Page() {
 
   useEffect(() => {
     if (!propertyId) {
-      navigate({ to: '/properties/new', replace: true })
+      navigate({ to: '/properties/new' })
       return
     }
+    loadPropertyData(propertyId)
     loadServices()
   }, [propertyId, navigate])
+
+  async function loadPropertyData(id: number) {
+    try {
+      const [files, property] = await Promise.all([
+        propertyService.getFiles(id),
+        propertyService.getById(id),
+      ])
+      setExistingFiles(files)
+      if (property.services?.length > 0) {
+        setSelectedServiceIds(property.services.map((s) => s.id))
+      }
+    } catch {
+      // non-critical, continue with empty state
+    }
+  }
 
   async function loadServices() {
     try {
@@ -46,19 +66,29 @@ export default function CreatePropertyStep2Page() {
 
   function handleFilesSelected(fileList: FileList | null) {
     if (!fileList) return
-    const newFiles: PreviewFile[] = Array.from(fileList).map((file) => ({
+    const files: NewFile[] = Array.from(fileList).map((file) => ({
       file,
       url: URL.createObjectURL(file),
     }))
-    setImages((prev) => [...prev, ...newFiles])
+    setNewImages((prev) => [...prev, ...files])
   }
 
-  function removeImage(index: number) {
-    setImages((prev) => {
+  function removeNewImage(index: number) {
+    setNewImages((prev) => {
       const removed = prev[index]
       URL.revokeObjectURL(removed.url)
       return prev.filter((_, i) => i !== index)
     })
+  }
+
+  async function removeExistingFile(fileId: number) {
+    if (!propertyId) return
+    try {
+      await propertyService.removeFile(propertyId, fileId)
+      setExistingFiles((prev) => prev.filter((f) => f.id !== fileId))
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Error al eliminar imagen')
+    }
   }
 
   function toggleService(id: number) {
@@ -67,17 +97,23 @@ export default function CreatePropertyStep2Page() {
     )
   }
 
-  async function handleSaveDraft() {
+  const totalImages = existingFiles.length + newImages.length
+
+  async function saveData() {
     if (!propertyId) return
+    if (selectedServiceIds.length > 0) {
+      await propertyService.update(propertyId, { serviceIds: selectedServiceIds })
+    }
+    if (newImages.length > 0) {
+      await propertyService.uploadFiles(propertyId, newImages.map((i) => i.file))
+    }
+  }
+
+  async function handleSaveDraft() {
     setSaving(true)
     setError(null)
     try {
-      if (selectedServiceIds.length > 0) {
-        await propertyService.update(propertyId, { serviceIds: selectedServiceIds })
-      }
-      if (images.length > 0) {
-        await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
-      }
+      await saveData()
       navigate({ to: '/properties' })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al guardar')
@@ -87,28 +123,24 @@ export default function CreatePropertyStep2Page() {
   }
 
   async function handleValidate() {
-    if (images.length < MIN_IMAGES) {
-      setError(`Se requieren al menos ${MIN_IMAGES} imágenes. Faltan ${MIN_IMAGES - images.length}.`)
+    if (totalImages < MIN_IMAGES) {
+      setError(`Se requieren al menos ${MIN_IMAGES} imágenes. Faltan ${MIN_IMAGES - totalImages}.`)
       return
     }
 
-    if (!propertyId) return
     setSaving(true)
     setError(null)
     try {
-      if (selectedServiceIds.length > 0) {
-        await propertyService.update(propertyId, { serviceIds: selectedServiceIds })
-      }
-      if (images.length > 0) {
-        await propertyService.uploadFiles(propertyId, images.map((i) => i.file))
-      }
-      navigate({ to: '/properties/detail/$propertyId', params: { propertyId: String(propertyId) } })
+      await saveData()
+      navigate({ to: `/properties/detail/${propertyId}` })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {
       setSaving(false)
     }
   }
+
+  const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -126,15 +158,28 @@ export default function CreatePropertyStep2Page() {
 
       {/* Image upload */}
       <div className="mb-8">
-        <p className="mb-3 text-sm font-medium text-primary">Imágenes (mín. {MIN_IMAGES})</p>
+        <p className="mb-3 text-sm font-medium text-primary">Imágenes ({totalImages} / mín. {MIN_IMAGES})</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {images.map((img, i) => (
-            <div key={img.url} className="group relative aspect-square overflow-hidden rounded-xl bg-slate-100">
-              <img src={img.url} alt={`Imagen ${i + 1}`} className="size-full object-cover" />
+          {existingFiles.map((file) => (
+            <div key={`existing-${file.id}`} className="group relative aspect-square overflow-hidden rounded-xl bg-slate-100">
+              <img src={`${API_BASE}/${file.path}`} alt={file.fileName} className="size-full object-cover" loading="lazy" />
               <button
                 type="button"
                 className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-black/50 text-white opacity-0 transition group-hover:opacity-100"
-                onClick={() => removeImage(i)}
+                onClick={() => removeExistingFile(file.id)}
+                aria-label="Eliminar imagen"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+          {newImages.map((img, i) => (
+            <div key={img.url} className="group relative aspect-square overflow-hidden rounded-xl bg-slate-100">
+              <img src={img.url} alt={`Nueva ${i + 1}`} className="size-full object-cover" />
+              <button
+                type="button"
+                className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-black/50 text-white opacity-0 transition group-hover:opacity-100"
+                onClick={() => removeNewImage(i)}
                 aria-label="Eliminar imagen"
               >
                 <X size={14} />
@@ -198,7 +243,7 @@ export default function CreatePropertyStep2Page() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate({ to: '/properties/new', search: { editId: propertyId } })}
+          onClick={() => window.history.back()}
         >
           Atrás
         </button>
