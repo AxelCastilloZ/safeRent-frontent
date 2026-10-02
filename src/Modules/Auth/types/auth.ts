@@ -7,6 +7,13 @@ export interface AuthResponse {
     access_token: string;
 }
 
+export interface AuthUser {
+    id: number;
+    name: string;
+    surname1: string;
+    roles: string[];
+}
+
 export interface RegisterRequest extends LoginRequest {
     idCard: string;
     name: string;

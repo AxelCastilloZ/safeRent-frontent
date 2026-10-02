@@ -1,12 +1,13 @@
 import { useForm } from '@tanstack/react-form';
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Alert from '@mui/material/Alert';
 
 import logo from '../../../assets/saferent-logo.svg';
 import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useLogin } from '../hooks/authHooks';
-import { getAuthErrorMessage } from '../services/aurhServices';
+import { getAuthErrorMessage, getAuthErrorSeverity } from '../services/aurhServices';
 
 const labelClass = 'text-sm leading-[16.8px] font-medium tracking-[0.7px] text-[#45474c]';
 const inputClass =
@@ -21,6 +22,12 @@ const LoginForm = () => {
   const login = useLogin();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!login.isSuccess) return;
+    const timer = window.setTimeout(() => { void navigate({ to: '/' }); }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [login.isSuccess, navigate]);
+
   const form = useForm({
     defaultValues: loginDefaultValues,
     validators: { onBlur: loginSchema, onSubmit: loginSchema },
@@ -31,7 +38,7 @@ const LoginForm = () => {
       } catch {
         return;
       }
-      await navigate({ to: '/' });
+
     },
   });
 
@@ -52,7 +59,7 @@ const LoginForm = () => {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (!form.state.isSubmitting) void form.handleSubmit();
+            if (!form.state.isSubmitting && !login.isSuccess) void form.handleSubmit();
           }}
           className="flex flex-col gap-3"
         >
@@ -132,12 +139,13 @@ const LoginForm = () => {
             }}
           </form.Field>
 
-          {login.isError && <p role="alert" className={errorClass}>{getAuthErrorMessage(login.error)}</p>}
+          {login.isError && <Alert severity={getAuthErrorSeverity(login.error)}>{getAuthErrorMessage(login.error)}</Alert>}
+          {login.isSuccess && <Alert severity="success">Sesión iniciada correctamente. Te llevaremos al inicio.</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || login.isSuccess}
                 aria-busy={isSubmitting}
                 className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#091426] py-4 text-sm leading-[16.8px] font-medium tracking-[0.7px] text-white shadow-md transition-colors hover:bg-[#15243d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426] active:bg-[#050b16] disabled:cursor-not-allowed disabled:opacity-70"
               >
@@ -160,3 +168,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
