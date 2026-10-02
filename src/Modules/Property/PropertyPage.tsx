@@ -6,8 +6,7 @@ import EmptyState from './Components/EmptyState'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { Property } from './types/property'
-
-const MOCK_OWNER_ID = 1
+import { api } from './services/api'
 
 export default function PropertyPage() {
   const navigate = useNavigate()
@@ -23,7 +22,8 @@ export default function PropertyPage() {
     try {
       setLoading(true)
       setError(null)
-      const data = await propertyService.getByOwner(MOCK_OWNER_ID)
+      const user = await api.get<{ id: number }>('/auth/me')
+      const data = await propertyService.getByOwner(user.id)
       setProperties(data)
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {

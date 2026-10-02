@@ -18,7 +18,9 @@ interface PreviewFile {
 export default function CreatePropertyStep2Page() {
   const navigate = useNavigate()
   const location = useLocation()
-  const propertyId = (location.state as { propertyId?: number })?.propertyId
+  const propertyIdFromState = (location.state as { propertyId?: number })?.propertyId
+  const propertyIdRef = useRef(propertyIdFromState)
+  const propertyId = propertyIdRef.current
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
