@@ -1,8 +1,18 @@
 import axios from 'axios';
 import apiAxios from '../../../api/apiConfig';
-import type { AuthResponse, LoginRequest, RegisterRequest, RegisterResponse } from '../types/auth';
+import type { AuthUser, AuthResponse, LoginRequest, RegisterRequest, RegisterResponse } from '../types/auth';
 
 const BASE = '/auth';
+
+export async function GetCurrentUser(): Promise<AuthUser> {
+  const response = await apiAxios.get<AuthUser>(`${BASE}/me`);
+  return response.data;
+}
+
+export function getAuthErrorSeverity(error: unknown): 'warning' | 'error' {
+  return axios.isAxiosError(error) && [400, 401, 409].includes(error.response?.status ?? 0)
+    ? 'warning' : 'error';
+}
 
 export async function Login(payload: LoginRequest): Promise<AuthResponse> {
   const response = await apiAxios.post<AuthResponse>(`${BASE}/login`, payload);

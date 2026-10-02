@@ -1,11 +1,14 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
+import AuthActions from '../../Auth/components/AuthActions'
+import { useSessionToken } from '../../Auth/services/authSession'
 
 type NavItem = { kind: 'route'; label: string; to: string } | { kind: 'anchor'; label: string; href: string }
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const token = useSessionToken()
   const closeMenu = () => setIsOpen(false)
   const { pathname } = useLocation()
   const isHome = pathname === '/'
@@ -52,12 +55,14 @@ export default function Navbar() {
           )}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <Link to="/login" className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</Link>
-          <Link to="/register" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark">Registrarse</Link>
+          <AuthActions />
         </div>
+        <div className="flex items-center gap-1 md:hidden">
+        {token && <AuthActions onAction={closeMenu} />}
         <button type="button" className="rounded-lg p-2 text-ink hover:bg-slate-100 md:hidden" aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
           {isOpen ? <X size={23} /> : <Menu size={23} />}
         </button>
+        </div>
       </nav>
       {isOpen && <div className="border-t border-slate-100 bg-white px-4 py-4 shadow-lg md:hidden">
         <div className="mx-auto flex max-w-7xl flex-col gap-1">
@@ -72,10 +77,9 @@ export default function Navbar() {
               </a>
             ),
           )}
-          <div className="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
-            <Link to="/login" onClick={closeMenu} className="rounded-lg px-3 py-2.5 text-center text-sm font-semibold text-primary hover:bg-slate-100">Iniciar sesión</Link>
-            <Link to="/register" onClick={closeMenu} className="rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-white">Registrarse</Link>
-          </div>
+          {!token && <div className="mt-2 flex items-center justify-center gap-2 border-t border-slate-100 pt-3">
+            <AuthActions onAction={closeMenu} />
+          </div>}
         </div>
       </div>}
     </header>

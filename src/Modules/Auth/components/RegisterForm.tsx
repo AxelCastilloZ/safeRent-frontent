@@ -1,9 +1,11 @@
 import { useForm } from '@tanstack/react-form';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import Alert from '@mui/material/Alert';
 
 import logo from '../../../assets/saferent-logo.svg';
 import { useRegister } from '../hooks/authHooks';
-import { getAuthErrorMessage } from '../services/aurhServices';
+import { getAuthErrorMessage, getAuthErrorSeverity } from '../services/aurhServices';
 import {
   createAccountDefaultValues,
   createAccountSchema,
@@ -19,6 +21,12 @@ const legalLinkClass =
 
 const RegisterForm = () => {
   const register = useRegister();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!register.isSuccess) return;
+    const timer = window.setTimeout(() => { void navigate({ to: '/login' }); }, 2500);
+    return () => window.clearTimeout(timer);
+  }, [register.isSuccess, navigate]);
   const form = useForm({
     defaultValues: createAccountDefaultValues,
     validators: { onBlur: createAccountSchema, onSubmit: createAccountSchema },
@@ -31,7 +39,7 @@ const RegisterForm = () => {
       } catch {
         return;
       }
-      form.reset();
+
     },
   });
 
@@ -53,7 +61,7 @@ const RegisterForm = () => {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (!form.state.isSubmitting) void form.handleSubmit();
+            if (!form.state.isSubmitting && !register.isSuccess) void form.handleSubmit();
           }}
           className="flex flex-col gap-6"
         >
@@ -306,13 +314,13 @@ const RegisterForm = () => {
             }}
           </form.Field>
 
-          {register.isError && <p role="alert" className={errorClass}>{getAuthErrorMessage(register.error)}</p>}
-          {register.isSuccess && <p role="status">Your account has been created. Sign in to continue.</p>}
+          {register.isError && <Alert severity={getAuthErrorSeverity(register.error)}>{getAuthErrorMessage(register.error)}</Alert>}
+          {register.isSuccess && <Alert severity="success">Cuenta creada correctamente. Te llevaremos al login para iniciar sesión.</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || register.isSuccess}
                 aria-busy={isSubmitting}
                 className="w-full rounded-lg bg-[#0a2540] px-4 py-3 text-center text-sm leading-5 font-semibold tracking-[0.7px] text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#12345a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#061a2e] disabled:cursor-not-allowed disabled:opacity-70"
               >
@@ -341,4 +349,5 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
 
