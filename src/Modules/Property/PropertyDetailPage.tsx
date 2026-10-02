@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
@@ -56,7 +55,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate('/properties')}
+          onClick={() => navigate({ to: '/properties' })}
         >
           Volver a mis propiedades
         </button>
@@ -91,7 +90,7 @@ export default function PropertyDetailPage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
-            onClick={() => navigate('/properties/new', { state: { editId: property.id } })}
+            onClick={() => navigate({ to: '/properties/new', state: { editId: property.id } })}
           >
             <Pencil size={13} />
             Editar datos
@@ -205,7 +204,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate('/properties')}
+          onClick={() => navigate({ to: '/properties' })}
         >
           Mis propiedades
         </button>
