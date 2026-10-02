@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
-import { useParams } from '@tanstack/react-router'
-import { CheckCircle2, Circle } from 'lucide-react'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
@@ -37,7 +36,7 @@ export default function PropertyDetailPage() {
     setPublishing(true)
     try {
       await propertyService.publish(property.id)
-      navigate({ to: '/properties/$propertyId/publish', params: { propertyId: String(property.id) } })
+      await loadProperty(property.id)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al publicar')
     } finally {
@@ -74,7 +73,7 @@ export default function PropertyDetailPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex items-start justify-between">
-        <h1 className="text-2xl font-bold text-primary">{property.title}</h1>
+        <h1 className="text-2xl font-bold text-primary">{property.title || 'Sin título'}</h1>
         <StatusBadge variant={property.isActive ? 'active' : 'draft'} />
       </div>
 
@@ -84,37 +83,98 @@ export default function PropertyDetailPage() {
         </div>
       )}
 
-      {/* Image gallery */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {property.files?.length > 0 ? (
-          property.files.map((file) => (
-            <div key={file.id} className="aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
-              <img
-                src={`${API_BASE}/${file.path}`}
-                alt={file.fileName}
-                className="size-full object-cover"
-                loading="lazy"
-              />
+      {/* Property data */}
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-primary">Datos de la propiedad</h3>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
+            onClick={() => navigate({ to: '/properties/new', state: { editId: property.id } })}
+          >
+            <Pencil size={13} />
+            Editar datos
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex items-start gap-2">
+            <MapPin size={16} className="mt-0.5 shrink-0 text-slate-400" />
+            <div>
+              <span className="block text-xs font-medium text-slate-400">Dirección</span>
+              <span className="text-sm text-primary">{property.address || '—'}</span>
             </div>
-          ))
-        ) : (
-          <>
-            <div className="aspect-[4/3] rounded-xl bg-slate-100" />
-            <div className="aspect-[4/3] rounded-xl bg-slate-100" />
-          </>
+          </div>
+          <div className="flex items-start gap-2">
+            <DollarSign size={16} className="mt-0.5 shrink-0 text-slate-400" />
+            <div>
+              <span className="block text-xs font-medium text-slate-400">Precio / mes</span>
+              <span className="text-sm text-primary">{property.cost ? `${property.cost} ${property.typeOfCoin || ''}`.trim() : '—'}</span>
+            </div>
+          </div>
+          <div className="flex items-start gap-2">
+            <BedDouble size={16} className="mt-0.5 shrink-0 text-slate-400" />
+            <div>
+              <span className="block text-xs font-medium text-slate-400">Habitaciones</span>
+              <span className="text-sm text-primary">{property.rooms ?? '—'}</span>
+            </div>
+          </div>
+          {property.typeOfProperty && (
+            <div>
+              <span className="block text-xs font-medium text-slate-400">Tipo</span>
+              <span className="text-sm text-primary">{property.typeOfProperty.name}</span>
+            </div>
+          )}
+        </div>
+
+        {property.description && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <span className="mb-1 block text-xs font-medium text-slate-400">Descripción</span>
+            <p className="text-sm leading-relaxed text-slate-600">{property.description}</p>
+          </div>
         )}
       </div>
 
-      {/* Service tags */}
-      {property.services?.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {property.services.map((s) => (
-            <span key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-              {s.name}
-            </span>
-          ))}
+      {/* Image gallery */}
+      <div className="mb-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-primary">Imágenes ({property.files?.length ?? 0})</h3>
         </div>
-      )}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {property.files?.length > 0 ? (
+            property.files.map((file) => (
+              <div key={file.id} className="aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
+                <img
+                  src={`${API_BASE}/${file.path}`}
+                  alt={file.fileName}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full rounded-xl bg-slate-50 py-8 text-center text-sm text-slate-400">
+              Sin imágenes
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Service tags */}
+      <div className="mb-6">
+        <h3 className="mb-3 text-sm font-bold text-primary">Servicios</h3>
+        {property.services?.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {property.services.map((s) => (
+              <span key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                {s.name}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">Sin servicios asignados</p>
+        )}
+      </div>
 
       {/* Pre-publish checklist */}
       {!property.isActive && (
@@ -141,33 +201,22 @@ export default function PropertyDetailPage() {
 
       {/* Actions */}
       <div className="flex items-center gap-3">
+        <button
+          type="button"
+          className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
+          onClick={() => navigate({ to: '/properties' })}
+        >
+          Mis propiedades
+        </button>
         {!property.isActive && (
-          <>
-            <button
-              type="button"
-              className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-              onClick={() => navigate({ to: '/properties/new', search: { editId: property.id } })}
-            >
-              Seguir editando
-            </button>
-            <button
-              type="button"
-              className="rounded-xl bg-secondary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark disabled:opacity-50"
-              onClick={handlePublish}
-              disabled={publishing || !canPublish}
-              title={canPublish ? '' : 'Completa todos los requisitos antes de publicar'}
-            >
-              {publishing ? 'Publicando...' : 'Publicar propiedad'}
-            </button>
-          </>
-        )}
-        {property.isActive && (
           <button
             type="button"
-            className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-            onClick={() => navigate({ to: '/properties' })}
+            className="rounded-xl bg-secondary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark disabled:opacity-50"
+            onClick={handlePublish}
+            disabled={publishing || !canPublish}
+            title={canPublish ? '' : 'Completa todos los requisitos antes de publicar'}
           >
-            Mis propiedades
+            {publishing ? 'Publicando...' : 'Publicar propiedad'}
           </button>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSearch, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { AlertCircle } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService } from './services/propertyService'
@@ -35,7 +35,8 @@ function validate(data: FormData): FormErrors {
 
 export default function CreatePropertyStep1Page() {
   const navigate = useNavigate()
-  const { editId } = useSearch({ from: '/properties/new' })
+  const location = useLocation()
+  const editId = (location.state as Record<string, unknown>)?.editId as number | undefined ?? null
 
   const [form, setForm] = useState<FormData>({
     title: '', cost: '', address: '', zona: '', rooms: '', m2: '', description: '',
@@ -148,7 +149,7 @@ export default function CreatePropertyStep1Page() {
         })
         propertyId = property.id
       }
-      navigate({ to: '/properties/new/media', search: { propertyId } })
+      navigate({ to: '/properties/new/media', state: { propertyId } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
     } finally {

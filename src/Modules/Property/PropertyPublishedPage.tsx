@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { CheckCircle } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
@@ -43,7 +42,7 @@ export default function PropertyPublishedPage() {
         <button
           type="button"
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-          onClick={() => property && navigate({ to: '/properties/detail/$propertyId', params: { propertyId: String(property.id) } })}
+          onClick={() => property && navigate({ to: `/properties/detail/${property.id}` })}
         >
           Ver como inquilino
         </button>
