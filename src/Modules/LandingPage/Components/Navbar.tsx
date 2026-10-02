@@ -21,8 +21,6 @@ export default function Navbar() {
     { kind: 'route', label: 'Explorar', to: '/explorar' },
     { kind: 'anchor', label: 'Cómo funciona', href: isHome ? '#how-it-works' : '/#how-it-works' },
     { kind: 'anchor', label: 'Para propietarios', href: isHome ? '#owner-cta' : '/#owner-cta' },
-    // La bandeja solo tiene sentido con sesión iniciada.
-    ...(token ? [{ kind: 'route', label: 'Mensajes', to: '/messages' } as const] : []),
   ]
 
   const navLinkClassName = ({ isActive }: { isActive: boolean }) =>

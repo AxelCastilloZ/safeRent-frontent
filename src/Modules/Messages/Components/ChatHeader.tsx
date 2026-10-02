@@ -41,15 +41,11 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
             aria-label="Ver propiedad"
             className={buttonStyles.outline}
           >
-            <ExternalLink aria-hidden="true" className="sm:hidden" />
-            <span className="hidden sm:inline">Ver propiedad</span>
+            {/* Con sidebar + bandeja + chat el ancho es justo: solo icono hasta pantallas muy anchas.
+                No hay "Salir del chat": la bandeja siempre está a la vista (en mobile, la flecha de volver). */}
+            <ExternalLink aria-hidden="true" className="2xl:hidden" />
+            <span className="hidden 2xl:inline">Ver propiedad</span>
           </Link>
-          {/* Contenedor aparte: `hidden` pierde contra el `inline-flex` de buttonStyles si va en el mismo elemento. */}
-          <div className="hidden lg:block">
-            <Link to="/messages" className={buttonStyles.ghost}>
-              Salir del chat
-            </Link>
-          </div>
         </>
       ) : (
         <div className="flex flex-1 items-center gap-3" aria-busy="true">

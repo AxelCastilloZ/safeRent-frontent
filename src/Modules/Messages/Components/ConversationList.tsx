@@ -46,7 +46,7 @@ export default function ConversationList() {
         ) : conversations.length === 0 ? (
           <div className="space-y-1 p-5 text-sm text-slate-500">
             <p className="font-medium text-primary">Todavía no tienes conversaciones.</p>
-            <p>Entra a una propiedad y pulsa «Chatear con el propietario» para empezar.</p>
+            <p>Entra a una propiedad y pulsa «Chatear con el propietario», o espera a que un interesado te escriba.</p>
             <Link to="/explorar" className="inline-block pt-2 font-semibold text-secondary hover:underline">
               Explorar propiedades
             </Link>

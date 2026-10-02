@@ -11,6 +11,8 @@ import {
 import type { SendMessageRequest } from '../types/message'
 
 const MESSAGES_POLL_MS = 4000
+// La bandeja cambia poco: basta para que un arrendatario vea una consulta nueva sin recargar.
+const CONVERSATIONS_POLL_MS = 15000
 
 export const conversationKeys = {
   all: ['conversations'] as const,
@@ -26,6 +28,7 @@ export function useConversations() {
     queryKey: conversationKeys.list(currentUser?.id),
     queryFn: () => getConversations(currentUser!.id),
     enabled: currentUser !== undefined,
+    refetchInterval: CONVERSATIONS_POLL_MS,
   })
 }
 
