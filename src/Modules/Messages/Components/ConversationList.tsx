@@ -2,6 +2,7 @@ import { Link, useParams } from '@tanstack/react-router'
 import { Building2 } from 'lucide-react'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import { useConversations } from '../hooks/messageHooks'
+import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
 import {
   otherParticipant,
   otherParticipantRole,
@@ -18,6 +19,7 @@ export default function ConversationList() {
   const { user: currentUser } = useAuth()
   const { data: conversations, isPending, isError, refetch } = useConversations()
   const { conversationId } = useParams({ strict: false })
+  const basePath = useMessagesBasePath()
   const activeId = conversationId ? Number(conversationId) : null
 
   return (
@@ -59,8 +61,7 @@ export default function ConversationList() {
               return (
                 <li key={conversation.id} className="border-b border-slate-200 last:border-b-0">
                   <Link
-                    to="/messages/$conversationId"
-                    params={{ conversationId: String(conversation.id) }}
+                    to={`${basePath}/${conversation.id}` as string}
                     aria-current={isActive ? 'page' : undefined}
                     className={`flex items-center gap-3 px-5 py-4 transition-colors hover:bg-slate-100 ${isActive ? 'bg-slate-100' : ''}`}
                   >

@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Building2, ExternalLink } from 'lucide-react'
+import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
 import type { Conversation } from '../types/message'
 import { otherParticipant, otherParticipantRole, participantFullName, participantInitials } from '../utils/conversation'
 import { buttonStyles } from './buttonStyles'
@@ -14,11 +15,12 @@ interface ChatHeaderProps {
 
 /** Cabecera del chat (wireframe 1f/3b): quién es, su rol en esta conversación, la propiedad y las salidas. */
 export default function ChatHeader({ conversation, currentUserId }: ChatHeaderProps) {
+  const basePath = useMessagesBasePath()
   const other = conversation && currentUserId !== undefined ? otherParticipant(conversation, currentUserId) : undefined
 
   return (
     <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
-      <Link to="/messages" aria-label="Volver a mis mensajes" className={`${buttonStyles.ghostIcon} md:hidden`}>
+      <Link to={basePath} aria-label="Volver a mis mensajes" className={`${buttonStyles.ghostIcon} md:hidden`}>
         <ArrowLeft aria-hidden="true" />
       </Link>
 

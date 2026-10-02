@@ -2,6 +2,7 @@ import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import AuthActions from '../../Auth/components/AuthActions'
+import UserMenu from '../../Dashboard/Components/UserMenu'
 import { useSessionToken } from '../../Auth/services/authSession'
 
 type NavItem = { kind: 'route'; label: string; to: string } | { kind: 'anchor'; label: string; href: string }
@@ -55,10 +56,10 @@ export default function Navbar() {
           )}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <AuthActions />
+          {token ? <UserMenu /> : <AuthActions />}
         </div>
         <div className="flex items-center gap-1 md:hidden">
-        {token && <AuthActions onAction={closeMenu} />}
+        {token && <UserMenu onAction={closeMenu} />}
         <button type="button" className="rounded-lg p-2 text-ink hover:bg-slate-100 md:hidden" aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
           {isOpen ? <X size={23} /> : <Menu size={23} />}
         </button>

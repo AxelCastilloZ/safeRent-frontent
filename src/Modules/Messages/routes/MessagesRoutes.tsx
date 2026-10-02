@@ -1,21 +1,22 @@
-import { createRoute, lazyRouteComponent } from '@tanstack/react-router'
+import { createRoute, redirect } from '@tanstack/react-router'
 import { rootRoute } from '../../../routes/rootRoute'
-import MessagesPage from '../pages/MessagesPage'
 
+// Mensajes vive dentro del panel (/dashboard/messages, ver Dashboard/routes). Estas rutas
+// solo mantienen vivos los links antiguos (/messages y /messages/:id) redirigiéndolos allá.
 export const MessagesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'messages',
-  component: MessagesPage,
+  beforeLoad: ({ location }) => {
+    throw redirect({ to: location.pathname.replace(/^\/messages/, '/dashboard/messages') })
+  },
 })
 
 export const messagesIndexRoute = createRoute({
   getParentRoute: () => MessagesRoute,
   path: '/',
-  component: lazyRouteComponent(() => import('../pages/MessagesIndexPage')),
 })
 
 export const conversationRoute = createRoute({
   getParentRoute: () => MessagesRoute,
   path: '$conversationId',
-  component: lazyRouteComponent(() => import('../pages/ConversationPage')),
 })

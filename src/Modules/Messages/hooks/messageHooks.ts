@@ -66,7 +66,8 @@ export function useStartConversation() {
     mutationFn: createConversation,
     onSuccess: async (conversation) => {
       await queryClient.invalidateQueries({ queryKey: conversationKeys.all })
-      router.history.push(`/messages/${conversation.id}`)
+      // El chat vive en el panel del inquilino (quien contacta a un propietario desde una propiedad).
+      router.history.push(`/dashboard/messages/${conversation.id}`)
     },
   })
 }

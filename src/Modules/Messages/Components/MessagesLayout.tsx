@@ -15,9 +15,9 @@ export default function MessagesLayout() {
       <div className={`min-h-0 ${hasConversation ? 'hidden md:block' : 'block'}`}>
         <ConversationList />
       </div>
-      <main className={`min-h-0 min-w-0 ${hasConversation ? 'block' : 'hidden md:block'}`}>
+      <div className={`min-h-0 min-w-0 ${hasConversation ? 'block' : 'hidden md:block'}`}>
         <Outlet />
-      </main>
+      </div>
     </div>
   )
 }
