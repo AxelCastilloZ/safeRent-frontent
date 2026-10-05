@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { Property } from './types/property'
+import { statusBadgeVariant } from './utils/propertyStatus'
 import Stepper from './Components/Stepper'
 import { PROPERTY_STEPS } from './constants/propertySteps'
 
@@ -69,25 +70,50 @@ export default function PropertyDetailPage() {
   const hasImages = (property.files?.length ?? 0) >= 3
   const hasServices = (property.services?.length ?? 0) > 0
   const hasLocation = typeof property.latitude === 'number' && typeof property.longitude === 'number' && Number.isFinite(property.latitude) && Number.isFinite(property.longitude)
-  const canPublish = hasData && hasImages && hasServices && hasLocation
+  const canSubmit = hasData && hasImages && hasServices && hasLocation
+  const isDraft = property.status === 'DRAFT'
+  const canPublish = canSubmit && (property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE')
 
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
     <div className="mx-auto max-w-3xl">
-      {!property.isActive && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
+      {isDraft && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
       {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
         Confirma la ubicación en el mapa para publicar.
         <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
       </div>}
       <div className="mb-6 flex items-start justify-between">
         <h1 className="text-2xl font-bold text-primary">{property.title || 'Sin título'}</h1>
-        <StatusBadge variant={property.isActive ? 'active' : 'draft'} />
+        <StatusBadge variant={statusBadgeVariant(property.status)} />
       </div>
 
-      {!property.isActive && (
+      {property.status === 'DRAFT' && (
         <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-          Propiedad creada y vinculada a tu cuenta. Aún no es visible para inquilinos.
+          Propiedad creada y vinculada a tu cuenta. Aún no la has enviado a revisión.
+        </div>
+      )}
+      {property.status === 'PENDING' && (
+        <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          En revisión: un administrador está verificando los datos. Te avisaremos cuando la apruebe.
+        </div>
+      )}
+      {property.status === 'CHANGES_REQUESTED' && (
+        <div className="mb-6 flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+          <span>
+            <strong className="font-semibold">El administrador pidió corregir algo:</strong>{' '}
+            {property.reviewNote || 'Revisa los datos de la propiedad.'} Corrige lo necesario y vuelve a enviarla a revisión.
+          </span>
+        </div>
+      )}
+      {property.status === 'INACTIVE' && (
+        <div className="mb-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+          <span>
+            <strong className="font-semibold">Propiedad inactiva.</strong>{' '}
+            {property.reviewNote || 'No es visible para inquilinos.'} Puedes corregirla y enviarla a revisión de nuevo.
+          </span>
         </div>
       )}
 
@@ -185,9 +211,9 @@ export default function PropertyDetailPage() {
       </div>
 
       {/* Pre-publish checklist */}
-      {!property.isActive && (
+      {property.status !== 'ACTIVE' && property.status !== 'PENDING' && (
         <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-sm font-bold text-primary">Antes de publicar</h3>
+          <h3 className="mb-3 text-sm font-bold text-primary">Antes de enviar a revisión</h3>
           <ul className="flex flex-col gap-2">
             {[
               { ok: hasData, label: 'Datos completos' },
@@ -216,15 +242,15 @@ export default function PropertyDetailPage() {
         >
           Mis propiedades
         </button>
-        {!property.isActive && (
+        {(property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
           <button
             type="button"
             className="rounded-xl bg-secondary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark disabled:opacity-50"
             onClick={handlePublish}
             disabled={publishing || !canPublish}
-            title={canPublish ? '' : 'Completa todos los requisitos antes de publicar'}
+            title={canPublish ? '' : 'Completa todos los requisitos antes de enviar a revisión'}
           >
-            {publishing ? 'Publicando...' : 'Publicar propiedad'}
+            {publishing ? 'Enviando...' : 'Enviar a revisión'}
           </button>
         )}
       </div>

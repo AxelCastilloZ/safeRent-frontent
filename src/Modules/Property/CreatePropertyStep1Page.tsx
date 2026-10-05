@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { AlertCircle } from 'lucide-react'
 import Stepper from './Components/Stepper'
 import { propertyService } from './services/propertyService'
@@ -32,6 +33,7 @@ function validate(data: FormData): FormErrors {
 
 export default function CreatePropertyStep1Page() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const search = useSearch({ from: '/properties/new' })
   const editId = search.editId ?? null
 
@@ -101,6 +103,8 @@ export default function CreatePropertyStep1Page() {
           cost: Number(form.cost) || 0,
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
+        // Crear una propiedad otorga el rol de propietario; refrescamos la sesión para que se refleje de una vez.
+        queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       }
       navigate({ to: '/properties' })
     } catch (err) {
@@ -140,6 +144,8 @@ export default function CreatePropertyStep1Page() {
           rooms: form.rooms ? Number(form.rooms) : undefined,
         })
         propertyId = property.id
+        // Crear una propiedad otorga el rol de propietario; refrescamos la sesión para que se refleje de una vez.
+        queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       }
       navigate({ to: '/properties/new/location', search: { propertyId } })
     } catch (err) {

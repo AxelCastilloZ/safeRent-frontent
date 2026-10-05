@@ -1,13 +1,14 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Pencil } from 'lucide-react'
 import StatusBadge from './StatusBadge'
+import { statusBadgeVariant } from '../utils/propertyStatus'
 import type { Property } from '../types/property'
 
 type PropertyCardProps = { property: Property }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   const navigate = useNavigate()
-  const variant = property.isActive ? 'active' : 'draft'
+  const variant = statusBadgeVariant(property.status)
   const thumbnail = property.files?.[0]?.path
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 

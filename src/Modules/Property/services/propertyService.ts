@@ -2,14 +2,15 @@ import { listServices } from '../../Services/services/service.service'
 import { api } from './api'
 import type {
   Property,
+  PaginatedProperties,
   CreatePropertyPayload,
   UpdatePropertyPayload,
+  ReviewPropertyPayload,
+  PropertyStatus,
   PropertyFile,
 } from '../types/property'
 
 export const propertyService = {
-  getAll: () => api.get<Property[]>('/properties'),
-
   getById: (id: number) => api.get<Property>(`/properties/${id}`),
 
   getByOwner: (ownerId: number) => api.get<Property[]>(`/properties/owner/${ownerId}`),
@@ -19,9 +20,18 @@ export const propertyService = {
   update: (id: number, data: UpdatePropertyPayload) =>
     api.patch<Property>(`/properties/${id}`, data),
 
+  /** El propietario envía la propiedad a revisión (no la activa: queda en PENDING). */
   publish: (id: number) => api.patch<Property>(`/properties/${id}/publish`, {}),
 
   remove: (id: number) => api.delete<Property>(`/properties/${id}`),
+
+  /** Solo ADMIN: todas las propiedades (cualquier estado) con su propietario. */
+  getAllForAdmin: (status?: PropertyStatus) =>
+    api.get<PaginatedProperties>(`/properties/admin/all${status ? `?status=${status}` : ''}`),
+
+  /** Solo ADMIN: aprueba, pide cambios o rechaza una propiedad en revisión. */
+  review: (id: number, data: ReviewPropertyPayload) =>
+    api.patch<Property>(`/properties/${id}/review`, data),
 
   uploadFiles: (propertyId: number, files: File[]) => {
     const formData = new FormData()

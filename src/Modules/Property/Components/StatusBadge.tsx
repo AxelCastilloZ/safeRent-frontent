@@ -1,4 +1,4 @@
-type BadgeVariant = 'active' | 'draft' | 'review' | 'pending'
+type BadgeVariant = 'active' | 'draft' | 'pending' | 'changes' | 'inactive'
 
 type StatusBadgeProps = {
   variant: BadgeVariant
@@ -8,15 +8,17 @@ type StatusBadgeProps = {
 const defaultLabels: Record<BadgeVariant, string> = {
   active: 'Activa',
   draft: 'Borrador',
-  review: 'En revisión',
-  pending: 'Pendiente',
+  pending: 'En revisión',
+  changes: 'Requiere cambios',
+  inactive: 'Inactiva',
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
   active: 'bg-green-100 text-green-700',
   draft: 'bg-slate-100 text-slate-600',
-  review: 'bg-yellow-100 text-yellow-700',
   pending: 'bg-blue-100 text-blue-700',
+  changes: 'bg-amber-100 text-amber-700',
+  inactive: 'bg-red-100 text-red-700',
 }
 
 export default function StatusBadge({ variant, label }: StatusBadgeProps) {

@@ -33,6 +33,9 @@ export interface IconDescription {
   icon: string
 }
 
+/** Refleja `PropertyStatus` en safeRent-backend/src/property/property-status.enum.ts. */
+export type PropertyStatus = 'DRAFT' | 'PENDING' | 'ACTIVE' | 'CHANGES_REQUESTED' | 'INACTIVE'
+
 export interface Property {
   id: number
   title: string
@@ -44,12 +47,29 @@ export interface Property {
   address: string
   guest: number
   rooms: number
-  isActive: boolean
+  status: PropertyStatus
+  reviewNote?: string | null
+  reviewedAt?: string | null
+  createdAt: string
   owner: User
   typeOfProperty: TypeOfProperty | null
   services: Service[]
   files: PropertyFile[]
   iconDescriptions: IconDescription[]
+}
+
+export interface PaginatedProperties {
+  data: Property[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+/** Cuerpo de `PATCH /properties/:id/review` (solo ADMIN). */
+export interface ReviewPropertyPayload {
+  status: 'ACTIVE' | 'CHANGES_REQUESTED' | 'INACTIVE'
+  note?: string
 }
 
 export interface CreatePropertyPayload {
@@ -77,7 +97,6 @@ export interface UpdatePropertyPayload {
   address?: string
   guest?: number
   rooms?: number
-  isActive?: boolean
   ownerId?: number
   typeOfPropertyId?: number
   serviceIds?: number[]

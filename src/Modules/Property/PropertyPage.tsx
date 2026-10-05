@@ -66,8 +66,8 @@ export default function PropertyPage() {
     )
   }
 
-  const activeCount = properties.filter((p) => p.isActive).length
-  const draftCount = properties.filter((p) => !p.isActive).length
+  const activeCount = properties.filter((p) => p.status === 'ACTIVE').length
+  const draftCount = properties.filter((p) => p.status === 'DRAFT').length
 
   return (
     <div className="mx-auto max-w-5xl">

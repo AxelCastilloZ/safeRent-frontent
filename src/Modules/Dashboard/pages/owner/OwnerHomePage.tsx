@@ -17,8 +17,8 @@ export default function OwnerHomePage() {
   const properties = useOwnerProperties();
   const conversations = useConversations();
 
-  const published = properties.data?.filter((property) => property.isActive).length;
-  const unpublished = properties.data?.filter((property) => !property.isActive).length;
+  const published = properties.data?.filter((property) => property.status === 'ACTIVE').length;
+  const inReview = properties.data?.filter((property) => property.status === 'PENDING').length;
 
   return (
     <PageContainer>
@@ -32,11 +32,11 @@ export default function OwnerHomePage() {
           isLoading={properties.isPending}
         />
         <StatCard
-          label="Sin publicar"
+          label="En revisión"
           icon={FileEdit}
-          value={properties.isError ? '—' : unpublished}
+          value={properties.isError ? '—' : inReview}
           isLoading={properties.isPending}
-          hint="Borradores e inactivas"
+          hint="Esperando aprobación del administrador"
         />
         <StatCard label="Solicitudes de reservación" icon={ClipboardList} />
         <StatCard
@@ -74,7 +74,7 @@ export default function OwnerHomePage() {
 
       <div className="mt-8">
         <PendingNotice>
-          «publicadas» y «sin publicar» salen de isActive. El flujo borrador → en revisión → aprobada y las solicitudes de reservación no existen en el backend.
+          las solicitudes de reservación — ese módulo no existe en el backend.
         </PendingNotice>
       </div>
     </PageContainer>
