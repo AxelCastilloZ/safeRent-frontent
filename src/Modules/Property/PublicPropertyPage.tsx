@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, BedDouble, Heart, MapPin, MessageCircle, Share2, Users } from 'lucide-react'
 import Navbar from '../LandingPage/Components/Navbar'
 import Footer from '../LandingPage/Components/Footer'
@@ -7,6 +7,9 @@ import ServiceIcon from '../Services/components/ServiceIcon'
 import PropertyGallery from './Components/PropertyGallery'
 import { usePublicProperty } from './hooks/usePublicProperty'
 import { priceLabel } from '../Explore/utils/property.utils'
+import { useAuth } from '../Auth/hooks/authHooks'
+import { useStartConversation } from '../Messages/hooks/messageHooks'
+import { consumePendingChatProperty, setPendingChatProperty } from '../Messages/utils/pendingChat'
 
 export default function PublicPropertyPage() {
   const { propertyId } = useParams({ strict: false })
@@ -17,6 +20,39 @@ export default function PublicPropertyPage() {
     try { return localStorage.getItem(`saved-property-${id}`) === 'true' } catch { return false }
   })
   const property = query.data
+  const navigate = useNavigate()
+  const { user: currentUser, hasSession } = useAuth()
+  const startConversation = useStartConversation()
+
+  function contactOwner() {
+    if (!property) return
+    if (!hasSession) {
+      // Sin sesión (useAuth ya limpia el token vencido): se recuerda la intención y se vuelve aquí tras el login.
+      setPendingChatProperty(property.id)
+      void navigate({ to: '/login', search: { next: `/property_detail/${property.id}` } })
+      return
+    }
+    if (!currentUser) {
+      setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
+      return
+    }
+    if (currentUser.id === property.owner.id) {
+      setNotice('Esta propiedad es tuya: no puedes chatear contigo mismo.')
+      return
+    }
+    startConversation.mutate({ participantIds: [currentUser.id, property.owner.id], propertyId: property.id })
+  }
+
+  // Al volver del login con la intención pendiente, el chat se abre solo.
+  const loadedPropertyId = property?.id
+  const ownerId = property?.owner.id
+  const currentUserId = currentUser?.id
+  const { mutate: startConversationMutate } = startConversation
+  useEffect(() => {
+    if (loadedPropertyId === undefined || ownerId === undefined || currentUserId === undefined) return
+    if (consumePendingChatProperty() !== loadedPropertyId || currentUserId === ownerId) return
+    startConversationMutate({ participantIds: [currentUserId, ownerId], propertyId: loadedPropertyId })
+  }, [loadedPropertyId, ownerId, currentUserId, startConversationMutate])
   function toggleSaved() {
     try {
       localStorage.setItem(`saved-property-${id}`, String(!saved))
@@ -43,6 +79,7 @@ export default function PublicPropertyPage() {
         </div>}
       </div>
       <p role="status" className="mb-3 text-sm text-secondary-dark">{notice}</p>
+      {startConversation.isError && <p role="alert" className="mb-3 text-sm text-red-700">No pudimos abrir el chat. Intenta nuevamente.</p>}
       {(!Number.isInteger(id) || id <= 0) ? <h1 className="py-20 text-center text-xl font-bold">Propiedad no válida</h1> : query.isPending ? <p role="status" className="py-24 text-center">Cargando propiedad...</p> : query.isError ? <div role="alert" className="rounded-2xl bg-white p-12 text-center"><h1 className="text-xl font-bold">{query.error.message}</h1><button type="button" onClick={() => void query.refetch()} className="mt-4 font-bold text-secondary">Reintentar</button></div> : property && <>
         <PropertyGallery key={property.id} property={property} />
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -64,7 +101,7 @@ export default function PublicPropertyPage() {
             <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70"> / mes</span></p>
             <p className="mt-2 text-xs text-neutral/60">Precio en {property.typeOfCoin || 'CRC'}</p>
             <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
-            <button type="button" onClick={() => setNotice('La mensajería aún no está disponible.')} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark"><MessageCircle size={20} aria-hidden="true" />Chatear con el propietario</button>
+            <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>
           </aside>
         </div>
       </>}

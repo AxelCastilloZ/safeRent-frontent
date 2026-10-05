@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { Pencil } from 'lucide-react'
 import StatusBadge from './StatusBadge'
+import { statusBadgeVariant } from '../utils/propertyStatus'
 import type { Property } from '../types/property'
 
 type PropertyCardProps = { property: Property }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
   const navigate = useNavigate()
-  const variant = property.isActive ? 'active' : 'draft'
+  const variant = statusBadgeVariant(property.status)
   const thumbnail = property.files?.[0]?.path
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
@@ -37,7 +38,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         <button
           type="button"
           className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-primary transition-colors hover:border-primary hover:bg-primary/5"
-          onClick={() => navigate(`/properties/detail/${property.id}`)}
+          onClick={() => navigate({ to: `/properties/detail/${property.id}` })}
         >
           <Pencil size={15} />
           Editar

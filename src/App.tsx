@@ -6,6 +6,7 @@ const queryClient = new QueryClient();
 
 export const router = createRouter({
   routeTree,
+  context: { queryClient },
 });
 
 declare module "@tanstack/react-router" {

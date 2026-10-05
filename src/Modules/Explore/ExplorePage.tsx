@@ -375,13 +375,21 @@ export default function ExplorePage() {
                     </button>
                     {selected === property.id && (
                       <div className="property-description">
-                        <p>{property.description}</p>
-                        {(property.services?.length || 0) > 3 && (
-                          <p>
-                            Servicios:{' '}
-                            {property.services?.map((s) => s.name).join(', ')}
-                          </p>
-                        )}
+                        <div>
+                          <p>{property.description}</p>
+                          {(property.services?.length || 0) > 3 && (
+                            <p>
+                              Servicios:{' '}
+                              {property.services?.map((s) => s.name).join(', ')}
+                            </p>
+                          )}
+                        </div>
+                        <a
+                          className="property-details-button"
+                          href={`/property_detail/${property.id}`}
+                        >
+                          Ver detalles
+                        </a>
                       </div>
                     )}
                   </article>

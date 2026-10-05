@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import PropertyCard from './Components/PropertyCard'
 import EmptyState from './Components/EmptyState'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { Property } from './types/property'
-
-const MOCK_OWNER_ID = 1
+import { api } from './services/api'
 
 export default function PropertyPage() {
   const navigate = useNavigate()
@@ -23,7 +22,8 @@ export default function PropertyPage() {
     try {
       setLoading(true)
       setError(null)
-      const data = await propertyService.getByOwner(MOCK_OWNER_ID)
+      const user = await api.get<{ id: number }>('/auth/me')
+      const data = await propertyService.getByOwner(user.id)
       setProperties(data)
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {
@@ -61,13 +61,13 @@ export default function PropertyPage() {
         title="Publica tu primera propiedad"
         description="Un buen SafeRent Score atrae mejores arrendatarios."
         actionLabel="Nueva propiedad"
-        onAction={() => navigate('/properties/new')}
+        onAction={() => navigate({ to: '/properties/new' })}
       />
     )
   }
 
-  const activeCount = properties.filter((p) => p.isActive).length
-  const draftCount = properties.filter((p) => !p.isActive).length
+  const activeCount = properties.filter((p) => p.status === 'ACTIVE').length
+  const draftCount = properties.filter((p) => p.status === 'DRAFT').length
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -78,7 +78,7 @@ export default function PropertyPage() {
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-xl bg-secondary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark"
-          onClick={() => navigate('/properties/new')}
+          onClick={() => navigate({ to: '/properties/new' })}
         >
           <Plus size={16} />
           Nueva propiedad

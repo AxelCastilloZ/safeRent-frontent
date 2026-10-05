@@ -1,5 +1,5 @@
 import { ArrowRight, Search } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link } from '@tanstack/react-router'
 import Reveal from '../../LandingPage/Components/Reveal'
 
 export default function AboutCta() {
