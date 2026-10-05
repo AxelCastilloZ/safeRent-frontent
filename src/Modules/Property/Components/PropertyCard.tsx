@@ -1,3 +1,4 @@
+import ReservationLabel from '../../Reservations/Components/ReservationLabel'
 import { useNavigate } from '@tanstack/react-router'
 import { Pencil } from 'lucide-react'
 import StatusBadge from './StatusBadge'
@@ -35,6 +36,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <StatusBadge variant={variant} />
         </div>
 
+        <ReservationLabel property={property} />
         <button
           type="button"
           className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-primary transition-colors hover:border-primary hover:bg-primary/5"

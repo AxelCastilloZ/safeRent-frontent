@@ -36,7 +36,9 @@ export interface IconDescription {
 /** Refleja `PropertyStatus` en safeRent-backend/src/property/property-status.enum.ts. */
 export type PropertyStatus = 'DRAFT' | 'PENDING' | 'ACTIVE' | 'CHANGES_REQUESTED' | 'INACTIVE'
 
-export interface Property {
+import type { ReservationState } from '../../Reservations/models/reservation'
+
+export interface Property extends ReservationState {
   id: number
   title: string
   description: string

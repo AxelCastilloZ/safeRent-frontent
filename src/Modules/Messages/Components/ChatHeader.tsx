@@ -1,3 +1,5 @@
+import ReservePropertyButton from '../../Reservations/Components/ReservePropertyButton'
+import ReservationLabel from '../../Reservations/Components/ReservationLabel'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Building2, ExternalLink } from 'lucide-react'
 import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
@@ -19,7 +21,7 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
   const other = conversation && currentUserId !== undefined ? otherParticipant(conversation, currentUserId) : undefined
 
   return (
-    <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
+    <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
       <Link to={basePath} aria-label="Volver a mis mensajes" className={`${buttonStyles.ghostIcon} md:hidden`}>
         <ArrowLeft aria-hidden="true" />
       </Link>
@@ -36,7 +38,9 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
               <Building2 className="size-3.5 shrink-0" aria-hidden="true" />
               {conversation.property.title}
             </p>
+            <ReservationLabel property={conversation.property} />
           </div>
+          <ReservePropertyButton conversation={conversation} />
           <Link
             to="/property_detail/$propertyId"
             params={{ propertyId: String(conversation.property.id) }}

@@ -1,3 +1,5 @@
+import PropertyComments from '../Comments/Components/PropertyComments'
+import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, BedDouble, Heart, MapPin, MessageCircle, Share2, Users } from 'lucide-react'
@@ -95,10 +97,11 @@ export default function PublicPropertyPage() {
             <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">Acerca de esta propiedad</h2><p className="mt-4 whitespace-pre-wrap break-words leading-7 text-neutral">{property.description || 'Sin descripción disponible.'}</p>
               <ul className="mt-4 flex flex-wrap gap-3">{property.iconDescriptions?.map((detail) => <li key={detail.id} className="inline-flex items-center gap-2 text-sm"><ServiceIcon name={detail.icon} size={18} />{detail.title}</li>)}</ul>
             </section>
-            <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">Reseñas de residentes</h2><p className="mt-3 text-sm text-neutral/70">Las reseñas de residentes aún no están disponibles.</p></section>
+            <PropertyComments propertyId={property.id} tenantId={property.reservedTenantId} />
           </article>
           <aside aria-label="Precio y contacto" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
             <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70"> / mes</span></p>
+            <ReservationLabel property={property} />
             <p className="mt-2 text-xs text-neutral/60">Precio en {property.typeOfCoin || 'CRC'}</p>
             <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
             <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>

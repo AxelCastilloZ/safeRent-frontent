@@ -1,3 +1,4 @@
+import ReservationLabel from '../../Reservations/Components/ReservationLabel'
 import { BedDouble, Building2, MapPin, Users } from 'lucide-react'
 import { useState } from 'react'
 import ServiceIcon from '../../Services/components/ServiceIcon'
@@ -32,6 +33,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col p-5">
+        <ReservationLabel property={property} />
         <h3 className="text-lg font-bold leading-snug text-primary">{property.title}</h3>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-neutral/70">
           <MapPin size={15} className="shrink-0 text-neutral/50" aria-hidden="true" />

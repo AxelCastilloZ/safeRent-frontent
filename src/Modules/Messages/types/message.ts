@@ -5,9 +5,12 @@ export interface ConversationParticipant {
   surname2?: string | null
 }
 
-export interface ConversationProperty {
+import type { ReservationState } from '../../Reservations/models/reservation'
+
+export interface ConversationProperty extends ReservationState {
   id: number
   title: string
+  status: string
   owner: { id: number; name: string }
 }
 
