@@ -1,4 +1,5 @@
 import { createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
+import { GetCurrentUser } from '../../Auth/services/aurhServices';
 import { rootRoute } from '../../../routes/rootRoute';
 import { getStoredToken } from '../../Auth/utils/sessionToken';
 import MessagesLayout from '../../Messages/Components/MessagesLayout';
@@ -101,6 +102,15 @@ const adminPropertiesRoute = createRoute({
   path: 'properties',
   component: lazyRouteComponent(() => import('../pages/admin/AdminPropertiesPage')),
 });
+const adminCommentsRoute = createRoute({
+  getParentRoute: () => adminAreaRoute,
+  path: 'comments',
+  beforeLoad: async () => {
+    const user = await GetCurrentUser();
+    if (!user.roles.includes('ADMIN')) throw redirect({ to: '/dashboard' });
+  },
+  component: lazyRouteComponent(() => import('../../Comments/pages/AdminCommentsPage')),
+});
 const adminUsersRoute = createRoute({
   getParentRoute: () => adminAreaRoute,
   path: 'users',
@@ -145,6 +155,7 @@ export const dashboardRoute = DashboardRoute.addChildren([
     adminHomeRoute,
     adminPropertiesRoute,
     adminUsersRoute,
+    adminCommentsRoute,
     adminReportsRoute,
     adminSettingsRoute,
     adminMessagesRoute.addChildren([adminMessagesIndexRoute, adminConversationRoute]),

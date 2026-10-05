@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createPropertyComment, getPropertyComments } from '../services/commentService'
+import { createPropertyComment, getOwnPropertyComment, getPropertyComments } from '../services/commentService'
 
 export function usePropertyComments(propertyId: number) {
   return useQuery({
@@ -8,10 +8,21 @@ export function usePropertyComments(propertyId: number) {
   })
 }
 
+export function useOwnPropertyComment(propertyId: number, userId?: number) {
+  return useQuery({
+    queryKey: ['own-property-comment', propertyId, userId],
+    queryFn: () => getOwnPropertyComment(propertyId),
+    enabled: Boolean(userId),
+  })
+}
+
 export function useCreatePropertyComment(propertyId: number) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (content: string) => createPropertyComment(propertyId, content),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['property-comments', propertyId] }),
+    onSuccess: () => Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['property-comments', propertyId] }),
+      queryClient.invalidateQueries({ queryKey: ['own-property-comment', propertyId] }),
+    ]),
   })
 }

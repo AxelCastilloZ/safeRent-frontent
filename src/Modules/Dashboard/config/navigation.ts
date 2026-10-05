@@ -70,6 +70,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
     nav: [
       { to: '/dashboard/admin', label: 'Resumen', Icon: LayoutDashboard },
       { to: '/dashboard/admin/properties', label: 'Propiedades', Icon: Building2 },
+      { to: '/dashboard/admin/comments', label: 'Comentarios', Icon: MessageSquare },
       { to: '/dashboard/admin/users', label: 'Usuarios', Icon: Users },
       { to: '/dashboard/admin/reports', label: 'Reportes', Icon: Flag },
       { to: '/dashboard/admin/settings', label: 'Ajustes', Icon: Settings },

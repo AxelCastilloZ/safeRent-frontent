@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { useAuth } from '../../Auth/hooks/authHooks'
-import { useCreatePropertyComment, usePropertyComments } from '../hooks/usePropertyComments'
+import { useCreatePropertyComment, useOwnPropertyComment, usePropertyComments } from '../hooks/usePropertyComments'
 
 export default function PropertyComments({ propertyId, tenantId }: { propertyId: number; tenantId?: number | null }) {
   const { user } = useAuth()
   const comments = usePropertyComments(propertyId)
   const create = useCreatePropertyComment(propertyId)
   const [content, setContent] = useState('')
-  const alreadyCommented = comments.data?.some((comment) => comment.author.id === user?.id)
-  const canComment = user?.id === tenantId && Boolean(user) && !alreadyCommented
+  const ownComment = useOwnPropertyComment(propertyId, user?.id)
+  const alreadyCommented = Boolean(ownComment.data)
+  const canComment = user?.id === tenantId && Boolean(user) && ownComment.isSuccess && !alreadyCommented
   const message: unknown = axios.isAxiosError(create.error) ? create.error.response?.data?.message : undefined
   const error = typeof message === 'string' ? message : 'No se pudo publicar el comentario. Intenta nuevamente.'
 
@@ -47,7 +48,7 @@ export default function PropertyComments({ propertyId, tenantId }: { propertyId:
           {create.isPending ? 'Publicando…' : 'Publicar comentario'}
         </button>
       </form>}
-      {alreadyCommented && <p role="status" className="mt-3 text-sm text-secondary-dark">Ya publicaste tu comentario sobre esta propiedad.</p>}
+      {alreadyCommented && <p role="status" className="mt-3 text-sm text-secondary-dark">{ownComment.data?.hidden ? 'Tu comentario fue ocultado por administración.' : 'Ya publicaste tu comentario sobre esta propiedad.'}</p>}
     </>}
   </section>
 }
