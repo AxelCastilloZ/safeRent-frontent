@@ -1,6 +1,7 @@
 import { redirect } from '@tanstack/react-router';
 import type { RouterContext } from '../../../routes/rootRoute';
-import { DASHBOARD_HOME_PATH } from '../../Dashboard/config/navigation';
+import { getAreaFromPath } from '../../Dashboard/config/navigation';
+import { roleHome } from '../utils/roleHome';
 import { authUserQueryOptions } from '../hooks/authQueries';
 import type { AppRole } from '../types/roles';
 import { hasAnyRole } from '../utils/roles';
@@ -24,7 +25,7 @@ export async function requireAuth({ context, location }: GuardArgs) {
   if (!token) throw toLogin();
 
   try {
-    const user = await context.queryClient.ensureQueryData(authUserQueryOptions(token));
+    const user = await context.queryClient.fetchQuery({ ...authUserQueryOptions(token), staleTime: 0 });
     return { user };
   } catch {
     // authUserQueryOptions ya cerró la sesión si fue un 401; cualquier otro fallo también impide confirmar quién es.
@@ -34,13 +35,21 @@ export async function requireAuth({ context, location }: GuardArgs) {
 
 /**
  * Exige sesión y además alguno de los roles indicados; si el usuario no lo tiene
- * lo manda a su panel (/dashboard), que es accesible para todos los roles.
+ * lo manda al panel principal que corresponde a sus roles actuales.
  * Uso: `beforeLoad: requireRole('ADMIN')`.
  */
+export async function requireDashboard(args: GuardArgs) {
+  const { user } = await requireAuth(args);
+  const area = getAreaFromPath(args.location.href.split('?')[0]);
+  const role = area === 'admin' ? 'ADMIN' : area === 'owner' ? 'OWNER' : 'CLIENT';
+  if (!user.roles.includes(role)) throw redirect({ to: roleHome(user.roles) });
+  return { user };
+}
+
 export function requireRole(...allowed: AppRole[]) {
   return async (args: GuardArgs) => {
     const { user } = await requireAuth(args);
-    if (!hasAnyRole(user.roles, allowed)) throw redirect({ to: DASHBOARD_HOME_PATH });
+    if (!hasAnyRole(user.roles, allowed)) throw redirect({ to: roleHome(user.roles) });
     return { user };
   };
 }

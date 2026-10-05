@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 
 import logo from '../../../assets/saferent-logo.svg';
@@ -21,6 +21,7 @@ const legalLinkClass =
 
 const RegisterForm = () => {
   const register = useRegister();
+  const [accountType, setAccountType] = useState<'CLIENT' | 'OWNER'>('CLIENT');
   const navigate = useNavigate();
   useEffect(() => {
     if (!register.isSuccess) return;
@@ -35,7 +36,7 @@ const RegisterForm = () => {
       const { acceptTerms, surname2, ...payload } = parsed;
       void acceptTerms;
       try {
-        await register.mutateAsync({ ...payload, ...(surname2 ? { surname2 } : {}) });
+        await register.mutateAsync({ ...payload, accountType, ...(surname2 ? { surname2 } : {}) });
       } catch {
         return;
       }
@@ -65,6 +66,13 @@ const RegisterForm = () => {
           }}
           className="flex flex-col gap-6"
         >
+          <label className="flex flex-col gap-2 text-sm font-semibold">
+            Tipo de cuenta
+            <select value={accountType} onChange={(event) => setAccountType(event.target.value as 'CLIENT' | 'OWNER')} className={inputClass}>
+              <option value="CLIENT">Inquilino: buscar y alquilar propiedades</option>
+              <option value="OWNER">Propietario: publicar mis propiedades</option>
+            </select>
+          </label>
           <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
             {/* Name */}
             <form.Field name="name">

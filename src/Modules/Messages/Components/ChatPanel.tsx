@@ -17,8 +17,7 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
   const messages = useMessages(conversationId)
   const { pending, send, retry } = useOutbox(conversationId, currentUser?.id)
 
-  // El backend no restringe GET /conversations/:id a sus participantes todavía;
-  // mientras tanto, la pantalla no muestra chats ajenos.
+  // El backend valida la participación; la pantalla también evita mostrar chats ajenos.
   const isParticipant =
     !conversation.data || !currentUser || conversation.data.participants.some((participant) => participant.id === currentUser.id)
 

@@ -6,7 +6,7 @@ import type { SessionUser } from '../types/session';
 import { getStoredToken } from '../utils/sessionToken';
 
 /**
- * Consulta del usuario de la sesión para los guards del router (`ensureQueryData`).
+ * Consulta del usuario de la sesión para los guards del router (`fetchQuery`).
  * Usa la MISMA queryKey que `useAuth`, así comparten caché, y aplica la misma regla:
  * un 401 con el mismo token cierra la sesión. Si cambia el `queryFn` de `useAuth`,
  * este debe cambiar igual.

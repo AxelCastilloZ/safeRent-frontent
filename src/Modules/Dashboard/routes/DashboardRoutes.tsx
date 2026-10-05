@@ -1,21 +1,18 @@
-import { createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
-import { GetCurrentUser } from '../../Auth/services/aurhServices';
+import { createRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { requireDashboard, requireRole } from '../../Auth/routes/guards';
 import { rootRoute } from '../../../routes/rootRoute';
-import { getStoredToken } from '../../Auth/utils/sessionToken';
 import MessagesLayout from '../../Messages/Components/MessagesLayout';
 import DashboardLayout from '../Components/DashboardLayout';
 
 // Un solo layout (/dashboard) con tres áreas que salen de la URL:
 //   /dashboard         → inquilino      /dashboard/owner/*  → propietario      /dashboard/admin/* → administrador
-// Por ahora cualquiera con sesión entra a cualquier área; al integrar roles, cada área se protege con su guard.
+// Cada área verifica el rol asignado a la cuenta en el backend.
 const DashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'dashboard',
   // Sin sesión no se llega a renderizar nada: va a /login y, tras iniciar sesión, vuelve aquí.
   // (Si la sesión se pierde con el panel abierto, lo cubre DashboardLayout.)
-  beforeLoad: ({ location }) => {
-    if (!getStoredToken()) throw redirect({ to: '/login', search: { next: location.href } });
-  },
+  beforeLoad: requireDashboard,
   component: DashboardLayout,
 });
 
@@ -57,7 +54,7 @@ const clientConversationRoute = createRoute({
 });
 
 // ── Propietario ──────────────────────────────────────────────────────────────
-const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner' });
+const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner', beforeLoad: requireRole('OWNER') });
 const ownerHomeRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: '/',
@@ -91,7 +88,7 @@ const ownerConversationRoute = createRoute({
 });
 
 // ── Administrador ────────────────────────────────────────────────────────────
-const adminAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'admin' });
+const adminAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'admin', beforeLoad: requireRole('ADMIN') });
 const adminHomeRoute = createRoute({
   getParentRoute: () => adminAreaRoute,
   path: '/',
@@ -105,10 +102,7 @@ const adminPropertiesRoute = createRoute({
 const adminCommentsRoute = createRoute({
   getParentRoute: () => adminAreaRoute,
   path: 'comments',
-  beforeLoad: async () => {
-    const user = await GetCurrentUser();
-    if (!user.roles.includes('ADMIN')) throw redirect({ to: '/dashboard' });
-  },
+  beforeLoad: requireRole('ADMIN'),
   component: lazyRouteComponent(() => import('../../Comments/pages/AdminCommentsPage')),
 });
 const adminUsersRoute = createRoute({

@@ -12,9 +12,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 /**
- * El panel tiene tres áreas. Por ahora el área sale de la URL y cualquiera con sesión
- * puede abrir cualquiera (todavía no se integran los roles). Cuando se integren, cada
- * área se asocia a su rol (CLIENT, OWNER, ADMIN) y se protege con un guard.
+ * Las áreas se protegen con los roles CLIENT, OWNER y ADMIN de la cuenta.
  */
 export type DashboardArea = 'client' | 'owner' | 'admin';
 

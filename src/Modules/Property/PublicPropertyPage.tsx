@@ -38,6 +38,10 @@ export default function PublicPropertyPage() {
       setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
       return
     }
+    if (!currentUser.roles.includes('CLIENT')) {
+      setNotice('Necesitas el rol de inquilino para contactar al propietario.');
+      return;
+    }
     if (currentUser.id === property.owner.id) {
       setNotice('Esta propiedad es tuya: no puedes chatear contigo mismo.')
       return
@@ -48,7 +52,7 @@ export default function PublicPropertyPage() {
   // Al volver del login con la intención pendiente, el chat se abre solo.
   const loadedPropertyId = property?.id
   const ownerId = property?.owner.id
-  const currentUserId = currentUser?.id
+  const currentUserId = currentUser?.roles.includes('CLIENT') ? currentUser.id : undefined
   const { mutate: startConversationMutate } = startConversation
   useEffect(() => {
     if (loadedPropertyId === undefined || ownerId === undefined || currentUserId === undefined) return
