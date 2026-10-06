@@ -1,5 +1,6 @@
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { rootRoute } from "../../../routes/rootRoute";
+import { requireAuth, requireRole } from '../../Auth/routes/guards';
 import OwnerLayout from "../Components/OwnerLayout";
 
 function optionalPropertyId(value: unknown): number | undefined {
@@ -11,6 +12,7 @@ function optionalPropertyId(value: unknown): number | undefined {
 export const PropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "properties",
+  beforeLoad: requireRole('OWNER', 'ADMIN'),
   component: OwnerLayout,
 });
 
@@ -61,5 +63,6 @@ export const propertyPublishRoute = createRoute({
 export const publicPropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'property_detail/$propertyId',
+  beforeLoad: requireAuth,
   component: lazyRouteComponent(() => import('../PublicPropertyPage')),
 });

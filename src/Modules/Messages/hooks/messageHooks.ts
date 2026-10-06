@@ -37,6 +37,7 @@ export function useConversation(conversationId: number) {
     queryKey: conversationKeys.detail(conversationId),
     queryFn: () => getConversation(conversationId),
     retry: false,
+    refetchInterval: CONVERSATIONS_POLL_MS,
   })
 }
 

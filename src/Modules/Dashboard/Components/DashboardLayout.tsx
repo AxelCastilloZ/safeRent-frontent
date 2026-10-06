@@ -1,3 +1,5 @@
+import { useAuth } from '../../Auth/hooks/authHooks';
+import { roleHome } from '../../Auth/utils/roleHome';
 import { Outlet, useLocation, useRouter } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -14,6 +16,7 @@ import DashboardSidebar from './DashboardSidebar';
  */
 export default function DashboardLayout() {
   const { hasSession } = useDashboardUser();
+  const { user } = useAuth();
   const { pathname } = useLocation();
   const router = useRouter();
   // El drawer recuerda en qué ruta se abrió: al navegar deja de contar como abierto, sin efectos.
@@ -37,7 +40,13 @@ export default function DashboardLayout() {
     if (!hasSession) void router.navigate({ to: '/login', search: { next: router.state.location.href }, replace: true });
   }, [hasSession, router]);
 
-  if (!hasSession) return null;
+  const role = area === 'admin' ? 'ADMIN' : area === 'owner' ? 'OWNER' : 'CLIENT';
+  const permitted = Boolean(user?.roles.includes(role));
+  useEffect(() => {
+    if (user && !permitted) router.history.replace(roleHome(user.roles));
+  }, [user, permitted, router]);
+
+  if (!hasSession || !permitted) return null;
 
   const closeDrawer = () => setDrawer({ open: false, path: pathname });
 

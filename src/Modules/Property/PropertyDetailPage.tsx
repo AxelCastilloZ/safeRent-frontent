@@ -1,3 +1,4 @@
+import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { AlertTriangle, CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
@@ -116,6 +117,8 @@ export default function PropertyDetailPage() {
           </span>
         </div>
       )}
+
+      <ReservationLabel property={property} />
 
       {/* Property data */}
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

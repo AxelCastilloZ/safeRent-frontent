@@ -1,20 +1,21 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { ArrowRight, LayoutDashboard, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { DASHBOARD_AREAS, DASHBOARD_HOME_PATH } from '../config/navigation';
+import { roleHome } from '../../Auth/utils/roleHome';
+import { DASHBOARD_AREAS, getAreaFromPath } from '../config/navigation';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 
-// Accesos rápidos del menú. Sin roles todavía: son los del inquilino (todas las cuentas
-// nuevas lo son); al integrar roles esta lista saldrá del área de cada rol.
-const quickLinks = DASHBOARD_AREAS.client.nav.slice(1);
 
 /**
  * Avatar del usuario con su menú (nombre, correo, "Ir a mi panel", accesos y cerrar sesión).
  * Se cierra al volver a pulsar el avatar, al hacer clic fuera, con Escape y al elegir una opción.
  */
 export default function UserMenu({ onAction }: { onAction?: () => void }) {
-  const { fullName, initials, email, logout } = useDashboardUser();
+  const { fullName, initials, email, logout, roles } = useDashboardUser();
   const { pathname } = useLocation();
+  const home = roleHome(roles);
+  const area = getAreaFromPath(home);
+  const quickLinks = DASHBOARD_AREAS[area].nav.slice(1);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -81,7 +82,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
           </div>
 
           <Link
-            to={DASHBOARD_HOME_PATH}
+            to={home}
             onClick={close}
             className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark"
           >

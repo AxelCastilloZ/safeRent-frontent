@@ -24,6 +24,7 @@ export const useAuth = () => {
         queryKey: ['auth', 'me', token],
         enabled: Boolean(token),
         retry: false,
+        refetchInterval: 30000,
         queryFn: async () => {
             try {
                 return await GetCurrentUser();

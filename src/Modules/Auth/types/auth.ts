@@ -15,6 +15,7 @@ export interface AuthUser {
 }
 
 export interface RegisterRequest extends LoginRequest {
+    accountType?: 'CLIENT' | 'OWNER';
     idCard: string;
     name: string;
     surname1: string;

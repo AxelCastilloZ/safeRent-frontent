@@ -6,7 +6,8 @@ import Alert from '@mui/material/Alert';
 import logo from '../../../assets/saferent-logo.svg';
 import { loginDefaultValues, loginSchema } from '../schemas/login.schema';
 import { Link, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-import { useLogin } from '../hooks/authHooks';
+import { roleHome } from '../utils/roleHome';
+import { useAuth, useLogin } from '../hooks/authHooks';
 import { getAuthErrorMessage, getAuthErrorSeverity } from '../services/aurhServices';
 
 const labelClass = 'text-sm leading-[16.8px] font-medium tracking-[0.7px] text-[#45474c]';
@@ -20,19 +21,20 @@ const linkClass =
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const router = useRouter();
   const { next } = useSearch({ from: '/login' });
 
   useEffect(() => {
-    if (!login.isSuccess) return;
+    if (!login.isSuccess || !user) return;
     const timer = window.setTimeout(() => {
       // `next` ya viene validado como ruta interna (ver AuthRoutes).
       if (next) router.history.push(next);
-      else void navigate({ to: '/' });
+      else router.history.push(roleHome(user.roles));
     }, 2000);
     return () => window.clearTimeout(timer);
-  }, [login.isSuccess, navigate, router, next]);
+  }, [login.isSuccess, navigate, router, next, user]);
 
   const form = useForm({
     defaultValues: loginDefaultValues,

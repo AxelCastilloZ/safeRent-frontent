@@ -19,5 +19,6 @@ export function useDashboardUser() {
     initials: sessionUser ? `${firstLetter(sessionUser.name)}${firstLetter(sessionUser.surname1)}`.toLocaleUpperCase() : undefined,
     email: sessionUser?.email,
     userId: sessionUser?.id,
+    roles: sessionUser?.roles ?? [],
   };
 }

@@ -5,7 +5,9 @@ export interface PropertyService {
   description?: string | null
 }
 
-export interface Property {
+import type { ReservationState } from '../../Reservations/models/reservation'
+
+export interface Property extends ReservationState {
   id: number
   title: string
   description: string
