@@ -10,7 +10,7 @@ export async function GetCurrentUser(): Promise<AuthUser> {
 }
 
 export function getAuthErrorSeverity(error: unknown): 'warning' | 'error' {
-  return axios.isAxiosError(error) && [400, 401, 409].includes(error.response?.status ?? 0)
+  return axios.isAxiosError(error) && [400, 401, 409, 429].includes(error.response?.status ?? 0)
     ? 'warning' : 'error';
 }
 

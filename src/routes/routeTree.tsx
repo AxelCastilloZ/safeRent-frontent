@@ -3,7 +3,7 @@ import { servicesAdminRoute } from '../Modules/Services/routes/ServicesRoutes';
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
 import LandingPage from "../Modules/LandingPage/LandingPage";
-import { LoginRoute, RegisterRoute } from "../Modules/Auth/routes/AuthRoutes";
+import { LoginRoute, RegisterRoute, ForgotPasswordRoute, ResetPasswordRoute } from "../Modules/Auth/routes/AuthRoutes";
 import { propertyDetailsRoute, propertyIndexRoute, propertyNewLocationRoute, propertyNewMediaRoute, propertyNewRoute, propertyPublishRoute, PropertyRoute } from "../Modules/Property/routes/PropertyRoutes";
 import { ExplorerRoute } from "../Modules/Explore/routes/ExplorerRoutes";
 import { conversationRoute, MessagesRoute, messagesIndexRoute } from "../Modules/Messages/routes/MessagesRoutes";
@@ -22,6 +22,8 @@ export const routeTree = rootRoute.addChildren([
     servicesAdminRoute,
     LoginRoute,
     RegisterRoute,
+    ForgotPasswordRoute,
+    ResetPasswordRoute,
     PropertyRoute.addChildren([
         propertyIndexRoute,
         propertyNewRoute,
