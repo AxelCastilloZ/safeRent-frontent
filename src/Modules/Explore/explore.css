@@ -128,6 +128,16 @@
   margin-top: 18px;
   font-size: 12px;
 }
+.filter-section-label {
+  font-weight: 600;
+  color: #3a4656;
+  margin-bottom: 2px;
+}
+.filter-validation {
+  color: #c53030;
+  font-size: 11px;
+  margin: -8px 0 10px;
+}
 .price-inputs {
   display: flex;
   gap: 12px;
