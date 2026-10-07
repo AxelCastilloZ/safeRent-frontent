@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import PendingNotice from '../Components/PendingNotice';
-import { useDashboardUser } from '../hooks/useDashboardUser';
+import ProfilePanel from '../Components/ProfilePanel';
+import ChangePasswordDialog from '../Components/ChangePasswordDialog';
 
 function SettingsSection({ id, title, description, children }: { id: string; title: string; description: string; children: ReactNode }) {
   return (
@@ -16,20 +17,11 @@ function SettingsSection({ id, title, description, children }: { id: string; tit
   );
 }
 
-function ReadOnlyField({ label, value }: { label: string; value?: string }) {
-  return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-ink">{label}</p>
-      <p className="mt-1 text-sm font-medium text-primary">{value || '—'}</p>
-    </div>
-  );
-}
-
 const optionClass = 'flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-primary opacity-60';
 
-/** Ajustes (compartida por las tres áreas). El perfil muestra datos reales; el resto está preparado, sin backend. */
+/** Ajustes (compartida por las tres áreas). Perfil y seguridad integrados con el backend. */
 export default function SettingsPage() {
-  const { fullName, email } = useDashboardUser();
+  const [changingPassword, setChangingPassword] = useState(false);
 
   return (
     <PageContainer>
@@ -37,16 +29,14 @@ export default function SettingsPage() {
 
       <div className="grid gap-5 lg:grid-cols-2">
         <SettingsSection id="settings-profile" title="Perfil" description="Los datos con los que apareces en SafeRent.">
-          <ReadOnlyField label="Nombre" value={fullName} />
-          <ReadOnlyField label="Correo" value={email} />
-          <PendingNotice>editar el perfil (hay PATCH /users/:id, falta definir qué campos puede cambiar el propio usuario).</PendingNotice>
+          <ProfilePanel />
         </SettingsSection>
 
         <SettingsSection id="settings-security" title="Seguridad" description="Protege el acceso a tu cuenta.">
-          <button type="button" disabled className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary opacity-60">
+          <button type="button" onClick={() => setChangingPassword(true)} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary hover:bg-slate-50">
             Cambiar contraseña
           </button>
-          <PendingNotice>cambio de contraseña — no hay endpoint en el backend.</PendingNotice>
+          <p className="text-sm text-muted-ink">Actualiza tu contraseña para proteger tu cuenta.</p>
         </SettingsSection>
 
         <SettingsSection id="settings-notifications" title="Notificaciones" description="Elige de qué quieres enterarte.">
@@ -85,6 +75,8 @@ export default function SettingsPage() {
           <PendingNotice>modo oscuro y del sistema — diferido hasta definir el tema de toda la aplicación.</PendingNotice>
         </SettingsSection>
       </div>
+      {changingPassword && <ChangePasswordDialog onClose={() => setChangingPassword(false)} />}
     </PageContainer>
   );
 }
+
