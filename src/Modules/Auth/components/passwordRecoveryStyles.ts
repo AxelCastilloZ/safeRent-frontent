@@ -1,0 +1,1 @@
+export const recoveryButtonClass = 'w-full rounded-lg bg-[#0a2540] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#12345a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] disabled:cursor-not-allowed disabled:opacity-70';

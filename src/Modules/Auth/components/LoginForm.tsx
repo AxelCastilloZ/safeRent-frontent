@@ -110,9 +110,9 @@ const LoginForm = () => {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
                     <label htmlFor="login-password" className={labelClass}>Password</label>
-                    {/* <Link to={paths.forgotPassword} className={`${linkClass} text-xs leading-3`}> */}
+                    <Link to="/forgot-password" className={`${linkClass} text-xs leading-3`}>
                       Forgot Password?
-                    {/* </Link> */}
+                    </Link>
                   </div>
                   <div className="relative">
                     <Lock aria-hidden="true" className={iconClass} />
