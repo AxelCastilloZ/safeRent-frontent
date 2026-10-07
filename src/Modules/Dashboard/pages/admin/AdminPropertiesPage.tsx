@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, Check, MapPin, MessageSquareWarning, XCircle } from 'lucide-react';
+import { Building2, Check, EyeOff, MapPin, MessageSquareWarning, XCircle } from 'lucide-react';
 import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
 import { useAdminProperties, useReviewProperty } from '../../../Property/hooks/useAdminProperties';
@@ -144,6 +144,17 @@ export default function AdminPropertiesPage() {
                           <XCircle size={17} />
                         </button>
                       </div>
+                    ) : property.status === 'ACTIVE' ? (
+                      <button
+                        type="button"
+                        title="Desactivar"
+                        aria-label={`Desactivar ${property.title}`}
+                        disabled={review.isPending}
+                        className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                        onClick={() => setRejecting(property)}
+                      >
+                        <EyeOff size={17} />
+                      </button>
                     ) : (
                       <span className="text-xs text-slate-400">
                         {property.reviewedAt ? `Revisada el ${formatDate(property.reviewedAt)}` : '—'}

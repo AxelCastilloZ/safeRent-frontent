@@ -1,8 +1,12 @@
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, Building2, MapPin, Plus } from 'lucide-react';
+import { AlertTriangle, Building2, EyeOff, MapPin, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
+import { propertyService } from '../../../Property/services/propertyService';
+import type { Property } from '../../../Property/types/property';
+import ConfirmDialog from '../../Components/ConfirmDialog';
 import EmptyPanel from '../../Components/EmptyPanel';
 import FilterTabs from '../../Components/FilterTabs';
 import PageContainer from '../../Components/PageContainer';
@@ -23,7 +27,22 @@ const publishLinkClass = 'inline-flex items-center gap-2 rounded-xl bg-secondary
 /** Mis propiedades: lista real del propietario con el estado de revisión de cada una. */
 export default function OwnerPropertiesPage() {
   const properties = useOwnerProperties();
+  const queryClient = useQueryClient();
   const [filter, setFilter] = useState<PropertyFilter>('all');
+  const [deactivating, setDeactivating] = useState<Property | null>(null);
+  const [deactivateError, setDeactivateError] = useState<string | null>(null);
+
+  const deactivate = useMutation({
+    mutationFn: (id: number) => propertyService.remove(id),
+    onSuccess: () => {
+      setDeactivating(null);
+      setDeactivateError(null);
+      queryClient.invalidateQueries({ queryKey: ['owner-properties'] });
+    },
+    onError: (err) => {
+      setDeactivateError(err instanceof Error ? err.message : 'No se pudo desactivar la propiedad.');
+    },
+  });
 
   const visible = (properties.data ?? []).filter((property) =>
     filter === 'all' ? true : property.status === filter,
@@ -101,10 +120,32 @@ export default function OwnerPropertiesPage() {
                 >
                   Editar
                 </Link>
+                {property.status !== 'INACTIVE' && property.status !== 'DRAFT' && (
+                  <button
+                    type="button"
+                    onClick={() => { setDeactivating(property); setDeactivateError(null); }}
+                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                  >
+                    <EyeOff size={16} className="inline-block mr-1" aria-hidden="true" />
+                    Desactivar
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
+      )}
+      {deactivating && (
+        <ConfirmDialog
+          title={`Desactivar: ${deactivating.title}`}
+          description="La propiedad dejará de ser visible para los inquilinos. Podrás volver a publicarla después."
+          confirmLabel="Desactivar propiedad"
+          danger
+          loading={deactivate.isPending}
+          error={deactivateError}
+          onConfirm={() => deactivate.mutate(deactivating.id)}
+          onCancel={() => setDeactivating(null)}
+        />
       )}
     </PageContainer>
   );
