@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Building2, ClipboardCheck, Flag, Settings, Users } from 'lucide-react';
+import { Building2, ClipboardCheck, Settings, Users } from 'lucide-react';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 import StatCard from '../../Components/StatCard';
@@ -35,7 +35,7 @@ export default function AdminHomePage() {
           value={pending.isError ? '—' : pending.data?.total}
           isLoading={pending.isPending}
         />
-        <StatCard label="Reportes pendientes" icon={Flag} />
+        {/* <StatCard label="Reportes pendientes" icon={Flag} /> */}
       </section>
 
       <section aria-labelledby="quick-actions" className="mt-8">

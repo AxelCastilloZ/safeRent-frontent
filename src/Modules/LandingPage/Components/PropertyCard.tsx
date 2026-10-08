@@ -23,7 +23,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-secondary-dark shadow-sm backdrop-blur-sm">
           <span className="size-1.5 rounded-full bg-secondary" />
-          Publicada
+          {property.reservedTenantId ? 'Reservada' : 'Disponible'}
         </span>
 
         <p className="absolute bottom-3 right-3 rounded-xl bg-white/95 px-3 py-1.5 text-right shadow-sm backdrop-blur-sm">

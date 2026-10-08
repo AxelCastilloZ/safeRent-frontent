@@ -3,7 +3,6 @@ import { Building2, ClipboardList, FileEdit, MessageSquare, Plus } from 'lucide-
 import { useConversations, useUnreadMessagesCount } from '../../../Messages/hooks/messageHooks';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
-import PendingNotice from '../../Components/PendingNotice';
 import StatCard from '../../Components/StatCard';
 import { useDashboardUser } from '../../hooks/useDashboardUser';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
@@ -20,6 +19,7 @@ export default function OwnerHomePage() {
 
   const published = properties.data?.filter((property) => property.status === 'ACTIVE').length;
   const inReview = properties.data?.filter((property) => property.status === 'PENDING').length;
+  const reserved = properties.data?.filter((property) => property.reservedTenantId);
 
   return (
     <PageContainer>
@@ -39,7 +39,12 @@ export default function OwnerHomePage() {
           isLoading={properties.isPending}
           hint="Esperando aprobación del administrador"
         />
-        <StatCard label="Solicitudes de reservación" icon={ClipboardList} />
+        <StatCard
+          label="Propiedades reservadas"
+          icon={CalendarCheck}
+          value={properties.isError ? '—' : reserved?.length}
+          isLoading={properties.isPending}
+        />
         <StatCard
           label="Mensajes sin leer"
           icon={MessageSquare}
@@ -62,10 +67,6 @@ export default function OwnerHomePage() {
             <Building2 size={20} className="text-secondary" aria-hidden="true" />
             Ver mis propiedades
           </Link>
-          <Link to="/dashboard/owner/requests" className={quickActionClass}>
-            <ClipboardList size={20} className="text-secondary" aria-hidden="true" />
-            Ver solicitudes
-          </Link>
           <Link to="/dashboard/owner/messages" className={quickActionClass}>
             <MessageSquare size={20} className="text-secondary" aria-hidden="true" />
             Mensajes
@@ -73,11 +74,35 @@ export default function OwnerHomePage() {
         </div>
       </section>
 
-      <div className="mt-8">
-        <PendingNotice>
-          las solicitudes de reservación — ese módulo no existe en el backend.
-        </PendingNotice>
-      </div>
+      <section aria-labelledby="reserved-properties" className="mt-8">
+        <h2 id="reserved-properties" className="mb-3 text-lg font-bold">
+          Propiedades reservadas
+        </h2>
+        {properties.isPending && <p role="status">Cargando propiedades reservadas…</p>}
+        {properties.isError && <p role="alert">No se pudieron cargar tus propiedades reservadas.</p>}
+        {properties.isSuccess && (reserved?.length ? (
+          <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {reserved.map((property) => (
+              <li key={property.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="font-bold text-primary">{property.title}</h3>
+                <p className="mt-1 text-sm text-muted-ink">{property.address}</p>
+                <p className="mt-3 text-sm">
+                  Inquilino: {property.reservedTenantName ?? 'No disponible'}
+                </p>
+                {property.reservedAt && (
+                  <p className="mt-1 text-sm text-muted-ink">
+                    Reservada el {new Date(property.reservedAt).toLocaleDateString('es-CR')}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-muted-ink">
+            Aún no tienes propiedades reservadas.
+          </p>
+        ))}
+      </section>
     </PageContainer>
   );
 }
