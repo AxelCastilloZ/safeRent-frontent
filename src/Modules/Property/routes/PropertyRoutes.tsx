@@ -1,6 +1,6 @@
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { rootRoute } from "../../../routes/rootRoute";
-import { requireAuth, requireRole } from '../../Auth/routes/guards';
+import { requireRole } from '../../Auth/routes/guards';
 import OwnerLayout from "../Components/OwnerLayout";
 
 function optionalPropertyId(value: unknown): number | undefined {
@@ -63,6 +63,5 @@ export const propertyPublishRoute = createRoute({
 export const publicPropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'property_detail/$propertyId',
-  beforeLoad: requireAuth,
   component: lazyRouteComponent(() => import('../PublicPropertyPage')),
 });
