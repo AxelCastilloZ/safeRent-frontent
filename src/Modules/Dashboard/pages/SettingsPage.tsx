@@ -39,7 +39,7 @@ export default function SettingsPage() {
           <p className="text-sm text-muted-ink">Actualiza tu contraseña para proteger tu cuenta.</p>
         </SettingsSection>
 
-        <SettingsSection id="settings-notifications" title="Notificaciones" description="Elige de qué quieres enterarte.">
+        {/* <SettingsSection id="settings-notifications" title="Notificaciones" description="Elige de qué quieres enterarte.">
           {['Mensajes nuevos', 'Actualizaciones de reservaciones'].map((label) => (
             <label key={label} className={optionClass}>
               <input type="checkbox" disabled />
@@ -47,7 +47,7 @@ export default function SettingsPage() {
             </label>
           ))}
           <PendingNotice>preferencias de notificación — no existen notificaciones en el backend.</PendingNotice>
-        </SettingsSection>
+        </SettingsSection> */}
 
         <SettingsSection id="settings-language" title="Idioma" description="El idioma de la interfaz.">
           <fieldset className="space-y-2" disabled>
