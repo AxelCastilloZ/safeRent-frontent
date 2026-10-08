@@ -1,7 +1,6 @@
 import {
   Building2,
   CalendarCheck,
-  ClipboardList,
   Heart,
   LayoutDashboard,
   MessageSquare,
@@ -55,7 +54,6 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
     nav: [
       { to: '/dashboard/owner', label: 'Inicio', Icon: LayoutDashboard },
       { to: '/dashboard/owner/properties', label: 'Mis propiedades', Icon: Building2 },
-      { to: '/dashboard/owner/requests', label: 'Reservaciones / Solicitudes', Icon: ClipboardList },
       { to: '/dashboard/owner/messages', label: 'Mensajes', Icon: MessageSquare },
       { to: '/dashboard/owner/settings', label: 'Ajustes', Icon: Settings },
     ],

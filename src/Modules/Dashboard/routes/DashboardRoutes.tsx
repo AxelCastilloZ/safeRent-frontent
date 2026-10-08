@@ -112,11 +112,6 @@ const ownerPropertyPublishedRoute = createRoute({
   path: 'properties/$propertyId/publish',
   component: lazyRouteComponent(() => import('../../Property/PropertyPublishedPage')),
 });
-const ownerRequestsRoute = createRoute({
-  getParentRoute: () => ownerAreaRoute,
-  path: 'requests',
-  component: lazyRouteComponent(() => import('../pages/owner/OwnerRequestsPage')),
-});
 const ownerSettingsRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: 'settings',
@@ -195,7 +190,6 @@ export const dashboardRoute = DashboardRoute.addChildren([
       ownerPropertyDetailRoute,
       ownerPropertyPublishedRoute,
     ]),
-    ownerRequestsRoute,
     ownerSettingsRoute,
     ownerMessagesRoute.addChildren([ownerMessagesIndexRoute, ownerConversationRoute]),
   ]),
