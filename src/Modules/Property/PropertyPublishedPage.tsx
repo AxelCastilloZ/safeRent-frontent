@@ -52,14 +52,14 @@ export default function PropertyPublishedPage() {
         <button
           type="button"
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
-          onClick={() => property && navigate({ to: `/properties/detail/${property.id}` })}
+          onClick={() => property && navigate({ to: `/dashboard/owner/properties/detail/${property.id}` })}
         >
           Ver detalle
         </button>
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate({ to: '/properties' })}
+          onClick={() => navigate({ to: '/dashboard/owner/properties' })}
         >
           Mis propiedades
         </button>

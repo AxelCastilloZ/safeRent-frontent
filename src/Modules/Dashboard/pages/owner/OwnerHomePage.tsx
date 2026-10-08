@@ -53,7 +53,7 @@ export default function OwnerHomePage() {
           Acciones rápidas
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <Link to="/properties/new" className={quickActionClass}>
+          <Link to="/dashboard/owner/properties/new" className={quickActionClass}>
             <Plus size={20} className="text-secondary" aria-hidden="true" />
             Publicar propiedad
           </Link>
