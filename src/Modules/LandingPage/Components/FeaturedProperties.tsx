@@ -6,7 +6,7 @@ import Reveal from './Reveal'
 
 export default function FeaturedProperties({ serviceIds }: { serviceIds: number[] }) {
   const [attempt, setAttempt] = useState(0)
-  const { properties, loading, error } = useProperties(serviceIds, attempt)
+  const { properties, loading, error } = useProperties({ serviceIds }, attempt)
   // The public endpoint returns published properties, newest first.
   const featuredProperties = properties.slice(0, 6)
   return (

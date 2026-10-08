@@ -166,7 +166,7 @@ const LoginForm = () => {
 
         <p className="text-center text-base leading-[25.6px] text-[#45474c]">
           Don't have an account?{' '}
-          <Link to="/register" className={`${linkClass} text-sm tracking-[0.7px]`}>
+          <Link to="/register" search={{ next }} className={`${linkClass} text-sm tracking-[0.7px]`}>
             Sign up
           </Link>
         </p>

@@ -44,6 +44,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/reservations', label: 'Mis reservaciones', Icon: CalendarCheck },
       { to: '/dashboard/messages', label: 'Mensajes', Icon: MessageSquare },
       { to: '/dashboard/saved', label: 'Propiedades guardadas', Icon: Heart },
+      { to: '/dashboard/owner/properties', label: 'Mis publicaciones', Icon: Building2 },
       { to: '/dashboard/settings', label: 'Ajustes', Icon: Settings },
     ],
   },

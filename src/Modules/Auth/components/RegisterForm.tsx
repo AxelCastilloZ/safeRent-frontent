@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import Alert from '@mui/material/Alert';
 
@@ -22,11 +22,12 @@ const legalLinkClass =
 const RegisterForm = () => {
   const register = useRegister();
   const navigate = useNavigate();
+  const { next } = useSearch({ from: '/register' });
   useEffect(() => {
     if (!register.isSuccess) return;
-    const timer = window.setTimeout(() => { void navigate({ to: '/login' }); }, 2500);
+    const timer = window.setTimeout(() => { void navigate({ to: '/login', search: { next } }); }, 2500);
     return () => window.clearTimeout(timer);
-  }, [register.isSuccess, navigate]);
+  }, [register.isSuccess, navigate, next]);
   const form = useForm({
     defaultValues: createAccountDefaultValues,
     validators: { onBlur: createAccountSchema, onSubmit: createAccountSchema },
@@ -338,7 +339,7 @@ const RegisterForm = () => {
         </div>
 
         <Link
-          to="/login"
+          to="/login" search={{ next }}
           className="w-full rounded-lg border border-[#e2e8f0] bg-white px-[17px] py-[13px] text-center text-sm leading-5 font-semibold tracking-[0.7px] text-[#0a2540] drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#f9f9ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#f1f3fb]"
         >
           Sign In

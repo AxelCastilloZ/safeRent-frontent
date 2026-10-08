@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, ClipboardCheck, FileText, ImagePlus, MapPin } from 'lucide-react'
-import { useAuth } from '../Auth/hooks/authHooks'
 import Footer from '../LandingPage/Components/Footer'
 import Navbar from '../LandingPage/Components/Navbar'
 import Reveal from '../LandingPage/Components/Reveal'
@@ -18,11 +17,9 @@ const secondaryLink =
   'inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-primary transition hover:border-secondary'
 
 /**
- * Explica cómo se publica una propiedad y pide iniciar sesión. Al iniciar sesión (o
- * si ya hay una sesión) se continúa en el formulario de publicar propiedad.
+ * Explica cómo publicar y abre el formulario; su guard conserva el destino al iniciar sesión.
  */
 export default function PublishEntryPage() {
-  const { hasSession } = useAuth()
 
   return (
     <div className="min-h-screen bg-white text-ink">
@@ -50,32 +47,20 @@ export default function PublishEntryPage() {
         </ol>
 
         <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
-          {hasSession ? (
-            // Normalmente la ruta ya redirigió al formulario; esto cubre la sesión que se confirma después.
-            <>
-              <h2 className="text-xl font-bold text-primary">Todo listo para publicar</h2>
-              <Link to="/dashboard/owner/properties/new" className={`${primaryLink} mt-6`}>
-                Continuar con la publicación
-                <ArrowRight size={17} aria-hidden="true" />
-              </Link>
-            </>
-          ) : (
-            <>
-              <h2 className="text-xl font-bold text-primary">Inicia sesión para publicar tu propiedad</h2>
-              <p className="mt-2 text-sm leading-6 text-neutral/75">
-                Inicia sesión para publicar una propiedad en SafeRent. Si todavía no tienes cuenta, créala en un minuto.
-              </p>
-              <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link to="/login" search={{ next: '/dashboard/owner/properties/new' }} className={primaryLink}>
-                  Iniciar sesión
-                  <ArrowRight size={17} aria-hidden="true" />
-                </Link>
-                <Link to="/register" className={secondaryLink}>
-                  Crear cuenta
-                </Link>
-              </div>
-            </>
-          )}
+          <h2 className="text-xl font-bold text-primary">Crea tu propiedad</h2>
+          <p className="mt-2 text-sm leading-6 text-neutral/75">
+            Completa los datos y envía tu propiedad a revisión. Al aprobarla, recibirás el rol de propietario.
+            Si todavía no has iniciado sesión, te pediremos hacerlo antes de continuar.
+          </p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link to="/dashboard/owner/properties/new" className={primaryLink}>
+              Crear propiedad
+              <ArrowRight size={17} aria-hidden="true" />
+            </Link>
+            <Link to="/register" search={{ next: '/dashboard/owner/properties/new' }} className={secondaryLink}>
+              Crear cuenta
+            </Link>
+          </div>
         </div>
       </main>
       <Footer />

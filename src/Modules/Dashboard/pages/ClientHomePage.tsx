@@ -1,7 +1,6 @@
 import { CalendarCheck, Heart, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useConversations, useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
-import EmptyPanel from '../Components/EmptyPanel';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import { useTenantProperties } from '../hooks/useTenantProperties';
@@ -12,6 +11,7 @@ import { readSavedPropertyIds } from '../utils/savedProperties';
 /** Inicio del panel del inquilino. Lo que no tiene backend se marca como pendiente, no se simula. */
 export default function ClientHomePage() {
   const { firstName } = useDashboardUser();
+  const properties = useTenantProperties();
   const conversations = useConversations();
   const unreadMessages = useUnreadMessagesCount();
   const [savedCount] = useState(() => readSavedPropertyIds().length);

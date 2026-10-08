@@ -56,7 +56,7 @@ const clientConversationRoute = createRoute({
 });
 
 // ── Propietario ──────────────────────────────────────────────────────────────
-const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner', beforeLoad: requireRole('OWNER') });
+const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner', beforeLoad: requireDashboard });
 const ownerHomeRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: '/',
