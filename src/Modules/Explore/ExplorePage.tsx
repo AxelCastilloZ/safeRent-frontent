@@ -344,7 +344,7 @@ export default function ExplorePage() {
                         <PropertyPhoto property={property} />
                         <span className="available-badge">
                           <span className="status-dot" />
-                          Disponible
+                          {property.reservedTenantId ? 'Reservada' : 'Disponible'}
                         </span>
                       </div>
                       <div className="property-info">
