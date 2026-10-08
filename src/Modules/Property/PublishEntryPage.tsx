@@ -54,7 +54,7 @@ export default function PublishEntryPage() {
             // Normalmente la ruta ya redirigió al formulario; esto cubre la sesión que se confirma después.
             <>
               <h2 className="text-xl font-bold text-primary">Todo listo para publicar</h2>
-              <Link to="/properties/new" className={`${primaryLink} mt-6`}>
+              <Link to="/dashboard/owner/properties/new" className={`${primaryLink} mt-6`}>
                 Continuar con la publicación
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
@@ -66,7 +66,7 @@ export default function PublishEntryPage() {
                 Inicia sesión para publicar una propiedad en SafeRent. Si todavía no tienes cuenta, créala en un minuto.
               </p>
               <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link to="/login" search={{ next: '/properties/new' }} className={primaryLink}>
+                <Link to="/login" search={{ next: '/dashboard/owner/properties/new' }} className={primaryLink}>
                   Iniciar sesión
                   <ArrowRight size={17} aria-hidden="true" />
                 </Link>

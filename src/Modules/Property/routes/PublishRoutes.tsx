@@ -14,7 +14,7 @@ async function sendSignedInUsersToForm({ context }: { context: RouterContext }) 
 
   try {
     await context.queryClient.fetchQuery(authUserQueryOptions(token));
-    throw redirect({ to: '/properties/new' });
+    throw redirect({ to: '/dashboard/owner/properties/new' });
   } catch (error) {
     if (isRedirect(error)) throw error;
     // No se pudo confirmar la sesión (red caída, 401…): se muestra la página, que se adapta sola.
