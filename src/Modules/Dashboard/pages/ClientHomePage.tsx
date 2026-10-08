@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { CalendarCheck, CalendarClock, Heart, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
-import { useConversations } from '../../Messages/hooks/messageHooks';
+import { useConversations, useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
 import EmptyPanel from '../Components/EmptyPanel';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
@@ -14,6 +14,7 @@ import { readSavedPropertyIds } from '../utils/savedProperties';
 export default function ClientHomePage() {
   const { firstName } = useDashboardUser();
   const conversations = useConversations();
+  const unreadMessages = useUnreadMessagesCount();
   const [savedCount] = useState(() => readSavedPropertyIds().length);
 
   return (
@@ -24,11 +25,11 @@ export default function ClientHomePage() {
         <StatCard label="Reservaciones activas" icon={CalendarCheck} />
         <StatCard label="Reservaciones pendientes" icon={CalendarClock} />
         <StatCard
-          label="Conversaciones"
+          label="Mensajes sin leer"
           icon={MessageSquare}
-          value={conversations.isError ? '—' : conversations.data?.length}
+          value={conversations.isError ? '—' : unreadMessages}
           isLoading={conversations.isPending}
-          hint="Mensajes sin leer: pendiente de integrar"
+          hint={conversations.data && `En ${conversations.data.length} ${conversations.data.length === 1 ? 'conversación' : 'conversaciones'}`}
         />
         <StatCard label="Propiedades guardadas" icon={Heart} value={savedCount} hint="Guardadas en este dispositivo" />
       </section>

@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Building2, ClipboardList, FileEdit, MessageSquare, Plus } from 'lucide-react';
-import { useConversations } from '../../../Messages/hooks/messageHooks';
+import { useConversations, useUnreadMessagesCount } from '../../../Messages/hooks/messageHooks';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 import PendingNotice from '../../Components/PendingNotice';
@@ -16,6 +16,7 @@ export default function OwnerHomePage() {
   const { firstName } = useDashboardUser();
   const properties = useOwnerProperties();
   const conversations = useConversations();
+  const unreadMessages = useUnreadMessagesCount();
 
   const published = properties.data?.filter((property) => property.status === 'ACTIVE').length;
   const inReview = properties.data?.filter((property) => property.status === 'PENDING').length;
@@ -40,11 +41,11 @@ export default function OwnerHomePage() {
         />
         <StatCard label="Solicitudes de reservación" icon={ClipboardList} />
         <StatCard
-          label="Conversaciones"
+          label="Mensajes sin leer"
           icon={MessageSquare}
-          value={conversations.isError ? '—' : conversations.data?.length}
+          value={conversations.isError ? '—' : unreadMessages}
           isLoading={conversations.isPending}
-          hint="Mensajes sin leer: pendiente de integrar"
+          hint={conversations.data && `En ${conversations.data.length} ${conversations.data.length === 1 ? 'conversación' : 'conversaciones'}`}
         />
       </section>
 

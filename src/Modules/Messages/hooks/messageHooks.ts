@@ -6,9 +6,10 @@ import {
   getConversation,
   getConversations,
   getMessages,
+  markConversationRead,
   sendMessage,
 } from '../services/messageServices'
-import type { SendMessageRequest } from '../types/message'
+import type { Conversation, SendMessageRequest } from '../types/message'
 
 const MESSAGES_POLL_MS = 4000
 // La bandeja cambia poco: basta para que un arrendatario vea una consulta nueva sin recargar.
@@ -30,6 +31,12 @@ export function useConversations() {
     enabled: currentUser !== undefined,
     refetchInterval: CONVERSATIONS_POLL_MS,
   })
+}
+
+/** Mensajes sin leer del usuario: suma de la bandeja (misma consulta y caché que useConversations). */
+export function useUnreadMessagesCount(): number {
+  const { data } = useConversations()
+  return data?.reduce((total, conversation) => total + (conversation.unreadCount ?? 0), 0) ?? 0
 }
 
 export function useConversation(conversationId: number) {
@@ -56,6 +63,28 @@ export function useSendMessage(conversationId: number) {
     mutationFn: (payload: SendMessageRequest) => sendMessage(conversationId, payload),
     // Devolver la promesa: el mensaje pendiente se retira recién cuando la lista ya trae el confirmado.
     onSuccess: () => queryClient.invalidateQueries({ queryKey: conversationKeys.messages(conversationId) }),
+  })
+}
+
+/**
+ * Marca una conversación como leída. La bandeja baja el contador al instante (sin esperar al servidor)
+ * y después se vuelve a consultar para quedar igual que el backend.
+ */
+export function useMarkConversationRead() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+  return useMutation({
+    mutationFn: markConversationRead,
+    onMutate: (conversationId: number) => {
+      queryClient.setQueryData<Conversation[]>(conversationKeys.list(user?.id), (list) =>
+        list?.map((conversation) => (conversation.id === conversationId ? { ...conversation, unreadCount: 0 } : conversation)),
+      )
+    },
+    onSettled: (_data, _error, conversationId) =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: conversationKeys.list(user?.id) }),
+        queryClient.invalidateQueries({ queryKey: conversationKeys.messages(conversationId) }),
+      ]),
   })
 }
 
