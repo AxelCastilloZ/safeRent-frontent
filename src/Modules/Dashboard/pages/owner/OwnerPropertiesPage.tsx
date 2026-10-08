@@ -54,7 +54,7 @@ export default function OwnerPropertiesPage() {
         title="Mis propiedades"
         description="Gestiona las propiedades que publicas en SafeRent."
         actions={
-          <Link to="/properties/new" className={publishLinkClass}>
+          <Link to="/dashboard/owner/properties/new" className={publishLinkClass}>
             <Plus size={18} aria-hidden="true" />
             Publicar propiedad
           </Link>
@@ -79,7 +79,7 @@ export default function OwnerPropertiesPage() {
           title={filter === 'all' ? 'Aún no tienes propiedades' : 'No hay propiedades en este estado'}
           description="Publica tu primera propiedad para empezar a recibir consultas."
           action={
-            <Link to="/properties/new" className={publishLinkClass}>
+            <Link to="/dashboard/owner/properties/new" className={publishLinkClass}>
               <Plus size={18} aria-hidden="true" />
               Publicar propiedad
             </Link>
@@ -107,14 +107,14 @@ export default function OwnerPropertiesPage() {
               </div>
               <div className="flex gap-2">
                 <Link
-                  to="/properties/detail/$propertyId"
+                  to="/dashboard/owner/properties/detail/$propertyId"
                   params={{ propertyId: String(property.id) }}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
                 >
                   Ver
                 </Link>
                 <Link
-                  to="/properties/new"
+                  to="/dashboard/owner/properties/new"
                   search={{ editId: property.id }}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
                 >
