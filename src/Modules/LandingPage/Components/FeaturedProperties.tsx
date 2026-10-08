@@ -8,7 +8,7 @@ export default function FeaturedProperties({ serviceIds }: { serviceIds: number[
   const [attempt, setAttempt] = useState(0)
   const { properties, loading, error } = useProperties(serviceIds, attempt)
   // The public endpoint returns published properties, newest first.
-  const featuredProperties = properties.slice(0, 3)
+  const featuredProperties = properties.slice(0, 6)
   return (
     <section id="properties" className="scroll-mt-20 bg-surface px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-6xl">

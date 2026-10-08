@@ -1,6 +1,5 @@
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { rootRoute } from "../../../routes/rootRoute";
-import { requireAuth } from '../../Auth/routes/guards';
 
 // El asistente para crear / editar propiedades vive en el panel del propietario
 // (/dashboard/owner/properties/...): ver Dashboard/routes/DashboardRoutes.tsx.
@@ -14,6 +13,5 @@ export function optionalPropertyId(value: unknown): number | undefined {
 export const publicPropertyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'property_detail/$propertyId',
-  beforeLoad: requireAuth,
   component: lazyRouteComponent(() => import('../PublicPropertyPage')),
 });
