@@ -1,8 +1,7 @@
-import { Building2, ClipboardCheck, Flag, Users } from 'lucide-react';
-import EmptyPanel from '../../Components/EmptyPanel';
+import { Link } from '@tanstack/react-router';
+import { Building2, ClipboardCheck, Flag, Settings, Users } from 'lucide-react';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
-import PendingNotice from '../../Components/PendingNotice';
 import StatCard from '../../Components/StatCard';
 import { useAdminUsers } from '../../../Users/hooks/useAdminUsers';
 import { useAdminProperties } from '../../../Property/hooks/useAdminProperties';
@@ -39,33 +38,15 @@ export default function AdminHomePage() {
         <StatCard label="Reportes pendientes" icon={Flag} />
       </section>
 
-      <section aria-labelledby="pending-actions" className="mt-8">
-        <h2 id="pending-actions" className="mb-3 text-lg font-bold">
-          Acciones pendientes
+      <section aria-labelledby="quick-actions" className="mt-8">
+        <h2 id="quick-actions" className="mb-3 text-lg font-bold">
+          Acciones rápidas
         </h2>
-        {pending.data?.data.length ? (
-          <ul className="space-y-2">
-            {pending.data.data.slice(0, 5).map((property) => (
-              <li key={property.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-primary">{property.title}</p>
-                  <p className="truncate text-xs text-muted-ink">{property.owner.name} {property.owner.surname1}</p>
-                </div>
-                <a href="/dashboard/admin/properties" className="shrink-0 text-xs font-bold text-secondary hover:underline">
-                  Revisar
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <EmptyPanel
-            icon={ClipboardCheck}
-            title="Sin acciones pendientes"
-            description="Aquí aparecen las propiedades esperando aprobación."
-          />
-        )}
-        <div className="mt-3">
-          <PendingNotice>reportes y moderación de contenido — ese módulo no existe en el backend.</PendingNotice>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Link to="/admin/services" className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-primary shadow-sm transition hover:border-secondary">
+            <Settings size={20} className="text-secondary" aria-hidden="true" />
+            Gestionar servicios
+          </Link>
         </div>
       </section>
     </PageContainer>
