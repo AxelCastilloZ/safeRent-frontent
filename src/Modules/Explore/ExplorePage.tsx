@@ -183,10 +183,10 @@ export default function ExplorePage() {
                 onChange={(e) => setRooms(e.target.value)}
               >
                 <option value="">Habitaciones</option>
-                <option value="1">1+ habitaciones</option>
-                <option value="2">2+ habitaciones</option>
-                <option value="3">3+ habitaciones</option>
-                <option value="4">4+ habitaciones</option>
+                <option value="1">1 habitaciones</option>
+                <option value="2">2 habitaciones</option>
+                <option value="3">3 habitaciones</option>
+                <option value="4">4 habitaciones</option>
               </select>
             </div>
             {filtersOpen && (
