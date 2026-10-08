@@ -3,6 +3,8 @@ import { ArrowRight, LayoutDashboard, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { roleHome } from '../../Auth/utils/roleHome';
 import { DASHBOARD_AREAS, getAreaFromPath } from '../config/navigation';
+import { useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
+import UnreadBadge from '../../Messages/Components/UnreadBadge';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 
 
@@ -16,6 +18,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
   const home = roleHome(roles);
   const area = getAreaFromPath(home);
   const quickLinks = DASHBOARD_AREAS[area].nav.slice(1);
+  const unreadMessages = useUnreadMessagesCount();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -55,15 +58,18 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        aria-label={`Menú de ${fullName ?? 'mi cuenta'}`}
+        aria-label={`Menú de ${fullName ?? 'mi cuenta'}${unreadMessages > 0 ? `, ${unreadMessages} mensajes sin leer` : ''}`}
         aria-haspopup="true"
         aria-expanded={open}
         aria-controls="user-menu-panel"
-        className={`grid size-10 place-items-center rounded-full bg-primary text-sm font-semibold text-white transition hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+        className={`relative grid size-10 place-items-center rounded-full bg-primary text-sm font-semibold text-white transition hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
           open ? 'ring-2 ring-secondary ring-offset-2' : ''
         }`}
       >
         {initials || '?'}
+        {unreadMessages > 0 && (
+          <span aria-hidden="true" className="absolute right-0 top-0 size-3 rounded-full border-2 border-white bg-secondary-dark" />
+        )}
       </button>
 
       {open && (
@@ -99,6 +105,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
                 <Link to={to} onClick={close} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-primary transition hover:bg-slate-100">
                   <Icon size={18} className="text-muted-ink" aria-hidden="true" />
                   {label}
+                  {to === DASHBOARD_AREAS[area].messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
                 </Link>
               </li>
             ))}

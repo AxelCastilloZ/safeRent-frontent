@@ -12,6 +12,7 @@ import {
 } from '../utils/conversation'
 import ParticipantAvatar from './ParticipantAvatar'
 import RoleBadge from './RoleBadge'
+import UnreadBadge from './UnreadBadge'
 import Skeleton from './Skeleton'
 
 /** Bandeja (wireframe 3a): todas las conversaciones del usuario, sea inquilino o arrendatario en cada una. */
@@ -58,6 +59,7 @@ export default function ConversationList() {
             {conversations.map((conversation) => {
               const other = currentUser ? otherParticipant(conversation, currentUser.id) : undefined
               const isActive = conversation.id === activeId
+              const unread = conversation.unreadCount ?? 0
               return (
                 <li key={conversation.id} className="border-b border-slate-200 last:border-b-0">
                   <Link
@@ -68,7 +70,7 @@ export default function ConversationList() {
                     <ParticipantAvatar initials={other ? participantInitials(other) : '?'} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="truncate font-semibold">{other ? participantFullName(other) : 'Usuario'}</p>
+                        <p className={`truncate ${unread > 0 ? 'font-extrabold text-primary' : 'font-semibold'}`}>{other ? participantFullName(other) : 'Usuario'}</p>
                         {currentUser && <RoleBadge>{otherParticipantRole(conversation, currentUser.id)}</RoleBadge>}
                       </div>
                       <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
@@ -76,9 +78,10 @@ export default function ConversationList() {
                           <Building2 className="size-3.5 shrink-0" aria-hidden="true" />
                           <span className="truncate">{conversation.property.title}</span>
                         </p>
-                        <time dateTime={conversation.createdAt} className="shrink-0">
-                          {shortDate(conversation.createdAt)}
-                        </time>
+                        <span className="flex shrink-0 items-center gap-2">
+                          <UnreadBadge count={unread} />
+                          <time dateTime={conversation.createdAt}>{shortDate(conversation.createdAt)}</time>
+                        </span>
                       </div>
                     </div>
                   </Link>

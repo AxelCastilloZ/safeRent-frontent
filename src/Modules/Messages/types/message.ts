@@ -17,6 +17,8 @@ export interface ConversationProperty extends ReservationState {
 export interface Conversation {
   id: number
   createdAt: string
+  /** Mensajes de la otra persona que aún no abriste. Solo viene en la bandeja (GET /conversations/user/:id). */
+  unreadCount?: number
   participants: ConversationParticipant[]
   property: ConversationProperty
 }
@@ -25,6 +27,8 @@ export interface Message {
   id: number
   message: string
   createdAt: string
+  /** Cuándo lo vio la otra persona; null = sin leer. */
+  readAt: string | null
   sender: ConversationParticipant
 }
 

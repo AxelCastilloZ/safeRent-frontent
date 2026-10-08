@@ -1,6 +1,7 @@
 import { CalendarCheck, Heart, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
-import { useConversations } from '../../Messages/hooks/messageHooks';
+import { useConversations, useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
+import EmptyPanel from '../Components/EmptyPanel';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import { useTenantProperties } from '../hooks/useTenantProperties';
@@ -12,7 +13,7 @@ import { readSavedPropertyIds } from '../utils/savedProperties';
 export default function ClientHomePage() {
   const { firstName } = useDashboardUser();
   const conversations = useConversations();
-  const properties = useTenantProperties();
+  const unreadMessages = useUnreadMessagesCount();
   const [savedCount] = useState(() => readSavedPropertyIds().length);
 
   return (
@@ -22,11 +23,11 @@ export default function ClientHomePage() {
       <section aria-label="Resumen" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Propiedades reservadas" icon={CalendarCheck} value={properties.isError ? '—' : properties.data?.length} isLoading={properties.isPending} />
         <StatCard
-          label="Conversaciones"
+          label="Mensajes sin leer"
           icon={MessageSquare}
-          value={conversations.isError ? '—' : conversations.data?.length}
+          value={conversations.isError ? '—' : unreadMessages}
           isLoading={conversations.isPending}
-          hint="Mensajes sin leer: pendiente de integrar"
+          hint={conversations.data && `En ${conversations.data.length} ${conversations.data.length === 1 ? 'conversación' : 'conversaciones'}`}
         />
         <StatCard label="Propiedades guardadas" icon={Heart} value={savedCount} hint="Guardadas en este dispositivo" />
       </section>
