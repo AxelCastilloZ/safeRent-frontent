@@ -43,8 +43,8 @@ export default function DashboardLayout() {
   const role = area === 'admin' ? 'ADMIN' : area === 'owner' ? 'OWNER' : 'CLIENT';
   const permitted = Boolean(user?.roles.includes(role));
   useEffect(() => {
-    if (user && !permitted) router.history.replace(roleHome(user.roles));
-  }, [user, permitted, router]);
+    if (user && !permitted && pathname.startsWith('/dashboard')) router.history.replace(roleHome(user.roles));
+  }, [user, permitted, router, pathname]);
 
   if (!hasSession || !permitted) return null;
 

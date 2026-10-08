@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import type { Property } from '../interfaces/property.interface'
-import { getProperties } from '../services/property.service'
+import { getProperties, type PropertyFilters } from '../services/property.service'
 
-export function useProperties(serviceIds: number[], attempt: number) {
+export function useProperties(filters: PropertyFilters, attempt: number) {
   const [result, setResult] = useState<{
     key: string
     properties: Property[]
     error: string
   } | null>(null)
-  const requestKey = `${attempt}:${serviceIds.join(',')}`
+
+  const requestKey = `${attempt}:${JSON.stringify(filters)}`
 
   useEffect(() => {
     const controller = new AbortController()
-    getProperties(controller.signal, serviceIds)
+    getProperties(controller.signal, filters)
       .then((properties) => {
         if (!controller.signal.aborted) setResult({ key: requestKey, properties, error: '' })
       })
@@ -28,7 +29,7 @@ export function useProperties(serviceIds: number[], attempt: number) {
           })
       })
     return () => controller.abort()
-  }, [requestKey, serviceIds])
+  }, [requestKey])
 
   return {
     properties:

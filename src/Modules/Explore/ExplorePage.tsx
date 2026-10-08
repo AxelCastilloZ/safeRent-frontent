@@ -1,5 +1,5 @@
 import ServiceIcon from '../Services/components/ServiceIcon'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BedDouble,
   Building2,
@@ -15,10 +15,22 @@ import PropertyMap from './PropertyMap'
 import { useProperties } from './hooks/useProperties'
 import { useServices } from './hooks/useServices'
 import type { Property } from './interfaces/property.interface'
-import { coordinates, normalize, photoUrl, priceLabel } from './utils/property.utils'
+import type { PropertyFilters } from './services/property.service'
+import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
 
 const EMPTY_PROPERTIES: Property[] = []
+
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debounced, setDebounced] = useState(value)
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) { first.current = false; return }
+    const id = setTimeout(() => setDebounced(value), delayMs)
+    return () => clearTimeout(id)
+  }, [value, delayMs])
+  return debounced
+}
 
 export default function ExplorePage() {
   const params = new URLSearchParams(window.location.search)
@@ -33,16 +45,32 @@ export default function ExplorePage() {
   const [selected, setSelected] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
   const [mobileView, setMobileView] = useState('list')
-  const { properties: loadedProperties, loading, error } = useProperties(
-    services,
-    attempt,
-  )
+
+  const debouncedQuery = useDebouncedValue(query, 400)
+
+  const priceRangeValid = !minPrice || !maxPrice || Number(minPrice) <= Number(maxPrice)
+
+  const filters: PropertyFilters = useMemo(() => {
+    const f: PropertyFilters = {}
+    if (services.length) f.serviceIds = services
+    if (debouncedQuery.trim()) f.search = debouncedQuery.trim()
+    if (priceRangeValid) {
+      if (minPrice) f.minPrice = Number(minPrice)
+      if (maxPrice) f.maxPrice = Number(maxPrice)
+    }
+    if (rooms) f.minRooms = Number(rooms)
+    return f
+  }, [services, debouncedQuery, minPrice, maxPrice, rooms, priceRangeValid])
+
+  const { properties: loadedProperties, loading, error } = useProperties(filters, attempt)
   const {
     services: availableServices,
     loading: servicesLoading,
     error: servicesError,
   } = useServices(servicesAttempt)
+
   const properties = loading || error ? EMPTY_PROPERTIES : loadedProperties
+
   const currencies = useMemo(
     () =>
       [
@@ -55,26 +83,20 @@ export default function ExplorePage() {
       ].filter(Boolean),
     [properties, currency],
   )
+
   const filtered = useMemo(
-    () =>
-      properties.filter(
-        (property) =>
-          normalize(`${property.title} ${property.address}`).includes(
-            normalize(query.trim()),
-          ) &&
-          (!currency || property.typeOfCoin === currency) &&
-          (!currency ||
-            !minPrice ||
-            Number(property.cost) >= Number(minPrice)) &&
-          (!currency ||
-            !maxPrice ||
-            Number(property.cost) <= Number(maxPrice)) &&
-          (!rooms || property.rooms >= Number(rooms)),
-      ),
-    [properties, query, currency, minPrice, maxPrice, rooms],
+    () => properties.filter((property) =>
+      !currency || property.typeOfCoin === currency,
+    ),
+    [properties, currency],
   )
+
   const activeProperty = filtered.find((p) => p.id === selected)
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
+  const activeFilterCount =
+    (services.length > 0 ? 1 : 0) +
+    (minPrice ? 1 : 0) +
+    (maxPrice ? 1 : 0)
   const hasFilters = Boolean(
     query || currency || minPrice || maxPrice || rooms || services.length,
   )
@@ -141,7 +163,7 @@ export default function ExplorePage() {
                 onClick={() => setFiltersOpen(!filtersOpen)}
               >
                 <SlidersHorizontal size={16} />
-                Filtros{services.length > 0 && ` (${services.length})`}
+                Filtros{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
               <select
                 aria-label="Moneda"
@@ -169,19 +191,16 @@ export default function ExplorePage() {
             </div>
             {filtersOpen && (
               <div id="explore-filters" className="expanded-filters">
-                {/* <p>
+                <p className="filter-section-label">
                   Precio mensual{' '}
-                  {currency
-                    ? `en ${currency}`
-                    : '· elige una moneda para filtrar'}
-                </p> */}
-                {/* <div className="price-inputs">
+                  {currency ? `en ${currency}` : ''}
+                </p>
+                <div className="price-inputs">
                   <label>
                     Desde
                     <input
                       type="number"
                       min="0"
-                      disabled={!currency}
                       placeholder="Sin mínimo"
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
@@ -192,23 +211,22 @@ export default function ExplorePage() {
                     <input
                       type="number"
                       min="0"
-                      disabled={!currency}
                       placeholder="Sin máximo"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                     />
                   </label>
-                </div> */}
-                {/* {currency &&
-                  minPrice &&
+                </div>
+                {minPrice &&
                   maxPrice &&
                   Number(minPrice) > Number(maxPrice) && (
-                    <p role="status">
+                    <p role="status" className="filter-validation">
                       El precio mínimo debe ser menor o igual al máximo.
-                    </p> */}
-                  
+                    </p>
+                  )}
+
                 <fieldset aria-busy={servicesLoading}>
-                  {/* <legend>Servicios incluidos</legend> */}
+                  <legend className="filter-section-label">Servicios incluidos</legend>
                   <p>
                     La propiedad debe contar con todos los servicios
                     seleccionados.

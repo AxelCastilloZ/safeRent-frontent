@@ -28,11 +28,11 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
     map.current = instance
     L.control.zoom({ position: 'topright' }).addTo(instance)
     const tiles = L.tileLayer(
-      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
       {
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.openstreetmap.fr/">OSM France</a>',
+        maxZoom: 20,
       },
     ).addTo(instance)
     tiles.on('tileerror', () =>

@@ -26,9 +26,9 @@ export default function LocationMap({ point, onChange, disabled = false }: Props
     if (!container.current) return
     const instance = L.map(container.current).setView([9.935, -84.084], 12)
     map.current = instance
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19,
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.openstreetmap.fr/">OSM France</a>',
+      maxZoom: 20,
     }).addTo(instance).on('tileerror', () => setNotice('No se pudo cargar parte del mapa. Revisa tu conexión.'))
     instance.on('click', (event: L.LeafletMouseEvent) => {
       if (!isDisabled.current) callback.current({ latitude: event.latlng.lat, longitude: event.latlng.lng })
