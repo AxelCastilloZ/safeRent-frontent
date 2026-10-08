@@ -9,6 +9,7 @@ import { ExplorerRoute } from "../Modules/Explore/routes/ExplorerRoutes";
 import { conversationRoute, MessagesRoute, messagesIndexRoute } from "../Modules/Messages/routes/MessagesRoutes";
 import { dashboardRoute } from "../Modules/Dashboard/routes/DashboardRoutes";
 import { PrivacyPolicyRoute, SobreNosotrosRoute, SoporteRoute, TermOfServiceRoute } from "../Modules/LandingPage/Routes/LandingRoutes";
+import { publishEntryRoute } from '../Modules/Property/routes/PublishRoutes';
 
 const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -24,6 +25,7 @@ export const routeTree = rootRoute.addChildren([
     RegisterRoute,
     ForgotPasswordRoute,
     ResetPasswordRoute,
+    publishEntryRoute,
     PropertyRoute.addChildren([
         propertyIndexRoute,
         propertyNewRoute,
