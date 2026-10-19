@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearch } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import Alert from '@mui/material/Alert';
 
 import logo from '../../../assets/saferent-logo.svg';
@@ -21,13 +21,13 @@ const legalLinkClass =
 
 const RegisterForm = () => {
   const register = useRegister();
-  const [accountType, setAccountType] = useState<'CLIENT' | 'OWNER'>('CLIENT');
   const navigate = useNavigate();
+  const { next } = useSearch({ from: '/register' });
   useEffect(() => {
     if (!register.isSuccess) return;
-    const timer = window.setTimeout(() => { void navigate({ to: '/login' }); }, 2500);
+    const timer = window.setTimeout(() => { void navigate({ to: '/login', search: { next } }); }, 2500);
     return () => window.clearTimeout(timer);
-  }, [register.isSuccess, navigate]);
+  }, [register.isSuccess, navigate, next]);
   const form = useForm({
     defaultValues: createAccountDefaultValues,
     validators: { onBlur: createAccountSchema, onSubmit: createAccountSchema },
@@ -36,7 +36,7 @@ const RegisterForm = () => {
       const { acceptTerms, surname2, ...payload } = parsed;
       void acceptTerms;
       try {
-        await register.mutateAsync({ ...payload, accountType, ...(surname2 ? { surname2 } : {}) });
+        await register.mutateAsync({ ...payload, accountType: 'CLIENT', ...(surname2 ? { surname2 } : {}) });
       } catch {
         return;
       }
@@ -66,13 +66,6 @@ const RegisterForm = () => {
           }}
           className="flex flex-col gap-6"
         >
-          <label className="flex flex-col gap-2 text-sm font-semibold">
-            Tipo de cuenta
-            <select value={accountType} onChange={(event) => setAccountType(event.target.value as 'CLIENT' | 'OWNER')} className={inputClass}>
-              <option value="CLIENT">Inquilino: buscar y alquilar propiedades</option>
-              <option value="OWNER">Propietario: publicar mis propiedades</option>
-            </select>
-          </label>
           <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
             {/* Name */}
             <form.Field name="name">
@@ -346,7 +339,7 @@ const RegisterForm = () => {
         </div>
 
         <Link
-          to="/login"
+          to="/login" search={{ next }}
           className="w-full rounded-lg border border-[#e2e8f0] bg-white px-[17px] py-[13px] text-center text-sm leading-5 font-semibold tracking-[0.7px] text-[#0a2540] drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#f9f9ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#f1f3fb]"
         >
           Sign In

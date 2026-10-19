@@ -1,8 +1,10 @@
-import { createRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { createRoute, lazyRouteComponent, Outlet } from '@tanstack/react-router';
 import { requireDashboard, requireRole } from '../../Auth/routes/guards';
 import { rootRoute } from '../../../routes/rootRoute';
 import MessagesLayout from '../../Messages/Components/MessagesLayout';
+import { optionalPropertyId } from '../../Property/routes/PropertyRoutes';
 import DashboardLayout from '../Components/DashboardLayout';
+import PageContainer from '../Components/PageContainer';
 
 // Un solo layout (/dashboard) con tres áreas que salen de la URL:
 //   /dashboard         → inquilino      /dashboard/owner/*  → propietario      /dashboard/admin/* → administrador
@@ -54,7 +56,7 @@ const clientConversationRoute = createRoute({
 });
 
 // ── Propietario ──────────────────────────────────────────────────────────────
-const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner', beforeLoad: requireRole('OWNER') });
+const ownerAreaRoute = createRoute({ getParentRoute: () => DashboardRoute, path: 'owner', beforeLoad: requireDashboard });
 const ownerHomeRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: '/',
@@ -65,10 +67,50 @@ const ownerPropertiesRoute = createRoute({
   path: 'properties',
   component: lazyRouteComponent(() => import('../pages/owner/OwnerPropertiesPage')),
 });
-const ownerRequestsRoute = createRoute({
+// Asistente para crear / editar una propiedad. La ruta sin path solo le da el mismo contenedor
+// que al resto de pantallas del panel.
+const ownerPropertyEditorRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
-  path: 'requests',
-  component: lazyRouteComponent(() => import('../pages/owner/OwnerRequestsPage')),
+  id: 'property-editor',
+  component: () => (
+    <PageContainer>
+      <Outlet />
+    </PageContainer>
+  ),
+});
+const ownerPropertyNewRoute = createRoute({
+  getParentRoute: () => ownerPropertyEditorRoute,
+  path: 'properties/new',
+  validateSearch: (search: Record<string, unknown>): { editId?: number } => ({
+    editId: optionalPropertyId(search.editId),
+  }),
+  component: lazyRouteComponent(() => import('../../Property/CreatePropertyStep1Page')),
+});
+const ownerPropertyNewLocationRoute = createRoute({
+  getParentRoute: () => ownerPropertyEditorRoute,
+  path: 'properties/new/location',
+  validateSearch: (search: Record<string, unknown>): { propertyId?: number } => ({
+    propertyId: optionalPropertyId(search.propertyId),
+  }),
+  component: lazyRouteComponent(() => import('../../Property/CreatePropertyLocationPage')),
+});
+const ownerPropertyNewMediaRoute = createRoute({
+  getParentRoute: () => ownerPropertyEditorRoute,
+  path: 'properties/new/media',
+  validateSearch: (search: Record<string, unknown>): { propertyId?: number } => ({
+    propertyId: optionalPropertyId(search.propertyId),
+  }),
+  component: lazyRouteComponent(() => import('../../Property/CreatePropertyStep2Page')),
+});
+const ownerPropertyDetailRoute = createRoute({
+  getParentRoute: () => ownerPropertyEditorRoute,
+  path: 'properties/detail/$propertyId',
+  component: lazyRouteComponent(() => import('../../Property/PropertyDetailPage')),
+});
+const ownerPropertyPublishedRoute = createRoute({
+  getParentRoute: () => ownerPropertyEditorRoute,
+  path: 'properties/$propertyId/publish',
+  component: lazyRouteComponent(() => import('../../Property/PropertyPublishedPage')),
 });
 const ownerSettingsRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
@@ -141,7 +183,13 @@ export const dashboardRoute = DashboardRoute.addChildren([
   ownerAreaRoute.addChildren([
     ownerHomeRoute,
     ownerPropertiesRoute,
-    ownerRequestsRoute,
+    ownerPropertyEditorRoute.addChildren([
+      ownerPropertyNewRoute,
+      ownerPropertyNewLocationRoute,
+      ownerPropertyNewMediaRoute,
+      ownerPropertyDetailRoute,
+      ownerPropertyPublishedRoute,
+    ]),
     ownerSettingsRoute,
     ownerMessagesRoute.addChildren([ownerMessagesIndexRoute, ownerConversationRoute]),
   ]),

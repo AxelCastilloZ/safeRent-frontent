@@ -36,5 +36,8 @@ export const LoginRoute = createRoute({
 export const RegisterRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "register",
+  validateSearch: (search: Record<string, unknown>): { next?: string } => ({
+    next: isSafeRedirect(search.next) ? search.next : undefined,
+  }),
   component: RegisterForm,
 });

@@ -4,11 +4,11 @@ import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./rootRoute";
 import LandingPage from "../Modules/LandingPage/LandingPage";
 import { LoginRoute, RegisterRoute, ForgotPasswordRoute, ResetPasswordRoute } from "../Modules/Auth/routes/AuthRoutes";
-import { propertyDetailsRoute, propertyIndexRoute, propertyNewLocationRoute, propertyNewMediaRoute, propertyNewRoute, propertyPublishRoute, PropertyRoute } from "../Modules/Property/routes/PropertyRoutes";
 import { ExplorerRoute } from "../Modules/Explore/routes/ExplorerRoutes";
 import { conversationRoute, MessagesRoute, messagesIndexRoute } from "../Modules/Messages/routes/MessagesRoutes";
 import { dashboardRoute } from "../Modules/Dashboard/routes/DashboardRoutes";
 import { PrivacyPolicyRoute, SobreNosotrosRoute, SoporteRoute, TermOfServiceRoute } from "../Modules/LandingPage/Routes/LandingRoutes";
+import { publishEntryRoute } from '../Modules/Property/routes/PublishRoutes';
 
 const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -24,14 +24,7 @@ export const routeTree = rootRoute.addChildren([
     RegisterRoute,
     ForgotPasswordRoute,
     ResetPasswordRoute,
-    PropertyRoute.addChildren([
-        propertyIndexRoute,
-        propertyNewRoute,
-        propertyNewLocationRoute,
-        propertyNewMediaRoute,
-        propertyDetailsRoute,
-        propertyPublishRoute
-    ]),
+    publishEntryRoute,
     dashboardRoute,
     MessagesRoute.addChildren([
         messagesIndexRoute,
@@ -44,4 +37,3 @@ export const routeTree = rootRoute.addChildren([
     TermOfServiceRoute,
     // servicesAdminRoute
 ])
-

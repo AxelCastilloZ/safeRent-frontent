@@ -8,7 +8,8 @@ export const useLogin = () => {
     const mutation = useMutation({
         mutationFn: Login,
         onSuccess: (res) =>{
-            qc.clear();
+            // Preserve the active login mutation so its success can trigger navigation.
+            qc.removeQueries();
             setSessionToken(res.access_token);
         }
     })

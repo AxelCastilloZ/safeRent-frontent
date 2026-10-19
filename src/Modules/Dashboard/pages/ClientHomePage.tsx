@@ -1,11 +1,9 @@
-import { Link } from '@tanstack/react-router';
-import { CalendarCheck, CalendarClock, Heart, MessageSquare } from 'lucide-react';
+import { CalendarCheck, Heart, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
-import { useConversations } from '../../Messages/hooks/messageHooks';
-import EmptyPanel from '../Components/EmptyPanel';
+import { useConversations, useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
-import PendingNotice from '../Components/PendingNotice';
+import { useTenantProperties } from '../hooks/useTenantProperties';
 import StatCard from '../Components/StatCard';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import { readSavedPropertyIds } from '../utils/savedProperties';
@@ -13,7 +11,9 @@ import { readSavedPropertyIds } from '../utils/savedProperties';
 /** Inicio del panel del inquilino. Lo que no tiene backend se marca como pendiente, no se simula. */
 export default function ClientHomePage() {
   const { firstName } = useDashboardUser();
+  const properties = useTenantProperties();
   const conversations = useConversations();
+  const unreadMessages = useUnreadMessagesCount();
   const [savedCount] = useState(() => readSavedPropertyIds().length);
 
   return (
@@ -21,35 +21,15 @@ export default function ClientHomePage() {
       <PageHeader title={firstName ? `Hola, ${firstName}` : 'Hola'} description="Este es el resumen de tu actividad en SafeRent." />
 
       <section aria-label="Resumen" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Reservaciones activas" icon={CalendarCheck} />
-        <StatCard label="Reservaciones pendientes" icon={CalendarClock} />
+        <StatCard label="Propiedades reservadas" icon={CalendarCheck} value={properties.isError ? '—' : properties.data?.length} isLoading={properties.isPending} />
         <StatCard
-          label="Conversaciones"
+          label="Mensajes sin leer"
           icon={MessageSquare}
-          value={conversations.isError ? '—' : conversations.data?.length}
+          value={conversations.isError ? '—' : unreadMessages}
           isLoading={conversations.isPending}
-          hint="Mensajes sin leer: pendiente de integrar"
+          hint={conversations.data && `En ${conversations.data.length} ${conversations.data.length === 1 ? 'conversación' : 'conversaciones'}`}
         />
         <StatCard label="Propiedades guardadas" icon={Heart} value={savedCount} hint="Guardadas en este dispositivo" />
-      </section>
-
-      <section aria-labelledby="next-reservation" className="mt-8">
-        <h2 id="next-reservation" className="mb-3 text-lg font-bold">
-          Próxima reservación
-        </h2>
-        <EmptyPanel
-          icon={CalendarCheck}
-          title="Aún no tienes reservaciones"
-          description="Cuando reserves una propiedad, aquí verás las fechas, el estado y las acciones disponibles."
-          action={
-            <Link to="/explorar" className="rounded-xl bg-secondary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-secondary-dark">
-              Explorar propiedades
-            </Link>
-          }
-        />
-        <div className="mt-3">
-          <PendingNotice>las reservaciones todavía no existen en el backend (sin entidad ni endpoints).</PendingNotice>
-        </div>
       </section>
     </PageContainer>
   );

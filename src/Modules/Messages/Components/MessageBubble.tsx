@@ -1,4 +1,4 @@
-import { AlertCircle, RotateCw } from 'lucide-react'
+import { AlertCircle, Check, CheckCheck, RotateCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { Message, PendingMessage } from '../types/message'
 
@@ -9,12 +9,40 @@ interface MessageBubbleProps {
   mine: boolean
 }
 
-/** Mensaje ya confirmado por el servidor. */
+/** Mensaje ya confirmado por el servidor. Los propios muestran si la otra persona ya los leyó. */
 export function MessageBubble({ message, mine }: MessageBubbleProps) {
+  const time = timeFormat.format(new Date(message.createdAt))
   return (
-    <Bubble mine={mine} footer={timeFormat.format(new Date(message.createdAt))}>
+    <Bubble
+      mine={mine}
+      footer={
+        mine ? (
+          <span className="inline-flex items-center gap-2">
+            {time}
+            <ReadStatus read={message.readAt !== null} />
+          </span>
+        ) : (
+          time
+        )
+      }
+    >
       {message.message}
     </Bubble>
+  )
+}
+
+/** ✓ Enviado / ✓✓ Leído (con texto, no solo el ícono, para lectores de pantalla). */
+function ReadStatus({ read }: { read: boolean }) {
+  return read ? (
+    <span className="inline-flex items-center gap-1 font-semibold text-secondary">
+      <CheckCheck className="size-3.5" aria-hidden="true" />
+      Leído
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1">
+      <Check className="size-3.5" aria-hidden="true" />
+      Enviado
+    </span>
   )
 }
 

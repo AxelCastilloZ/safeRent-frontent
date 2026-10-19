@@ -1,3 +1,4 @@
+import { isPropertySubmissionPath } from '../../Auth/routes/guards';
 import { useAuth } from '../../Auth/hooks/authHooks';
 import { roleHome } from '../../Auth/utils/roleHome';
 import { Outlet, useLocation, useRouter } from '@tanstack/react-router';
@@ -22,7 +23,7 @@ export default function DashboardLayout() {
   // El drawer recuerda en qué ruta se abrió: al navegar deja de contar como abierto, sin efectos.
   const [drawer, setDrawer] = useState<{ open: boolean; path: string }>({ open: false, path: pathname });
   const drawerOpen = drawer.open && drawer.path === pathname;
-  const area = getAreaFromPath(pathname);
+  const area = user?.roles.includes('CLIENT') && !user.roles.includes('OWNER') && isPropertySubmissionPath(pathname) ? 'client' : getAreaFromPath(pathname);
   const config = DASHBOARD_AREAS[area];
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function DashboardLayout() {
   }, [hasSession, router]);
 
   const role = area === 'admin' ? 'ADMIN' : area === 'owner' ? 'OWNER' : 'CLIENT';
-  const permitted = Boolean(user?.roles.includes(role));
+  const permitted = Boolean(user && (user.roles.includes(role) || (user.roles.includes('CLIENT') && isPropertySubmissionPath(pathname))));
   useEffect(() => {
     if (user && !permitted && pathname.startsWith('/dashboard')) router.history.replace(roleHome(user.roles));
   }, [user, permitted, router, pathname]);

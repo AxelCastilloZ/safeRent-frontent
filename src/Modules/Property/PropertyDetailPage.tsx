@@ -59,7 +59,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate({ to: '/properties' })}
+          onClick={() => navigate({ to: '/dashboard/owner/properties' })}
         >
           Volver a mis propiedades
         </button>
@@ -82,7 +82,7 @@ export default function PropertyDetailPage() {
       {isDraft && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
       {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
         Confirma la ubicación en el mapa para publicar.
-        <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
+        <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
       </div>}
       <div className="mb-6 flex items-start justify-between">
         <h1 className="text-2xl font-bold text-primary">{property.title || 'Sin título'}</h1>
@@ -127,7 +127,7 @@ export default function PropertyDetailPage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
-            onClick={() => navigate({ to: '/properties/new', search: { editId: property.id } })}
+            onClick={() => navigate({ to: '/dashboard/owner/properties/new', search: { editId: property.id } })}
           >
             <Pencil size={13} />
             Editar datos
@@ -241,7 +241,7 @@ export default function PropertyDetailPage() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate({ to: '/properties' })}
+          onClick={() => navigate({ to: '/dashboard/owner/properties' })}
         >
           Mis propiedades
         </button>

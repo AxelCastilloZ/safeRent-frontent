@@ -17,7 +17,7 @@ interface NewFile {
 
 export default function CreatePropertyStep2Page() {
   const navigate = useNavigate()
-  const search = useSearch({ from: '/properties/new/media' })
+  const search = useSearch({ strict: false })
   const propertyIdFromState = search.propertyId
   const propertyIdRef = useRef(propertyIdFromState)
   const propertyId = propertyIdRef.current
@@ -33,7 +33,7 @@ export default function CreatePropertyStep2Page() {
 
   useEffect(() => {
     if (!propertyId) {
-      navigate({ to: '/properties/new' })
+      navigate({ to: '/dashboard/owner/properties/new' })
       return
     }
     loadPropertyData(propertyId)
@@ -114,7 +114,7 @@ export default function CreatePropertyStep2Page() {
     setError(null)
     try {
       await saveData()
-      navigate({ to: '/properties' })
+      navigate({ to: '/dashboard/owner/properties' })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al guardar')
     } finally {
@@ -132,7 +132,7 @@ export default function CreatePropertyStep2Page() {
     setError(null)
     try {
       await saveData()
-      navigate({ to: `/properties/detail/${propertyId}` })
+      navigate({ to: `/dashboard/owner/properties/detail/${propertyId}` })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al validar datos')
     } finally {
@@ -243,7 +243,7 @@ export default function CreatePropertyStep2Page() {
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-          onClick={() => navigate({ to: '/properties/new/location', search: { propertyId } })}
+          onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId } })}
         >
           Atrás
         </button>

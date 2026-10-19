@@ -1,8 +1,6 @@
 import {
   Building2,
   CalendarCheck,
-  ClipboardList,
-  Flag,
   Heart,
   LayoutDashboard,
   MessageSquare,
@@ -46,6 +44,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/reservations', label: 'Mis reservaciones', Icon: CalendarCheck },
       { to: '/dashboard/messages', label: 'Mensajes', Icon: MessageSquare },
       { to: '/dashboard/saved', label: 'Propiedades guardadas', Icon: Heart },
+      { to: '/dashboard/owner/properties', label: 'Mis publicaciones', Icon: Building2 },
       { to: '/dashboard/settings', label: 'Ajustes', Icon: Settings },
     ],
   },
@@ -56,7 +55,6 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
     nav: [
       { to: '/dashboard/owner', label: 'Inicio', Icon: LayoutDashboard },
       { to: '/dashboard/owner/properties', label: 'Mis propiedades', Icon: Building2 },
-      { to: '/dashboard/owner/requests', label: 'Reservaciones / Solicitudes', Icon: ClipboardList },
       { to: '/dashboard/owner/messages', label: 'Mensajes', Icon: MessageSquare },
       { to: '/dashboard/owner/settings', label: 'Ajustes', Icon: Settings },
     ],
@@ -70,7 +68,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/admin/properties', label: 'Propiedades', Icon: Building2 },
       { to: '/dashboard/admin/comments', label: 'Comentarios', Icon: MessageSquare },
       { to: '/dashboard/admin/users', label: 'Usuarios', Icon: Users },
-      { to: '/dashboard/admin/reports', label: 'Reportes', Icon: Flag },
+      // { to: '/dashboard/admin/reports', label: 'Reportes', Icon: Flag },
       { to: '/dashboard/admin/settings', label: 'Ajustes', Icon: Settings },
     ],
   },

@@ -34,7 +34,7 @@ function validate(data: FormData): FormErrors {
 export default function CreatePropertyStep1Page() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const search = useSearch({ from: '/properties/new' })
+  const search = useSearch({ strict: false })
   const editId = search.editId ?? null
 
   const [form, setForm] = useState<FormData>({
@@ -106,7 +106,7 @@ export default function CreatePropertyStep1Page() {
         // Crear una propiedad otorga el rol de propietario; refrescamos la sesión para que se refleje de una vez.
         queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       }
-      navigate({ to: '/properties' })
+      navigate({ to: '/dashboard/owner/properties' })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al guardar borrador')
     } finally {
@@ -147,7 +147,7 @@ export default function CreatePropertyStep1Page() {
         // Crear una propiedad otorga el rol de propietario; refrescamos la sesión para que se refleje de una vez.
         queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       }
-      navigate({ to: '/properties/new/location', search: { propertyId } })
+      navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
     } finally {

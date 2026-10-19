@@ -12,6 +12,8 @@ import FilterTabs from '../../Components/FilterTabs';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
+import { releaseReservation } from '../../../Reservations/services/reservationService';
+import ReservationLabel from '../../../Reservations/Components/ReservationLabel';
 
 const filters = [
   { value: 'all', label: 'Todas' },
@@ -29,6 +31,14 @@ export default function OwnerPropertiesPage() {
   const properties = useOwnerProperties();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<PropertyFilter>('all');
+  const [releasing, setReleasing] = useState<Property | null>(null);
+  const release = useMutation({
+    mutationFn: releaseReservation,
+    onSuccess: async () => {
+      setReleasing(null);
+      await queryClient.invalidateQueries();
+    },
+  });
   const [deactivating, setDeactivating] = useState<Property | null>(null);
   const [deactivateError, setDeactivateError] = useState<string | null>(null);
 
@@ -54,7 +64,7 @@ export default function OwnerPropertiesPage() {
         title="Mis propiedades"
         description="Gestiona las propiedades que publicas en SafeRent."
         actions={
-          <Link to="/properties/new" className={publishLinkClass}>
+          <Link to="/dashboard/owner/properties/new" className={publishLinkClass}>
             <Plus size={18} aria-hidden="true" />
             Publicar propiedad
           </Link>
@@ -79,7 +89,7 @@ export default function OwnerPropertiesPage() {
           title={filter === 'all' ? 'Aún no tienes propiedades' : 'No hay propiedades en este estado'}
           description="Publica tu primera propiedad para empezar a recibir consultas."
           action={
-            <Link to="/properties/new" className={publishLinkClass}>
+            <Link to="/dashboard/owner/properties/new" className={publishLinkClass}>
               <Plus size={18} aria-hidden="true" />
               Publicar propiedad
             </Link>
@@ -93,11 +103,13 @@ export default function OwnerPropertiesPage() {
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="truncate font-bold text-primary">{property.title}</h2>
                   <StatusBadge variant={statusBadgeVariant(property.status)} />
+                  <ReservationLabel property={property} />
                 </div>
                 <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-ink">
                   <MapPin size={15} className="shrink-0" aria-hidden="true" />
                   <span className="truncate">{property.address}</span>
                 </p>
+                {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">Reservada para {property.reservedTenantName || 'un inquilino'}</p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
                     <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
@@ -105,16 +117,17 @@ export default function OwnerPropertiesPage() {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">Quitar reserva</button>}
                 <Link
-                  to="/properties/detail/$propertyId"
+                  to="/dashboard/owner/properties/detail/$propertyId"
                   params={{ propertyId: String(property.id) }}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
                 >
                   Ver
                 </Link>
                 <Link
-                  to="/properties/new"
+                  to="/dashboard/owner/properties/new"
                   search={{ editId: property.id }}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
                 >
@@ -147,6 +160,15 @@ export default function OwnerPropertiesPage() {
           onCancel={() => setDeactivating(null)}
         />
       )}
+      {releasing && <ConfirmDialog
+        title={`Quitar reserva: ${releasing.title}`}
+        description={`Se quitará la reserva de ${releasing.reservedTenantName || 'este inquilino'} y la propiedad quedará sin la etiqueta de reservada.`}
+        confirmLabel="Quitar reserva"
+        loading={release.isPending}
+        error={release.isError ? 'No se pudo quitar la reserva. Intenta nuevamente.' : null}
+        onConfirm={() => release.mutate(releasing.id)}
+        onCancel={() => { if (!release.isPending) setReleasing(null); }}
+      />}
     </PageContainer>
   );
 }

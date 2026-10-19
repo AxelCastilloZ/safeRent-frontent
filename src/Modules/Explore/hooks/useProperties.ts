@@ -13,7 +13,7 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
 
   useEffect(() => {
     const controller = new AbortController()
-    getProperties(controller.signal, filters)
+    const refresh = () => { void getProperties(controller.signal, filters)
       .then((properties) => {
         if (!controller.signal.aborted) setResult({ key: requestKey, properties, error: '' })
       })
@@ -27,8 +27,16 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
                 ? reason.message
                 : 'No se pudo conectar con el servidor.',
           })
-      })
-    return () => controller.abort()
+      }) }
+    const onVisible = () => { if (document.visibilityState === 'visible') refresh() }
+    refresh()
+    window.addEventListener('focus', refresh)
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      controller.abort()
+      window.removeEventListener('focus', refresh)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [requestKey])
 
   return {

@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import { useConversation, useMessages } from '../hooks/messageHooks'
+import { useMarkReadWhileViewing } from '../hooks/useMarkReadWhileViewing'
 import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
 import { useOutbox } from '../hooks/useOutbox'
 import { buttonStyles } from './buttonStyles'
@@ -16,6 +17,7 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
   const conversation = useConversation(conversationId)
   const messages = useMessages(conversationId)
   const { pending, send, retry } = useOutbox(conversationId, currentUser?.id)
+  useMarkReadWhileViewing(conversationId, messages.data, currentUser?.id)
 
   // El backend valida la participación; la pantalla también evita mostrar chats ajenos.
   const isParticipant =

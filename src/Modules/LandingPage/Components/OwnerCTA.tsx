@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { ArrowRight, Home } from 'lucide-react'
 import Reveal from './Reveal'
 
@@ -17,13 +18,13 @@ export default function OwnerCTA() {
         <p className="mx-auto mt-4 max-w-xl leading-7 text-white/80">
           Destaca tu inmueble ante inquilinos que buscan transparencia y calidad. Un buen SafeRent Score atrae mejores arrendatarios.
         </p>
-        <button
-          type="button"
+        <Link
+          to="/publicar"
           className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3.5 text-sm font-bold text-white shadow-sm shadow-black/10 transition hover:-translate-y-0.5 hover:bg-secondary-dark hover:shadow-md"
         >
           Publica tu propiedad en SafeRent
           <ArrowRight size={17} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
-        </button>
+        </Link>
       </Reveal>
     </section>
   )

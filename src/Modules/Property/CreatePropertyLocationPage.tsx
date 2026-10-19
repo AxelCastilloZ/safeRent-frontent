@@ -10,7 +10,7 @@ import type { LocationSuggestion } from './services/locationService'
 
 export default function CreatePropertyLocationPage() {
   const navigate = useNavigate()
-  const { propertyId } = useSearch({ from: '/properties/new/location' })
+  const { propertyId } = useSearch({ strict: false })
   const [address, setAddress] = useState('')
   const [point, setPoint] = useState<LocationPoint | null>(null)
   const [searching, setSearching] = useState(false)
@@ -23,7 +23,7 @@ export default function CreatePropertyLocationPage() {
 
   useEffect(() => {
     let cancelled = false
-    if (!propertyId) { navigate({ to: '/properties/new' }); return }
+    if (!propertyId) { navigate({ to: '/dashboard/owner/properties/new' }); return }
     propertyService.getById(propertyId).then((property) => {
       if (cancelled) return
       setAddress(property.address ?? '')
@@ -69,8 +69,8 @@ export default function CreatePropertyLocationPage() {
       await propertyService.update(propertyId, {
         address: address.trim(), latitude: point?.latitude ?? null, longitude: point?.longitude ?? null,
       })
-      if (draft) navigate({ to: '/properties' })
-      else navigate({ to: '/properties/new/media', search: { propertyId } })
+      if (draft) navigate({ to: '/dashboard/owner/properties' })
+      else navigate({ to: '/dashboard/owner/properties/new/media', search: { propertyId } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la ubicación.')
     } finally { setSaving(false) }
@@ -114,7 +114,7 @@ export default function CreatePropertyLocationPage() {
       <p role="status" className="text-sm text-slate-500">{point ? 'Ubicación seleccionada. Revisa que el pin esté sobre la propiedad antes de continuar.' : 'Selecciona una dirección sugerida o un punto en el mapa.'}</p>
     </div>
     <div className="mt-6 flex flex-wrap justify-end gap-3">
-      <button type="button" disabled={saving} onClick={() => navigate({ to: '/properties/new', search: { editId: propertyId } })} className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary hover:bg-slate-50">Atrás</button>
+      <button type="button" disabled={saving} onClick={() => navigate({ to: '/dashboard/owner/properties/new', search: { editId: propertyId } })} className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary hover:bg-slate-50">Atrás</button>
       <button type="button" disabled={disabled || locating} onClick={() => save(true)} className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary disabled:opacity-50">Guardar borrador</button>
       <button type="button" disabled={disabled || locating} onClick={() => save(false)} className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">{saving ? 'Guardando...' : 'Siguiente'}</button>
     </div>

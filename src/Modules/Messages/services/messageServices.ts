@@ -33,3 +33,9 @@ export async function sendMessage(conversationId: number, payload: SendMessageRe
   const response = await apiAxios.post<Message>(`${BASE}/${conversationId}/messages`, payload)
   return response.data
 }
+
+/** Marca como leídos los mensajes que la otra persona te envió en esa conversación. */
+export async function markConversationRead(conversationId: number): Promise<{ updated: number }> {
+  const response = await apiAxios.patch<{ updated: number }>(`${BASE}/${conversationId}/read`)
+  return response.data
+}

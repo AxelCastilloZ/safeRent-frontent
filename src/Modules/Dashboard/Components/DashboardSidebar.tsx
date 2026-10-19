@@ -1,6 +1,8 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { Compass, LogOut } from 'lucide-react';
 import { DASHBOARD_AREAS, isNavItemActive, type DashboardArea } from '../config/navigation';
+import { useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
+import UnreadBadge from '../../Messages/Components/UnreadBadge';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import AreaSwitcher from './AreaSwitcher';
 
@@ -18,6 +20,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { fullName, initials, logout } = useDashboardUser();
+  const unreadMessages = useUnreadMessagesCount();
   const config = DASHBOARD_AREAS[area];
 
   async function handleLogout() {
@@ -62,6 +65,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
             >
               <item.Icon size={18} aria-hidden="true" />
               {item.label}
+              {item.to === config.messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
             </Link>
           );
         })}

@@ -38,11 +38,16 @@ export async function requireAuth({ context, location }: GuardArgs) {
  * lo manda al panel principal que corresponde a sus roles actuales.
  * Uso: `beforeLoad: requireRole('ADMIN')`.
  */
+export function isPropertySubmissionPath(href: string) {
+  const path = href.split(/[?#]/)[0].replace(/[/]$/, '');
+  return path === '/dashboard/owner/properties' || path.startsWith('/dashboard/owner/properties/');
+}
+
 export async function requireDashboard(args: GuardArgs) {
   const { user } = await requireAuth(args);
   const area = getAreaFromPath(args.location.href.split('?')[0]);
   const role = area === 'admin' ? 'ADMIN' : area === 'owner' ? 'OWNER' : 'CLIENT';
-  if (!user.roles.includes(role)) throw redirect({ to: roleHome(user.roles) });
+  if (!user.roles.includes(role) && !(user.roles.includes('CLIENT') && isPropertySubmissionPath(args.location.href))) throw redirect({ to: roleHome(user.roles) });
   return { user };
 }
 
