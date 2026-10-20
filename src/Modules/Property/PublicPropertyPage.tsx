@@ -12,6 +12,7 @@ import { priceLabel } from '../Explore/utils/property.utils'
 import { useAuth } from '../Auth/hooks/authHooks'
 import { useStartConversation } from '../Messages/hooks/messageHooks'
 import { consumePendingChatProperty, setPendingChatProperty } from '../Messages/utils/pendingChat'
+import PriceDetails from '../Explore/PriceDetails'
 
 export default function PublicPropertyPage() {
   const { propertyId } = useParams({ strict: false })
@@ -106,7 +107,7 @@ export default function PublicPropertyPage() {
           <aside aria-label="Precio y contacto" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
             <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70"> / mes</span></p>
             <ReservationLabel property={property} />
-            <p className="mt-2 text-xs text-neutral/60">Precio en {property.typeOfCoin || 'CRC'}</p>
+            <PriceDetails price={property.displayPrice} />
             <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
             <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>
           </aside>

@@ -6,6 +6,7 @@ import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import PendingNotice from '../Components/PendingNotice';
 import { useSavedProperties } from '../hooks/useSavedProperties';
+import PriceDetails from '../../Explore/PriceDetails';
 
 /** Propiedades guardadas con el botón "Guardar" de la propiedad (por ahora solo en este dispositivo). */
 export default function SavedPropertiesPage() {
@@ -42,6 +43,7 @@ export default function SavedPropertiesPage() {
               <p className="mt-3 text-lg font-extrabold text-primary">
                 {priceLabel(property)} <span className="text-xs font-normal text-muted-ink">/ mes</span>
               </p>
+              <PriceDetails price={property.displayPrice} />
               <Link
                 to="/property_detail/$propertyId"
                 params={{ propertyId: String(property.id) }}

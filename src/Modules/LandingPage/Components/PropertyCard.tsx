@@ -3,6 +3,7 @@ import { useState } from 'react'
 import ServiceIcon from '../../Services/components/ServiceIcon'
 import { photoUrl, priceLabel } from '../../Explore/utils/property.utils'
 import type { Property } from '../../Explore/interfaces/property.interface'
+import PriceDetails from '../../Explore/PriceDetails'
 
 type PropertyCardProps = { property: Property }
 
@@ -27,11 +28,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <p className="absolute bottom-3 right-3 rounded-xl bg-white/95 px-3 py-1.5 text-right shadow-sm backdrop-blur-sm">
           <span className="text-base font-extrabold text-primary">{priceLabel(property)}</span>
-          <span className="block text-[10px] font-semibold uppercase leading-tight tracking-wide text-neutral/60">/{property.typeOfCoin || 'CRC'} mes</span>
+          <span className="block text-[10px] font-semibold uppercase leading-tight tracking-wide text-neutral/60">por mes</span>
         </p>
       </div>
 
       <div className="flex flex-1 flex-col p-5">
+        <PriceDetails price={property.displayPrice} />
         {/* <ReservationLabel property={property} /> */}
         <h3 className="text-lg font-bold leading-snug text-primary">{property.title}</h3>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-neutral/70">

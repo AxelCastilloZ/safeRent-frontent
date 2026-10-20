@@ -37,6 +37,7 @@ export interface IconDescription {
 export type PropertyStatus = 'DRAFT' | 'PENDING' | 'ACTIVE' | 'CHANGES_REQUESTED' | 'INACTIVE'
 
 import type { ReservationState } from '../../Reservations/models/reservation'
+import type { DisplayPrice } from '../../Explore/interfaces/display-price'
 
 export interface Property extends ReservationState {
   id: number
@@ -44,6 +45,7 @@ export interface Property extends ReservationState {
   description: string
   cost: number
   typeOfCoin: string
+  displayPrice?: DisplayPrice | null
   latitude?: number | null
   longitude?: number | null
   address: string
