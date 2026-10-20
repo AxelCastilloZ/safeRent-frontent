@@ -6,6 +6,7 @@ export interface PropertyService {
 }
 
 import type { ReservationState } from '../../Reservations/models/reservation'
+import type { DisplayPrice } from './display-price'
 
 export interface Property extends ReservationState {
   id: number
@@ -14,6 +15,7 @@ export interface Property extends ReservationState {
   address: string
   cost: number | string
   typeOfCoin: string
+  displayPrice?: DisplayPrice | null
   rooms: number
   guest: number
   latitude?: number | string | null

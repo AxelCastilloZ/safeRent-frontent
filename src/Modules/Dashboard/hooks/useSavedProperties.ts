@@ -2,14 +2,17 @@ import { useQueries } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getPublicProperty } from '../../Property/services/publicProperty.service';
 import { readSavedPropertyIds } from '../utils/savedProperties';
+import { useDisplayCurrency } from '../../Auth/hooks/useDisplayCurrency';
 
 /** Propiedades guardadas en este dispositivo, con su detalle público (misma caché que la página de la propiedad). */
 export function useSavedProperties() {
+  const { currency, ready } = useDisplayCurrency();
   const [ids] = useState(readSavedPropertyIds);
   const results = useQueries({
     queries: ids.map((id) => ({
-      queryKey: ['public-property', id],
-      queryFn: ({ signal }: { signal: AbortSignal }) => getPublicProperty(id, signal),
+      queryKey: ['public-property', id, currency],
+      queryFn: ({ signal }: { signal: AbortSignal }) => getPublicProperty(id, signal, currency),
+      enabled: ready,
       retry: false,
     })),
   });

@@ -11,9 +11,9 @@ import type {
 } from '../types/property'
 
 export const propertyService = {
-  getById: (id: number) => api.get<Property>(`/properties/${id}`),
+  getById: (id: number, displayCurrency = 'CRC') => api.get<Property>(`/properties/${id}?displayCurrency=${encodeURIComponent(displayCurrency)}`),
 
-  getByOwner: (ownerId: number) => api.get<Property[]>(`/properties/owner/${ownerId}`),
+  getByOwner: (ownerId: number, displayCurrency = 'CRC') => api.get<Property[]>(`/properties/owner/${ownerId}?displayCurrency=${encodeURIComponent(displayCurrency)}`),
 
   create: (data: CreatePropertyPayload) => api.post<Property>('/properties', data),
 

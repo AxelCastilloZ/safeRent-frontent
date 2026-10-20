@@ -1,5 +1,7 @@
 import type { Property } from '../interfaces/property.interface'
 import { apiBase } from '../services/api.service'
+import { formatMoney } from './money'
+export { formatMoney } from './money'
 
 export function coordinates(property: Property): [number, number] | null {
   const { latitude, longitude } = property
@@ -20,18 +22,9 @@ export function coordinates(property: Property): [number, number] | null {
     : null
 }
 
-export function priceLabel(property: Property) {
-  const amount = Number(property.cost)
-  const currency = property.typeOfCoin || 'CRC'
-  try {
-    return new Intl.NumberFormat('es-CR', {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  } catch {
-    return `${currency} ${amount.toLocaleString('es-CR')}`
-  }
+export function priceLabel(property: Pick<Property, 'cost' | 'typeOfCoin' | 'displayPrice'>) {
+  const converted = property.displayPrice?.converted
+  return `${property.displayPrice?.approximate && converted ? '≈ ' : ''}${formatMoney(converted?.amount ?? property.cost, converted?.currency ?? property.typeOfCoin ?? 'CRC')}`
 }
 
 export function photoUrl(property: Property) {

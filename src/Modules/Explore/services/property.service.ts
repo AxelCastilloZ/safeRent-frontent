@@ -8,6 +8,9 @@ export interface PropertyFilters {
   maxPrice?: number
   minRooms?: number
   typeOfPropertyId?: number
+  displayCurrency?: string
+  sourceCurrency?: string
+  sort?: 'newest' | 'price_asc' | 'price_desc'
 }
 
 export async function getProperties(
@@ -24,6 +27,9 @@ export async function getProperties(
   if (minRooms !== undefined) params.set('minRooms', String(minRooms))
   if (typeOfPropertyId !== undefined) params.set('typeOfPropertyId', String(typeOfPropertyId))
   params.set('limit', '100')
+  if (filters.displayCurrency) params.set('displayCurrency', filters.displayCurrency)
+  if (filters.sourceCurrency) params.set('sourceCurrency', filters.sourceCurrency)
+  if (filters.sort) params.set('sort', filters.sort)
 
   const properties = new Map<number, Property>()
   let totalPages = 1
@@ -45,6 +51,9 @@ export async function getProperties(
     ) throw new Error('El servidor devolvió una respuesta inesperada.')
 
     totalPages = payload.totalPages
+    if ('priceContext' in payload && payload.priceContext && typeof payload.priceContext === 'object' && 'batchId' in payload.priceContext && (payload.priceContext.batchId === null || typeof payload.priceContext.batchId === 'number')) {
+      params.set('rateBatchId', String(payload.priceContext.batchId ?? 0))
+    }
     for (const property of payload.data as Property[]) properties.set(property.id, property)
   }
 

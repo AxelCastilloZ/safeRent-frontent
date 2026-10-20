@@ -18,6 +18,8 @@ import type { Property } from './interfaces/property.interface'
 import type { PropertyFilters } from './services/property.service'
 import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
+import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
+import PriceDetails from './PriceDetails'
 
 const EMPTY_PROPERTIES: Property[] = []
 
@@ -36,6 +38,9 @@ export default function ExplorePage() {
   const params = new URLSearchParams(window.location.search)
   const [query, setQuery] = useState(params.get('q') || '')
   const [currency, setCurrency] = useState(params.get('currency') || '')
+  const [knownCurrencies, setKnownCurrencies] = useState(['CRC', 'USD', 'EUR'])
+  const { currency: displayCurrency } = useDisplayCurrency()
+  const [sort, setSort] = useState<'newest' | 'price_asc' | 'price_desc'>('newest')
   const [minPrice, setMinPrice] = useState(params.get('min') || '')
   const [maxPrice, setMaxPrice] = useState(params.get('max') || '')
   const [rooms, setRooms] = useState('')
@@ -52,6 +57,8 @@ export default function ExplorePage() {
 
   const filters: PropertyFilters = useMemo(() => {
     const f: PropertyFilters = {}
+    f.sort = sort
+    if (currency) f.sourceCurrency = currency
     if (services.length) f.serviceIds = services
     if (debouncedQuery.trim()) f.search = debouncedQuery.trim()
     if (priceRangeValid) {
@@ -60,7 +67,7 @@ export default function ExplorePage() {
     }
     if (rooms) f.minRooms = Number(rooms)
     return f
-  }, [services, debouncedQuery, minPrice, maxPrice, rooms, priceRangeValid])
+  }, [services, debouncedQuery, minPrice, maxPrice, rooms, priceRangeValid, currency, sort])
 
   const { properties: loadedProperties, loading, error } = useProperties(filters, attempt)
   const {
@@ -75,21 +82,15 @@ export default function ExplorePage() {
     () =>
       [
         ...new Set([
-          'CRC',
-          'USD',
+          ...knownCurrencies,
           currency,
           ...properties.map((p) => p.typeOfCoin),
         ]),
       ].filter(Boolean),
-    [properties, currency],
+    [properties, currency, knownCurrencies],
   )
 
-  const filtered = useMemo(
-    () => properties.filter((property) =>
-      !currency || property.typeOfCoin === currency,
-    ),
-    [properties, currency],
-  )
+  const filtered = properties
 
   const activeProperty = filtered.find((p) => p.id === selected)
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
@@ -113,6 +114,7 @@ export default function ExplorePage() {
     setMaxPrice('')
     setRooms('')
     setServices([])
+    setSort('newest')
   }
 
   return (
@@ -166,16 +168,19 @@ export default function ExplorePage() {
                 Filtros{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
               <select
-                aria-label="Moneda"
+                aria-label="Moneda de publicación"
                 value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
+                onChange={(e) => { setKnownCurrencies(currencies); setCurrency(e.target.value) }}
               >
-                <option value="">Todas las monedas</option>
+                <option value="">Cualquier moneda publicada</option>
                 {currencies.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
+              </select>
+              <select aria-label="Ordenar propiedades" value={sort} onChange={event => setSort(event.target.value as typeof sort)}>
+                <option value="newest">Más recientes</option><option value="price_asc">Menor precio</option><option value="price_desc">Mayor precio</option>
               </select>
               <select
                 aria-label="Habitaciones mínimas"
@@ -193,8 +198,9 @@ export default function ExplorePage() {
               <div id="explore-filters" className="expanded-filters">
                 <p className="filter-section-label">
                   Precio mensual{' '}
-                  {currency ? `en ${currency}` : ''}
+                  en {displayCurrency}
                 </p>
+                <p className="text-xs text-neutral/70">Los rangos usan {displayCurrency}. Si faltan tasas, solo se incluyen precios comparables.</p>
                 <div className="price-inputs">
                   <label>
                     Desde
@@ -355,6 +361,7 @@ export default function ExplorePage() {
                             <small>/mes</small>
                           </p>
                         </div>
+                        <PriceDetails price={property.displayPrice} />
                         <p className="property-address">
                           <MapPin size={14} />
                           {property.address}
