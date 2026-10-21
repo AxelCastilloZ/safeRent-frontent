@@ -7,7 +7,8 @@ export default function ReservePropertyButton({ conversation }: { conversation: 
   const { user } = useAuth()
   const reserve = useReserveProperty(conversation.id)
   const property = conversation.property
-  if (user?.id !== property.owner.id || !user.roles.includes('OWNER')) return null
+  // Las conversaciones directas (administrador ↔ usuario) no tienen propiedad que alquilar.
+  if (!property || user?.id !== property.owner.id || !user.roles.includes('OWNER')) return null
 
   let error = ''
   if (reserve.error) {
