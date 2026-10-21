@@ -7,8 +7,6 @@ import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import { statusBadgeVariant } from './utils/propertyStatus'
-import Stepper from './Components/Stepper'
-import { PROPERTY_STEPS } from './constants/propertySteps'
 import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import { priceLabel } from '../Explore/utils/property.utils'
 import PriceDetails from '../Explore/PriceDetails'
@@ -68,14 +66,12 @@ export default function PropertyDetailPage() {
   const hasServices = (property.services?.length ?? 0) > 0
   const hasLocation = typeof property.latitude === 'number' && typeof property.longitude === 'number' && Number.isFinite(property.latitude) && Number.isFinite(property.longitude)
   const canSubmit = hasData && hasImages && hasServices && hasLocation
-  const isDraft = property.status === 'DRAFT'
   const canPublish = canSubmit && (property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE')
 
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
     <div className="mx-auto max-w-3xl">
-      {isDraft && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
       {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
         Confirma la ubicación en el mapa para publicar.
         <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>

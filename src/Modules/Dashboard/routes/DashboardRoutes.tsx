@@ -94,14 +94,6 @@ const ownerPropertyNewLocationRoute = createRoute({
   }),
   component: lazyRouteComponent(() => import('../../Property/CreatePropertyLocationPage')),
 });
-const ownerPropertyNewMediaRoute = createRoute({
-  getParentRoute: () => ownerPropertyEditorRoute,
-  path: 'properties/new/media',
-  validateSearch: (search: Record<string, unknown>): { propertyId?: number } => ({
-    propertyId: optionalPropertyId(search.propertyId),
-  }),
-  component: lazyRouteComponent(() => import('../../Property/CreatePropertyStep2Page')),
-});
 const ownerPropertyDetailRoute = createRoute({
   getParentRoute: () => ownerPropertyEditorRoute,
   path: 'properties/detail/$propertyId',
@@ -186,7 +178,6 @@ export const dashboardRoute = DashboardRoute.addChildren([
     ownerPropertyEditorRoute.addChildren([
       ownerPropertyNewRoute,
       ownerPropertyNewLocationRoute,
-      ownerPropertyNewMediaRoute,
       ownerPropertyDetailRoute,
       ownerPropertyPublishedRoute,
     ]),
