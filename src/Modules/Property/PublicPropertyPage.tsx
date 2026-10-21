@@ -13,19 +13,23 @@ import { useAuth } from '../Auth/hooks/authHooks'
 import { useStartConversation } from '../Messages/hooks/messageHooks'
 import { consumePendingChatProperty, setPendingChatProperty } from '../Messages/utils/pendingChat'
 import PriceDetails from '../Explore/PriceDetails'
+import { useSavedPropertyIds, useToggleSavedProperty } from '../SavedProperties/hooks/savedPropertyHooks'
+import { consumePendingSaveProperty, setPendingSaveProperty } from '../SavedProperties/utils/pendingSave'
 
 export default function PublicPropertyPage() {
   const { propertyId } = useParams({ strict: false })
   const id = Number(propertyId)
   const query = usePublicProperty(id)
   const [notice, setNotice] = useState('')
-  const [saved, setSaved] = useState(() => {
-    try { return localStorage.getItem(`saved-property-${id}`) === 'true' } catch { return false }
-  })
   const property = query.data
   const navigate = useNavigate()
   const { user: currentUser, hasSession } = useAuth()
   const startConversation = useStartConversation()
+  const savedIds = useSavedPropertyIds()
+  const savedMutation = useToggleSavedProperty()
+  const saved = property !== undefined && Boolean(savedIds.data?.includes(property.id))
+  // Solo el inquilino guarda propiedades, y nadie guarda la suya. Sin sesión (o mientras se verifica) el botón se muestra.
+  const canShowSave = property !== undefined && currentUser?.id !== property.owner.id && (!currentUser || currentUser.roles.includes('CLIENT'))
 
   function contactOwner() {
     if (!property) return
@@ -60,12 +64,41 @@ export default function PublicPropertyPage() {
     if (consumePendingChatProperty() !== loadedPropertyId || currentUserId === ownerId) return
     startConversationMutate({ participantIds: [currentUserId, ownerId], propertyId: loadedPropertyId })
   }, [loadedPropertyId, ownerId, currentUserId, startConversationMutate])
+
+  function updateSaved(propertyId: number, save: boolean) {
+    savedMutation.mutate({ propertyId, save }, {
+      onSuccess: () => setNotice(save ? 'Propiedad guardada en tu cuenta.' : 'Propiedad eliminada de tus guardadas.'),
+      onError: () => setNotice('No pudimos actualizar tus guardadas. Intenta de nuevo.'),
+    })
+  }
+
+  // Al volver del login con la intención de guardar pendiente, se guarda sola.
+  const { mutate: saveMutate } = savedMutation
+  useEffect(() => {
+    if (loadedPropertyId === undefined || ownerId === undefined || currentUserId === undefined) return
+    if (consumePendingSaveProperty() !== loadedPropertyId || currentUserId === ownerId) return
+    saveMutate(
+      { propertyId: loadedPropertyId, save: true },
+      {
+        onSuccess: () => setNotice('Propiedad guardada en tu cuenta.'),
+        onError: () => setNotice('No pudimos guardar la propiedad. Intenta de nuevo.'),
+      },
+    )
+  }, [loadedPropertyId, ownerId, currentUserId, saveMutate])
+
   function toggleSaved() {
-    try {
-      localStorage.setItem(`saved-property-${id}`, String(!saved))
-      setSaved(!saved)
-      setNotice(!saved ? 'Propiedad guardada en este dispositivo.' : 'Propiedad eliminada de tus guardados.')
-    } catch { setNotice('No se pudo guardar la propiedad en este dispositivo.') }
+    if (!property) return
+    if (!hasSession) {
+      // Sin sesión: se recuerda la intención y se guarda al volver del login.
+      setPendingSaveProperty(property.id)
+      void navigate({ to: '/login', search: { next: `/property_detail/${property.id}` } })
+      return
+    }
+    if (!currentUser) {
+      setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
+      return
+    }
+    updateSaved(property.id, !saved)
   }
   async function share() {
     try {
@@ -81,7 +114,7 @@ export default function PublicPropertyPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <a href="/#properties" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral hover:text-secondary"><ArrowLeft size={18} />Volver a resultados</a>
         {property && <div className="flex gap-2">
-          <button type="button" onClick={toggleSaved} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? 'Guardada' : 'Guardar'}</button>
+          {canShowSave && <button type="button" onClick={toggleSaved} disabled={savedMutation.isPending} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary disabled:opacity-60"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? 'Guardada' : 'Guardar'}</button>}
           <button type="button" onClick={() => void share()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Share2 size={16} />Compartir</button>
         </div>}
       </div>

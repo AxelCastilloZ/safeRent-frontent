@@ -26,8 +26,13 @@ export const propertyService = {
   remove: (id: number) => api.delete<Property>(`/properties/${id}`),
 
   /** Solo ADMIN: todas las propiedades (cualquier estado) con su propietario. */
-  getAllForAdmin: (status?: PropertyStatus) =>
-    api.get<PaginatedProperties>(`/properties/admin/all${status ? `?status=${status}` : ''}`),
+  getAllForAdmin: (status?: PropertyStatus, limit?: number) => {
+    const params = new URLSearchParams()
+    if (status) params.set('status', status)
+    if (limit) params.set('limit', String(limit))
+    const query = params.toString()
+    return api.get<PaginatedProperties>(`/properties/admin/all${query ? `?${query}` : ''}`)
+  },
 
   /** Solo ADMIN: aprueba, pide cambios o rechaza una propiedad en revisión. */
   review: (id: number, data: ReviewPropertyPayload) =>

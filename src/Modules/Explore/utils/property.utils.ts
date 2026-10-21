@@ -27,7 +27,7 @@ export function priceLabel(property: Pick<Property, 'cost' | 'typeOfCoin' | 'dis
   return `${property.displayPrice?.approximate && converted ? '≈ ' : ''}${formatMoney(converted?.amount ?? property.cost, converted?.currency ?? property.typeOfCoin ?? 'CRC')}`
 }
 
-export function photoUrl(property: Property) {
+export function photoUrl(property: Pick<Property, 'files'>) {
   const path = property.files?.find((file) =>
     file.mimeType?.startsWith('image/'),
   )?.path
