@@ -28,14 +28,15 @@ export function priceLabel(property: Pick<Property, 'cost' | 'typeOfCoin' | 'dis
 }
 
 export function photoUrl(property: Pick<Property, 'files'>) {
-  const path = property.files?.find((file) =>
+  const file = property.files?.find((file) =>
     file.mimeType?.startsWith('image/'),
-  )?.path
+  )
+  const path = file?.url || file?.path
   if (!path) return undefined
   try {
     const url = new URL(
       path,
-      `${new URL(apiBase, window.location.origin).href}/`,
+      `${new URL(apiBase, window.location.origin).href.replace(/\/+$/, '')}/`,
     )
     return ['http:', 'https:'].includes(url.protocol) ? url.href : undefined
   } catch {

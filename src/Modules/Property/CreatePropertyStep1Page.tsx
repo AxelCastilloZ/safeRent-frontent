@@ -208,7 +208,7 @@ export default function CreatePropertyStep1Page() {
       services: services.data?.filter(service => form.serviceIds.includes(service.id)) ?? [],
       address: loadedProperty?.address,
       located: loadedProperty?.latitude != null && loadedProperty?.longitude != null,
-      photos: loadedFiles.map(file => (import.meta.env.VITE_API_URL ?? 'http://localhost:3000') + '/' + file.path),
+      photos: loadedFiles.map(file => file.url || (import.meta.env.VITE_API_URL ?? '/api') + '/' + file.path),
     }} actions={<PropertyActions step={1} busy={saving} disabled={loadFailed || (!editId && !currencyReady)} onPrimary={handleNext} />}>
       <UnsavedChangesDialog blocked={blocker.status === 'blocked'} onLeave={() => blocker.proceed?.()} onStay={() => blocker.reset?.()} />
       {apiError && (

@@ -174,7 +174,7 @@ export default function PropertyDetailPage() {
             property.files.map((file) => (
               <div key={file.id} className="aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
                 <img
-                  src={`${API_BASE}/${file.path}`}
+                  src={file.url || `${API_BASE}/${file.path}`}
                   alt={file.fileName}
                   className="size-full object-cover"
                   loading="lazy"

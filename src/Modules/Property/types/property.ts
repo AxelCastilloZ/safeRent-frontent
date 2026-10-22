@@ -17,6 +17,7 @@ export type { Service } from '../../Services/interfaces/service.interface'
 import type { Service } from '../../Services/interfaces/service.interface'
 
 export interface PropertyFile {
+  url?: string | null
   id: number
   uploadedBy: string
   path: string

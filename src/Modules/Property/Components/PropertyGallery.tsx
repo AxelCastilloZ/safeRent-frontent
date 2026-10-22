@@ -19,10 +19,10 @@ export default function PropertyGallery({ property }: { property: Property }) {
   return <>
     <section aria-label="Fotografías de la propiedad" className="relative grid h-72 gap-3 overflow-hidden rounded-2xl sm:h-[420px] sm:grid-cols-3">
       <button type="button" onClick={() => show(0)} aria-label="Ampliar fotografía principal" className={`min-h-0 overflow-hidden bg-slate-100 ${photos.length > 1 ? 'sm:col-span-2' : 'sm:col-span-3'}`}>
-        <Photo src={photos[0]} alt={property.title} className="h-full w-full object-cover transition hover:scale-105" />
+        <Photo key={photos[0]} src={photos[0]} alt={property.title} className="h-full w-full object-cover transition hover:scale-105" />
       </button>
       {photos.length > 1 && <div className="hidden min-h-0 gap-3 sm:grid">{photos.slice(1, 3).map((url, i) => <button type="button" key={url + i} onClick={() => show(i + 1)} aria-label={`Ampliar fotografía ${i + 2}`} className="min-h-0 overflow-hidden bg-slate-100">
-        <Photo src={url} alt={`${property.title}, fotografía ${i + 2}`} className="h-full w-full object-cover transition hover:scale-105" />
+        <Photo key={url} src={url} alt={`${property.title}, fotografía ${i + 2}`} className="h-full w-full object-cover transition hover:scale-105" />
       </button>)}</div>}
       <button type="button" onClick={() => show(0)} className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-bold text-primary shadow-lg"><Images size={18} />Ver todas las fotos ({photos.length})</button>
     </section>
