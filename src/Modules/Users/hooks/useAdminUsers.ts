@@ -1,15 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { useAuth } from '../../Auth/hooks/authHooks'
+import type { AdminUser } from '../types/user'
 import { userService } from '../services/userService'
 import { roleService } from '../services/roleService'
 
 export const adminUsersQueryKey = ['admin', 'users'] as const
 export const rolesQueryKey = ['roles', 'catalog'] as const
 
-/** Usuarios para el panel de administración (GET /users, solo ADMIN). */
+/**
+ * Usuarios para el panel de administración (GET /users, solo ADMIN), sin la cuenta de quien consulta:
+ * un administrador no gestiona la suya (no puede desactivarse, quitarse roles ni escribirse a sí mismo).
+ */
 export function useAdminUsers() {
+  const { user: me } = useAuth()
+  const myId = me?.id
   return useQuery({
     queryKey: adminUsersQueryKey,
     queryFn: userService.getAllForAdmin,
+    // Hasta saber quién es la sesión no se muestra nada, para que su cuenta no aparezca un instante.
+    enabled: myId !== undefined,
+    select: useCallback((users: AdminUser[]) => users.filter((user) => user.id !== myId), [myId]),
   })
 }
 
