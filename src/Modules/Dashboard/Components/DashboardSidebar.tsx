@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { Compass, LogOut } from 'lucide-react';
 import { DASHBOARD_AREAS, isNavItemActive, type DashboardArea } from '../config/navigation';
@@ -17,6 +18,7 @@ const footerLinkClass =
 
 /** Sidebar del panel: logo, usuario, opciones del área y salidas (volver al sitio, cerrar sesión). */
 export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarProps) {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { fullName, initials, logout } = useDashboardUser();
@@ -32,7 +34,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
 
   return (
     <div className="flex h-full w-full flex-col bg-primary text-white">
-      <Link to="/" onClick={onNavigate} className="flex items-center gap-2 px-5 py-5" aria-label="SafeRent, inicio">
+      <Link to="/" onClick={onNavigate} className="flex items-center gap-2 px-5 py-5" aria-label={t("navigation:brandHome")}>
         <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg bg-white object-contain p-0.5" />
         <span className="text-xl font-bold tracking-tight">SafeRent</span>
       </Link>
@@ -42,12 +44,12 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
           {initials || '?'}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{fullName ?? 'Mi cuenta'}</p>
-          <p className="truncate text-xs text-white/60">{config.title}</p>
+          <p className="truncate text-sm font-semibold">{fullName ?? t("navigation:account")}</p>
+          <p className="truncate text-xs text-white/60">{t(config.title)}</p>
         </div>
       </div>
 
-      <nav aria-label={config.title} className="mt-4 flex-1 space-y-1 overflow-y-auto px-3">
+      <nav aria-label={t(config.title)} className="mt-4 flex-1 space-y-1 overflow-y-auto px-3">
         {config.nav.map((item) => {
           const active = isNavItemActive(item, area, pathname);
           return (
@@ -59,12 +61,12 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
               activeOptions={{ exact: item.to === config.basePath }}
               className={`flex items-center gap-3 rounded-lg border-l-4 px-3 py-2.5 text-sm font-medium transition ${
                 active
-                  ? 'border-secondary bg-white/10 text-white'
+                  ? 'border-secondary-light bg-white/10 text-white'
                   : 'border-transparent text-white/70 hover:bg-white/5 hover:text-white'
               }`}
             >
               <item.Icon size={18} aria-hidden="true" />
-              {item.label}
+              {t(item.label)}
               {item.to === config.messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
             </Link>
           );
@@ -74,13 +76,9 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
       <div className="space-y-2 border-t border-white/10 p-3">
         <AreaSwitcher current={area} onNavigate={onNavigate} />
         <Link to="/explorar" onClick={onNavigate} className={footerLinkClass}>
-          <Compass size={18} aria-hidden="true" />
-          Volver a Explorar
-        </Link>
+          <Compass size={18} aria-hidden="true" />{t("navigation:exploreBack")}</Link>
         <button type="button" onClick={() => void handleLogout()} className={footerLinkClass}>
-          <LogOut size={18} aria-hidden="true" />
-          Cerrar sesión
-        </button>
+          <LogOut size={18} aria-hidden="true" />{t("navigation:logout")}</button>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { currentLocale } from '../../../i18n/formatters';
 import { updateService } from '../services/service.service'
 import type { UpdateServiceInput } from '../interfaces/service.interface'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -23,7 +24,7 @@ export function useCreateService() {
         [
           ...(current || []).filter((item) => item.id !== created.id),
           created,
-        ].sort((a, b) => a.name.localeCompare(b.name, 'es')),
+        ].sort((a, b) => a.name.localeCompare(b.name, currentLocale())),
       )
       void client.invalidateQueries({ queryKey: servicesQueryKey })
     },
@@ -40,7 +41,7 @@ export function useUpdateService() {
       client.setQueryData<Service[]>(servicesQueryKey, (current) =>
         current
           ?.map((item) => (item.id === updated.id ? updated : item))
-          .sort((a, b) => a.name.localeCompare(b.name, 'es')),
+          .sort((a, b) => a.name.localeCompare(b.name, currentLocale())),
       )
       void client.invalidateQueries({ queryKey: servicesQueryKey })
     },

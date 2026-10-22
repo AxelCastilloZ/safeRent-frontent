@@ -1,3 +1,8 @@
+import { messageFromError, message } from '../../../../i18n/messages';
+import { useMessageState } from '../../../../i18n/useMessageState';
+import { currentLocale } from '../../../../i18n/formatters';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { useState } from 'react';
 import { Building2, Check, EyeOff, MapPin, MessageSquareWarning, XCircle } from 'lucide-react';
 import StatusBadge from '../../../Property/Components/StatusBadge';
@@ -10,13 +15,13 @@ import FilterTabs from '../../Components/FilterTabs';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 
-const filters = [
-  { value: 'active', label: 'Activas' },
-  { value: 'review', label: 'En revisión' },
-  { value: 'inactive', label: 'Inactivas' },
-] as const;
+const filters = () => ([
+  { value: 'active', label: i18n.t("dashboard:adminpropertiespage_activas") },
+  { value: 'review', label: i18n.t("dashboard:adminpropertiespage_en_revision") },
+  { value: 'inactive', label: i18n.t("dashboard:adminpropertiespage_inactivas") },
+] as const);
 
-type PropertyFilter = (typeof filters)[number]['value'];
+type PropertyFilter = (ReturnType<typeof filters>)[number]['value'];
 
 const STATUS_BY_FILTER: Record<PropertyFilter, PropertyStatus> = {
   active: 'ACTIVE',
@@ -26,7 +31,7 @@ const STATUS_BY_FILTER: Record<PropertyFilter, PropertyStatus> = {
 
 function formatDate(value: string): string {
   try {
-    return new Date(value).toLocaleDateString('es-CR', { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(value).toLocaleDateString(currentLocale(), { year: 'numeric', month: 'short', day: 'numeric' });
   } catch {
     return value;
   }
@@ -34,10 +39,11 @@ function formatDate(value: string): string {
 
 /** Propiedades (admin): revisión real — aprobar, pedir cambios o rechazar lo que envían los propietarios. */
 export default function AdminPropertiesPage() {
+  useTranslation();
   const [filter, setFilter] = useState<PropertyFilter>('active');
   const [requestingChanges, setRequestingChanges] = useState<Property | null>(null);
   const [rejecting, setRejecting] = useState<Property | null>(null);
-  const [actionError, setActionError] = useState<Record<number, string>>({});
+  const [actionError, setActionError] = useMessageState<Record<number, string>>({});
 
   const status = STATUS_BY_FILTER[filter];
   const properties = useAdminProperties(status);
@@ -50,7 +56,7 @@ export default function AdminPropertiesPage() {
     try {
       await review.mutateAsync({ id: property.id, data: { status: 'ACTIVE' } });
     } catch (err) {
-      setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? err.message : 'No se pudo aprobar la propiedad.' }));
+      setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? messageFromError(err) : message("dashboard:adminpropertiespage_no_se_pudo_aprobar_la_propiedad") }));
     }
   }
 
@@ -60,35 +66,30 @@ export default function AdminPropertiesPage() {
       setRequestingChanges(null);
       setRejecting(null);
     } catch (err) {
-      setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? err.message : 'No se pudo completar la acción.' }));
+      setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? messageFromError(err) : message("dashboard:adminpropertiespage_no_se_pudo_completar_la_accion") }));
     }
   }
 
   return (
     <PageContainer>
-      <PageHeader title="Propiedades" description="Revisa las propiedades enviadas por los propietarios y aplica el cambio de estado." />
-      <FilterTabs label="Estado de la propiedad" options={[...filters]} value={filter} onChange={setFilter} />
+      <PageHeader title={i18n.t("dashboard:adminpropertiespage_propiedades_2b3936")} description={i18n.t("dashboard:adminpropertiespage_revisa_las_propiedades_enviadas_por_los_propietarios_y_aplica")} />
+      <FilterTabs label={i18n.t("dashboard:adminpropertiespage_estado_de_la_propiedad")} options={[...filters()]} value={filter} onChange={setFilter} />
 
       {properties.isPending ? (
-        <p role="status" className="py-12 text-center text-sm text-muted-ink">
-          Cargando propiedades…
-        </p>
+        <p role="status" className="py-12 text-center text-sm text-muted-ink">{i18n.t("dashboard:adminpropertiespage_cargando_propiedades")}</p>
       ) : properties.isError ? (
-        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">
-          No pudimos cargar las propiedades.{' '}
-          <button type="button" onClick={() => void properties.refetch()} className="font-semibold underline">
-            Reintentar
-          </button>
+        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">{i18n.t("dashboard:discoversection_no_pudimos_cargar_las_propiedades")}{' '}
+          <button type="button" onClick={() => void properties.refetch()} className="font-semibold underline">{i18n.t("comments:propertycomments_reintentar")}</button>
         </div>
       ) : list.length === 0 ? (
-        <EmptyPanel icon={Building2} title={`No hay propiedades «${filters.find((f) => f.value === filter)?.label.toLowerCase()}»`} description="Las propiedades que envíen los propietarios aparecerán aquí." />
+        <EmptyPanel icon={Building2} title={i18n.t("dashboard:adminpropertiespage_no_hay_propiedades", { v0: filters().find((f) => f.value === filter)?.label.toLowerCase() })} description={i18n.t("dashboard:adminpropertiespage_las_propiedades_que_envien_los_propietarios_apareceran_aqui")} />
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
           <table className="w-full min-w-[820px] text-left text-sm">
-            <caption className="sr-only">Propiedades: {filters.find((f) => f.value === filter)?.label}</caption>
+            <caption className="sr-only">{i18n.t("dashboard:adminpropertiespage_propiedades_71a805")}{' '}{filters().find((f) => f.value === filter)?.label}</caption>
             <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-muted-ink">
               <tr>
-                {['Propiedad', 'Propietario', 'Ubicación', 'Fecha', 'Estado', 'Acciones'].map((column) => (
+                {[i18n.t("dashboard:adminpropertiespage_propiedad"), i18n.t("auth:roles_propietario"), i18n.t("dashboard:adminpropertiespage_ubicacion"), i18n.t("dashboard:adminpropertiespage_fecha"), i18n.t("dashboard:adminpropertiespage_estado"), i18n.t("dashboard:adminpropertiespage_acciones")].map((column) => (
                   <th key={column} scope="col" className="px-4 py-3 font-semibold">
                     {column}
                   </th>
@@ -117,8 +118,8 @@ export default function AdminPropertiesPage() {
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          title="Aprobar"
-                          aria-label={`Aprobar ${property.title}`}
+                          title={i18n.t("dashboard:adminpropertiespage_aprobar_10a00f")}
+                          aria-label={i18n.t("dashboard:adminpropertiespage_aprobar_11a9c2", { v0: property.title })}
                           disabled={review.isPending}
                           className="rounded-lg p-1.5 text-slate-500 transition hover:bg-green-50 hover:text-green-700 disabled:opacity-50"
                           onClick={() => void approve(property)}
@@ -127,8 +128,8 @@ export default function AdminPropertiesPage() {
                         </button>
                         <button
                           type="button"
-                          title="Solicitar cambios"
-                          aria-label={`Solicitar cambios a ${property.title}`}
+                          title={i18n.t("dashboard:adminpropertiespage_solicitar_cambios_e1aab9")}
+                          aria-label={i18n.t("dashboard:adminpropertiespage_solicitar_cambios_a", { v0: property.title })}
                           className="rounded-lg p-1.5 text-slate-500 transition hover:bg-amber-50 hover:text-amber-700"
                           onClick={() => setRequestingChanges(property)}
                         >
@@ -136,8 +137,8 @@ export default function AdminPropertiesPage() {
                         </button>
                         <button
                           type="button"
-                          title="Rechazar"
-                          aria-label={`Rechazar ${property.title}`}
+                          title={i18n.t("dashboard:adminpropertiespage_rechazar_2a0515")}
+                          aria-label={i18n.t("dashboard:adminpropertiespage_rechazar_177aaa", { v0: property.title })}
                           className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                           onClick={() => setRejecting(property)}
                         >
@@ -147,8 +148,8 @@ export default function AdminPropertiesPage() {
                     ) : property.status === 'ACTIVE' ? (
                       <button
                         type="button"
-                        title="Desactivar"
-                        aria-label={`Desactivar ${property.title}`}
+                        title={i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}
+                        aria-label={i18n.t("dashboard:adminpropertiespage_desactivar_9a3405", { v0: property.title })}
                         disabled={review.isPending}
                         className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                         onClick={() => setRejecting(property)}
@@ -157,7 +158,7 @@ export default function AdminPropertiesPage() {
                       </button>
                     ) : (
                       <span className="text-xs text-slate-400">
-                        {property.reviewedAt ? `Revisada el ${formatDate(property.reviewedAt)}` : '—'}
+                        {property.reviewedAt ? i18n.t("dashboard:adminpropertiespage_revisada_el", { v0: formatDate(property.reviewedAt) }) : '—'}
                       </span>
                     )}
                     {actionError[property.id] && <p role="alert" className="mt-1 text-xs text-red-600">{actionError[property.id]}</p>}
@@ -171,10 +172,10 @@ export default function AdminPropertiesPage() {
 
       {requestingChanges && (
         <NoteDialog
-          title={`Solicitar cambios: ${requestingChanges.title}`}
-          description="El propietario verá esta nota y podrá corregir y volver a enviar la propiedad."
-          confirmLabel="Solicitar cambios"
-          placeholder="Ej. Falta confirmar la ubicación exacta en el mapa."
+          title={i18n.t("dashboard:adminpropertiespage_solicitar_cambios_712a1a", { v0: requestingChanges.title })}
+          description={i18n.t("dashboard:adminpropertiespage_el_propietario_vera_esta_nota_y_podra_corregir_y")}
+          confirmLabel={i18n.t("dashboard:adminpropertiespage_solicitar_cambios_e1aab9")}
+          placeholder={i18n.t("dashboard:adminpropertiespage_ej_falta_confirmar_la_ubicacion_exacta_en_el_mapa")}
           loading={review.isPending}
           error={actionError[requestingChanges.id] || null}
           onConfirm={(note) => void submitNote(requestingChanges, 'CHANGES_REQUESTED', note)}
@@ -184,10 +185,10 @@ export default function AdminPropertiesPage() {
 
       {rejecting && (
         <NoteDialog
-          title={`Rechazar: ${rejecting.title}`}
-          description="La propiedad queda inactiva y no será visible para inquilinos. El propietario verá el motivo."
-          confirmLabel="Rechazar propiedad"
-          placeholder="Ej. Las imágenes no corresponden a la dirección indicada."
+          title={i18n.t("dashboard:adminpropertiespage_rechazar_44569c", { v0: rejecting.title })}
+          description={i18n.t("dashboard:adminpropertiespage_la_propiedad_queda_inactiva_y_no_sera_visible_para")}
+          confirmLabel={i18n.t("dashboard:adminpropertiespage_rechazar_propiedad")}
+          placeholder={i18n.t("dashboard:adminpropertiespage_ej_las_imagenes_no_corresponden_a_la_direccion_indicada")}
           loading={review.isPending}
           error={actionError[rejecting.id] || null}
           onConfirm={(note) => void submitNote(rejecting, 'INACTIVE', note)}

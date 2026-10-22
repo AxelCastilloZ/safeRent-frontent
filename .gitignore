@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+i18n-audit.json
 *.local
 
 # Environment variables

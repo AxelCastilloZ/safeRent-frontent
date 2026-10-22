@@ -1,7 +1,9 @@
+import { currentLocale } from '../../../i18n/formatters.ts';
+
 /** Símbolo de una moneda ("₡" para CRC, "$" para USD); si no tiene uno propio, el mismo código. */
 export function currencySymbol(code: string) {
   try {
-    const symbol = new Intl.NumberFormat('es-CR', { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol' })
+    const symbol = new Intl.NumberFormat(currentLocale(), { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol' })
       .formatToParts(0).find(part => part.type === 'currency')?.value
     return symbol ?? code
   } catch {
@@ -10,9 +12,9 @@ export function currencySymbol(code: string) {
 }
 
 /** Format decimal strings without converting monetary values to Number. */
-export function formatMoney(amount: string | number, currency: string) {
+export function formatMoney(amount: string | number, currency: string, locale = currentLocale()) {
   try {
-    const formatter = new Intl.NumberFormat('es-CR', { style: 'currency', currency, currencyDisplay: 'code' })
+    const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency, currencyDisplay: 'code' })
     const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2
     const match = /^(\d+)(?:\.(\d+))?$/.exec(String(amount))
     if (!match) return `${currency} ${amount}`

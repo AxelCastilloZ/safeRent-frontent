@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { AlertTriangle, LoaderCircle } from 'lucide-react'
@@ -20,13 +22,14 @@ export default function ConfirmDialog({
   title,
   description,
   confirmLabel,
-  cancelLabel = 'Cancelar',
+  cancelLabel = i18n.t("comments:admincommentspage_cancelar"),
   danger,
   loading,
   error,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  useTranslation();
   const dialog = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {

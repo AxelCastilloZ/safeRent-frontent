@@ -1,3 +1,6 @@
+import { catalogText } from '../../i18n/catalog';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -35,6 +38,7 @@ function useDebouncedValue<T>(value: T, delayMs: number): T {
 }
 
 export default function ExplorePage() {
+  useTranslation();
   const params = new URLSearchParams(window.location.search)
   const [query, setQuery] = useState(params.get('q') || '')
   const [currency, setCurrency] = useState(params.get('currency') || '')
@@ -120,37 +124,34 @@ export default function ExplorePage() {
   return (
     <div className="explore-page">
       <header className="explore-header">
-        <a className="explore-brand" href="/" aria-label="SafeRent, inicio">
+        <a className="explore-brand" href="/" aria-label={i18n.t("explore:explorepage_saferent_inicio")}>
           <img src="/LogoSafeRentAzul.png" alt="" />
           SafeRent
         </a>
-        <nav aria-label="Navegación principal">
-          <a href="/explorar" aria-current="page">
-            Explorar
-          </a>
-          <a href="/#how-it-works">Cómo funciona</a>
-          <a href="/#owner-cta">Para propietarios</a>
+        <nav aria-label={i18n.t("explore:explorepage_navegacion_principal")}>
+          <a href="/explorar" aria-current="page">{i18n.t("explore:explorepage_explorar")}</a>
+          <a href="/#how-it-works">{i18n.t("explore:explorepage_como_funciona")}</a>
+          <a href="/#owner-cta">{i18n.t("explore:explorepage_para_propietarios")}</a>
         </nav>
-        <a className="back-home" href="/">
-          Ir al inicio <ChevronRight size={16} />
+        <a className="back-home" href="/">{i18n.t("explore:explorepage_ir_al_inicio")}{' '}<ChevronRight size={16} />
         </a>
       </header>
       <main className="explore-layout" data-mobile-view={mobileView}>
-        <section className="explore-results" aria-label="Explorar propiedades">
+        <section className="explore-results" aria-label={i18n.t("about:aboutcta_explorar_propiedades")}>
           <div className="explore-search">
-            <p className="explore-eyebrow">ENCUENTRA TU PRÓXIMO HOGAR</p>
-            <h1>Explorar propiedades</h1>
+            <p className="explore-eyebrow">{i18n.t("explore:explorepage_encuentra_tu_proximo_hogar")}</p>
+            <h1>{i18n.t("about:aboutcta_explorar_propiedades")}</h1>
             <label className="location-search">
               <Search size={22} />
               <input
-                aria-label="Buscar por nombre o ubicación"
-                placeholder="Busca una ciudad, zona o propiedad"
+                aria-label={i18n.t("explore:explorepage_buscar_por_nombre_o_ubicacion")}
+                placeholder={i18n.t("explore:explorepage_busca_una_ciudad_zona_o_propiedad")}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
               {query && (
                 <button
-                  aria-label="Limpiar búsqueda"
+                  aria-label={i18n.t("explore:explorepage_limpiar_busqueda")}
                   onClick={() => setQuery('')}
                 >
                   <X size={18} />
@@ -164,60 +165,53 @@ export default function ExplorePage() {
                 aria-controls="explore-filters"
                 onClick={() => setFiltersOpen(!filtersOpen)}
               >
-                <SlidersHorizontal size={16} />
-                Filtros{activeFilterCount > 0 && ` (${activeFilterCount})`}
+                <SlidersHorizontal size={16} />{i18n.t("explore:explorepage_filtros")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
               <select
-                aria-label="Moneda de publicación"
+                aria-label={i18n.t("explore:explorepage_moneda_de_publicacion")}
                 value={currency}
                 onChange={(e) => { setKnownCurrencies(currencies); setCurrency(e.target.value) }}
               >
-                <option value="">Cualquier moneda publicada</option>
+                <option value="">{i18n.t("explore:explorepage_cualquier_moneda_publicada")}</option>
                 {currencies.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
               </select>
-              <select aria-label="Ordenar propiedades" value={sort} onChange={event => setSort(event.target.value as typeof sort)}>
-                <option value="newest">Más recientes</option><option value="price_asc">Menor precio</option><option value="price_desc">Mayor precio</option>
+              <select aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} value={sort} onChange={event => setSort(event.target.value as typeof sort)}>
+                <option value="newest">{i18n.t("explore:explorepage_mas_recientes")}</option><option value="price_asc">{i18n.t("explore:explorepage_menor_precio")}</option><option value="price_desc">{i18n.t("explore:explorepage_mayor_precio")}</option>
               </select>
               <select
-                aria-label="Habitaciones mínimas"
+                aria-label={i18n.t("explore:explorepage_habitaciones_minimas")}
                 value={rooms}
                 onChange={(e) => setRooms(e.target.value)}
               >
-                <option value="">Habitaciones</option>
-                <option value="1">1 habitaciones</option>
-                <option value="2">2 habitaciones</option>
-                <option value="3">3 habitaciones</option>
-                <option value="4">4 habitaciones</option>
+                <option value="">{i18n.t("explore:explorepage_habitaciones")}</option>
+                <option value="1">{i18n.t("explore:explorepage_1_habitaciones")}</option>
+                <option value="2">{i18n.t("explore:explorepage_2_habitaciones")}</option>
+                <option value="3">{i18n.t("explore:explorepage_3_habitaciones")}</option>
+                <option value="4">{i18n.t("explore:explorepage_4_habitaciones")}</option>
               </select>
             </div>
             {filtersOpen && (
               <div id="explore-filters" className="expanded-filters">
-                <p className="filter-section-label">
-                  Precio mensual{' '}
-                  en {displayCurrency}
+                <p className="filter-section-label">{i18n.t("explore:explorepage_precio_mensual")}{' '}{i18n.t("explore:explorepage_en")}{' '}{displayCurrency}
                 </p>
-                <p className="text-xs text-neutral/70">Los rangos usan {displayCurrency}. Si faltan tasas, solo se incluyen precios comparables.</p>
+                <p className="text-xs text-neutral/70">{i18n.t("explore:explorepage_los_rangos_usan")}{' '}{displayCurrency}{i18n.t("common:missingRates")}</p>
                 <div className="price-inputs">
-                  <label>
-                    Desde
-                    <input
+                  <label>{i18n.t("explore:explorepage_desde")}<input
                       type="number"
                       min="0"
-                      placeholder="Sin mínimo"
+                      placeholder={i18n.t("explore:explorepage_sin_minimo")}
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                     />
                   </label>
-                  <label>
-                    Hasta
-                    <input
+                  <label>{i18n.t("explore:explorepage_hasta")}<input
                       type="number"
                       min="0"
-                      placeholder="Sin máximo"
+                      placeholder={i18n.t("explore:explorepage_sin_maximo")}
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                     />
@@ -226,19 +220,14 @@ export default function ExplorePage() {
                 {minPrice &&
                   maxPrice &&
                   Number(minPrice) > Number(maxPrice) && (
-                    <p role="status" className="filter-validation">
-                      El precio mínimo debe ser menor o igual al máximo.
-                    </p>
+                    <p role="status" className="filter-validation">{i18n.t("explore:explorepage_el_precio_minimo_debe_ser_menor_o_igual_al")}</p>
                   )}
 
                 <fieldset aria-busy={servicesLoading}>
-                  <legend className="filter-section-label">Servicios incluidos</legend>
-                  <p>
-                    La propiedad debe contar con todos los servicios
-                    seleccionados.
-                  </p>
+                  <legend className="filter-section-label">{i18n.t("explore:explorepage_servicios_incluidos")}</legend>
+                  <p>{i18n.t("explore:explorepage_la_propiedad_debe_contar_con_todos_los_servicios_seleccionados")}</p>
                   {servicesLoading ? (
-                    <p role="status">Cargando servicios…</p>
+                    <p role="status">{i18n.t("explore:explorepage_cargando_servicios")}</p>
                   ) : servicesError ? (
                     <div role="alert">
                       <p>{servicesError}</p>
@@ -247,18 +236,16 @@ export default function ExplorePage() {
                         onClick={() => {
                           setServicesAttempt((n) => n + 1)
                         }}
-                      >
-                        Reintentar servicios
-                      </button>
+                      >{i18n.t("explore:explorepage_reintentar_servicios")}</button>
                     </div>
                   ) : availableServices.length === 0 ? (
-                    <p>No hay servicios en el catálogo todavía.</p>
+                    <p>{i18n.t("explore:explorepage_no_hay_servicios_en_el_catalogo_todavia")}</p>
                   ) : (
                     <div className="service-filters">
                       {availableServices.map((service) => (
                         <label
                           key={service.id}
-                          title={service.description || undefined}
+                          title={catalogText(service, 'description') || undefined}
                         >
                           <input
                             type="checkbox"
@@ -271,58 +258,53 @@ export default function ExplorePage() {
                               )
                             }
                           />
-                          <ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}
+                          <ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {catalogText(service)}
                         </label>
                       ))}
                     </div>
                   )}
                 </fieldset>
-                <button className="text-button" onClick={resetFilters}>
-                  Limpiar filtros
-                </button>
+                <button className="text-button" onClick={resetFilters}>{i18n.t("explore:explorepage_limpiar_filtros")}</button>
               </div>
             )}
           </div>
           <div className="result-summary" role="status">
             {loading
-              ? 'Buscando tu próximo hogar…'
+              ? i18n.t("explore:explorepage_buscando_tu_proximo_hogar")
               : error
-                ? 'Búsqueda no disponible'
-                : `${filtered.length} ${filtered.length === 1 ? 'propiedad disponible' : 'propiedades disponibles'}`}
+                ? i18n.t("explore:explorepage_busqueda_no_disponible")
+                : i18n.t('common:availableCount', { count: filtered.length })}
             <span>
-              <span className="status-dot" /> Publicadas
-            </span>
+              <span className="status-dot" />{' '}{i18n.t("explore:explorepage_publicadas")}</span>
           </div>
           <div className="property-list" aria-busy={loading}>
             {loading ? (
               <div className="empty-state">
                 <Building2 size={36} />
-                <h2>Cargando propiedades</h2>
-                <p>Estamos consultando las publicaciones disponibles.</p>
+                <h2>{i18n.t("explore:explorepage_cargando_propiedades")}</h2>
+                <p>{i18n.t("explore:explorepage_estamos_consultando_las_publicaciones_disponibles")}</p>
               </div>
             ) : error ? (
               <div className="empty-state" role="alert">
-                <h2>No se pudieron cargar</h2>
+                <h2>{i18n.t("explore:explorepage_no_se_pudieron_cargar")}</h2>
                 <p>{error}</p>
                 <button
                   onClick={() => {
                     setAttempt((n) => n + 1)
                   }}
-                >
-                  Reintentar
-                </button>
+                >{i18n.t("comments:propertycomments_reintentar")}</button>
               </div>
             ) : filtered.length === 0 ? (
               <div className="empty-state">
                 <Search size={36} />
-                <h2>No hay propiedades disponibles</h2>
+                <h2>{i18n.t("explore:explorepage_no_hay_propiedades_disponibles")}</h2>
                 <p>
                   {hasFilters
-                    ? 'Prueba otra zona o ajusta tus filtros.'
-                    : 'Las nuevas publicaciones aparecerán aquí.'}
+                    ? i18n.t("explore:explorepage_prueba_otra_zona_o_ajusta_tus_filtros")
+                    : i18n.t("explore:explorepage_las_nuevas_publicaciones_apareceran_aqui")}
                 </p>
                 {hasFilters && (
-                  <button onClick={resetFilters}>Limpiar filtros</button>
+                  <button onClick={resetFilters}>{i18n.t("explore:explorepage_limpiar_filtros")}</button>
                 )}
               </div>
             ) : (
@@ -330,9 +312,7 @@ export default function ExplorePage() {
                 {missingLocations > 0 && (
                   <p className="location-note">
                     <MapPin size={15} />
-                    {missingLocations} sin ubicación en el mapa; puedes
-                    consultar su dirección.
-                  </p>
+                    {missingLocations}{' '}{i18n.t("explore:explorepage_sin_ubicacion_en_el_mapa_puedes_consultar_su_direccion")}</p>
                 )}
                 {filtered.map((property) => (
                   <article
@@ -344,13 +324,13 @@ export default function ExplorePage() {
                       className="property-select"
                       onClick={() => setSelected(property.id)}
                       aria-pressed={selected === property.id}
-                      aria-label={`Seleccionar ${property.title}, ${priceLabel(property)} al mes`}
+                      aria-label={i18n.t("explore:explorepage_seleccionar_al_mes", { v0: property.title, v1: priceLabel(property) })}
                     >
                       <div className="property-photo">
                         <PropertyPhoto property={property} />
                         <span className="available-badge">
                           <span className="status-dot" />
-                          {property.reservedTenantId ? 'Reservada' : 'Disponible'}
+                          {property.reservedTenantId ? i18n.t("dashboard:recentsavedsection_reservada") : i18n.t("explore:explorepage_disponible")}
                         </span>
                       </div>
                       <div className="property-info">
@@ -358,7 +338,7 @@ export default function ExplorePage() {
                           <h2>{property.title}</h2>
                           <p className="property-price">
                             {priceLabel(property)}
-                            <small>/mes</small>
+                            <small>{i18n.t("common:perMonth")}</small>
                           </p>
                         </div>
                         <PriceDetails price={property.displayPrice} />
@@ -369,18 +349,17 @@ export default function ExplorePage() {
                         <div className="property-facts">
                           <span>
                             <BedDouble size={16} />
-                            {property.rooms} hab.
-                          </span>
+                            {property.rooms}{' '}{i18n.t("explore:explorepage_hab")}</span>
                           <span>
                             <Users size={16} />
                             {property.guest}{' '}
-                            {property.guest === 1 ? 'persona' : 'personas'}
+                            {i18n.t('common:person', { count: property.guest })}
                           </span>
                         </div>
                         <div className="property-bottom">
                           <div className="property-services">
                             {property.services?.slice(0, 3).map((service) => (
-                              <span key={service.id}><ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {service.name}</span>
+                              <span key={service.id}><ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {catalogText(service)}</span>
                             ))}
                           </div>
                           <span
@@ -392,8 +371,8 @@ export default function ExplorePage() {
                           >
                             <LocateFixed size={13} />
                             {coordinates(property)
-                              ? 'Ver ubicación'
-                              : 'Sin coordenadas'}
+                              ? i18n.t("explore:explorepage_ver_ubicacion")
+                              : i18n.t("explore:explorepage_sin_coordenadas")}
                           </span>
                         </div>
                       </div>
@@ -403,18 +382,15 @@ export default function ExplorePage() {
                         <div>
                           <p>{property.description}</p>
                           {(property.services?.length || 0) > 3 && (
-                            <p>
-                              Servicios:{' '}
-                              {property.services?.map((s) => s.name).join(', ')}
+                            <p>{i18n.t("explore:explorepage_servicios")}{' '}
+                              {property.services?.map((s) => catalogText(s)).join(', ')}
                             </p>
                           )}
                         </div>
                         <a
                           className="property-details-button"
                           href={`/property_detail/${property.id}`}
-                        >
-                          Ver detalles
-                        </a>
+                        >{i18n.t("dashboard:reservedpropertysection_ver_detalles")}</a>
                       </div>
                     )}
                   </article>
@@ -434,15 +410,15 @@ export default function ExplorePage() {
               <div>
                 <strong>{activeProperty.title}</strong>
                 <p>
-                  {priceLabel(activeProperty)} / mes · {activeProperty.address}
+                  {priceLabel(activeProperty)}{' '}{i18n.t('common:perMonthDot')}{' '}{activeProperty.address}
                 </p>
                 {!coordinates(activeProperty) && (
-                  <p>Esta propiedad todavía no tiene coordenadas.</p>
+                  <p>{i18n.t("explore:explorepage_esta_propiedad_todavia_no_tiene_coordenadas")}</p>
                 )}
               </div>
               <button
                 onClick={() => setSelected(null)}
-                aria-label="Cerrar selección"
+                aria-label={i18n.t("explore:explorepage_cerrar_seleccion")}
               >
                 <X size={18} />
               </button>
@@ -456,7 +432,7 @@ export default function ExplorePage() {
           }
         >
           <MapPin size={18} />
-          {mobileView === 'list' ? 'Ver mapa' : 'Ver lista'}
+          {mobileView === 'list' ? i18n.t("explore:explorepage_ver_mapa") : i18n.t("explore:explorepage_ver_lista")}
         </button>
       </main>
     </div>
@@ -464,6 +440,7 @@ export default function ExplorePage() {
 }
 
 function PropertyPhoto({ property }: { property: Property }) {
+  useTranslation();
   const [failed, setFailed] = useState(false)
   const url = photoUrl(property)
   return url && !failed ? (
@@ -476,7 +453,7 @@ function PropertyPhoto({ property }: { property: Property }) {
   ) : (
     <div className="photo-placeholder">
       <Building2 size={38} />
-      <span>Sin fotografía</span>
+      <span>{i18n.t("explore:explorepage_sin_fotografia")}</span>
     </div>
   )
 }

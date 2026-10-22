@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 type BadgeVariant = 'active' | 'draft' | 'pending' | 'changes' | 'inactive'
 
 type StatusBadgeProps = {
@@ -5,13 +7,13 @@ type StatusBadgeProps = {
   label?: string
 }
 
-const defaultLabels: Record<BadgeVariant, string> = {
-  active: 'Activa',
-  draft: 'Borrador',
-  pending: 'En revisión',
-  changes: 'Requiere cambios',
-  inactive: 'Inactiva',
-}
+const defaultLabels: () => Record<BadgeVariant, string> = () => ({
+  active: i18n.t("property:statusbadge_activa"),
+  draft: i18n.t("property:statusbadge_borrador"),
+  pending: i18n.t("dashboard:adminpropertiespage_en_revision"),
+  changes: i18n.t("property:statusbadge_requiere_cambios"),
+  inactive: i18n.t("property:statusbadge_inactiva"),
+})
 
 const variantClasses: Record<BadgeVariant, string> = {
   active: 'bg-green-100 text-green-700',
@@ -22,9 +24,10 @@ const variantClasses: Record<BadgeVariant, string> = {
 }
 
 export default function StatusBadge({ variant, label }: StatusBadgeProps) {
+  useTranslation();
   return (
     <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${variantClasses[variant]}`}>
-      {label ?? defaultLabels[variant]}
+      {label ?? defaultLabels()[variant]}
     </span>
   )
 }

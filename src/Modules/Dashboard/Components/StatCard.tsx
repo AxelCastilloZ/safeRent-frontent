@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 import type { LucideIcon } from 'lucide-react';
 
@@ -14,6 +16,7 @@ interface StatCardProps {
 
 /** Tarjeta de métrica. Nunca simula datos: sin valor muestra "—" y lo dice. */
 export default function StatCard({ to, label, value, icon: Icon, hint, isLoading }: StatCardProps) {
+  useTranslation();
   const isPending = value === undefined && !isLoading;
 
   const card = (
@@ -25,9 +28,9 @@ export default function StatCard({ to, label, value, icon: Icon, hint, isLoading
         </span>
       </div>
       <p className="mt-2 text-2xl font-extrabold text-primary sm:mt-3 sm:text-3xl">
-        {isLoading ? <span className="inline-block h-8 w-12 animate-pulse rounded bg-slate-200" aria-label="Cargando" /> : (value ?? '—')}
+        {isLoading ? <span className="inline-block h-8 w-12 animate-pulse rounded bg-slate-200" aria-label={i18n.t("dashboard:sectionstates_cargando")} /> : (value ?? '—')}
       </p>
-      <p className="mt-1 text-xs text-muted-ink">{isPending ? 'Pendiente de integrar' : hint}</p>
+      <p className="mt-1 text-xs text-muted-ink">{isPending ? i18n.t("dashboard:statcard_pendiente_de_integrar") : hint}</p>
     </article>
   );
 

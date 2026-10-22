@@ -1,3 +1,7 @@
+import { message } from '../../i18n/messages';
+import { useMessageState } from '../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { LocateFixed, Maximize } from 'lucide-react'
@@ -12,11 +16,12 @@ interface Props {
 }
 
 export default function PropertyMap({ properties, selected, onSelect }: Props) {
+  const language = useTranslation().i18n.resolvedLanguage;
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<L.Map | null>(null)
   const markers = useRef(new Map<number, L.Marker>())
   const userMarker = useRef<L.CircleMarker | null>(null)
-  const [notice, setNotice] = useState('')
+  const [notice, setNotice] = useMessageState('')
   const [locating, setLocating] = useState(false)
 
   useEffect(() => {
@@ -26,7 +31,7 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
       12,
     )
     map.current = instance
-    L.control.zoom({ position: 'topright' }).addTo(instance)
+    L.control.zoom({ position: 'topright', zoomInTitle: i18n.t('common:zoomIn'), zoomOutTitle: i18n.t('common:zoomOut') }).addTo(instance)
     const tiles = L.tileLayer(
       'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
       {
@@ -36,7 +41,7 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
       },
     ).addTo(instance)
     tiles.on('tileerror', () =>
-      setNotice('No se pudo cargar parte del mapa. Revisa tu conexión.'),
+      setNotice(message("explore:propertymap_no_se_pudo_cargar_parte_del_mapa_revisa_tu")),
     )
     const observer = new ResizeObserver(() => instance.invalidateSize())
     observer.observe(container.current)
@@ -45,7 +50,7 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
       instance.remove()
       map.current = null
     }
-  }, [])
+  }, [setNotice])
 
   useEffect(() => {
     const instance = map.current
@@ -82,7 +87,7 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
       layer.remove()
       markers.current.clear()
     }
-  }, [properties, onSelect])
+  }, [properties, onSelect, language])
 
   useEffect(() => {
     markers.current.forEach((marker, id) => {
@@ -91,11 +96,21 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
     })
     const marker = selected === null ? undefined : markers.current.get(selected)
     if (marker) map.current?.panTo(marker.getLatLng())
-  }, [selected, properties])
+  }, [selected, properties, language])
+
+  useEffect(() => {
+    const container = map.current?.getContainer();
+    container?.querySelector('.leaflet-control-attribution a[href*="leafletjs.com"]')?.setAttribute('title', i18n.t('common:mapLibrary'));
+    for (const [selector, key] of [['.leaflet-control-zoom-in', 'common:zoomIn'], ['.leaflet-control-zoom-out', 'common:zoomOut']]) {
+      const button = container?.querySelector(selector);
+      button?.setAttribute('title', i18n.t(key));
+      button?.setAttribute('aria-label', i18n.t(key));
+    }
+  }, [language]);
 
   function locate() {
     if (!navigator.geolocation) {
-      setNotice('Tu navegador no admite geolocalización.')
+      setNotice(message("explore:propertymap_tu_navegador_no_admite_geolocalizacion"))
       return
     }
     setLocating(true)
@@ -118,13 +133,13 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
           fillOpacity: 1,
         })
           .addTo(instance)
-          .bindTooltip('Tu ubicación')
+          .bindTooltip(i18n.t("explore:propertymap_tu_ubicacion"))
         instance.setView(point, 14)
       },
       () => {
         setLocating(false)
         setNotice(
-          'No pudimos obtener tu ubicación. Revisa los permisos del navegador.',
+          message("explore:propertymap_no_pudimos_obtener_tu_ubicacion_revisa_los_permisos_del"),
         )
       },
       { timeout: 10000 },
@@ -143,34 +158,33 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
   }
 
   return (
-    <section className="explore-map" aria-label="Mapa de precios y ubicaciones">
+    <section className="explore-map" aria-label={i18n.t("explore:propertymap_mapa_de_precios_y_ubicaciones")}>
       <div ref={container} className="map-canvas" />
       <div className="map-actions">
         <button
           type="button"
           onClick={locate}
           disabled={locating}
-          aria-label="Usar mi ubicación"
-          title="Usar mi ubicación"
+          aria-label={i18n.t("explore:propertymap_usar_mi_ubicacion")}
+          title={i18n.t("explore:propertymap_usar_mi_ubicacion")}
         >
           <LocateFixed size={22} />
         </button>
         <button
           type="button"
           onClick={fitAll}
-          aria-label="Ver todas las ubicaciones"
-          title="Ver todas las ubicaciones"
+          aria-label={i18n.t("explore:propertymap_ver_todas_las_ubicaciones")}
+          title={i18n.t("explore:propertymap_ver_todas_las_ubicaciones")}
         >
           <Maximize size={20} />
         </button>
       </div>
       <div className="map-caption">
-        {properties.filter((p) => coordinates(p)).length} propiedades en el mapa
-      </div>
+        {properties.filter((p) => coordinates(p)).length}{' '}{i18n.t("explore:propertymap_propiedades_en_el_mapa")}</div>
       {notice && (
         <div role="status" className="map-notice">
           {notice}
-          <button onClick={() => setNotice('')} aria-label="Cerrar aviso">
+          <button onClick={() => setNotice('')} aria-label={i18n.t("explore:propertymap_cerrar_aviso")}>
             ×
           </button>
         </div>

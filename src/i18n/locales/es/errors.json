@@ -1,0 +1,19 @@
+{
+  "unavailable": "No se pudo completar la solicitud. Intenta nuevamente.",
+  "network": "No se pudo conectar con el servidor. Intenta nuevamente.",
+  "userUnavailable": "Usuario no disponible.",
+  "emailRegistered": "El correo ya está registrado.",
+  "emailPassword": "Para cambiar el correo, indica tu contraseña actual correcta.",
+  "currentPassword": "La contraseña actual es incorrecta.",
+  "passwordDifferent": "La nueva contraseña debe ser diferente de la actual.",
+  "attempts": "Demasiados intentos. Intenta nuevamente en 15 minutos.",
+  "country": "País o territorio no admitido.",
+  "currency": "Moneda no admitida.",
+  "credentials": "Credenciales incorrectas.",
+  "identityRegistered": "La identificación o el correo ya están registrados.",
+  "invalidLink": "El enlace es inválido o ha expirado. Solicita uno nuevo.",
+  "sessionExpired": "Tu sesión ha expirado. Inicia sesión nuevamente.",
+  "invalidFields": "Revisa los datos del formulario.",
+  "pageError": "No pudimos cargar esta página",
+  "pageNotFound": "Página no encontrada"
+}

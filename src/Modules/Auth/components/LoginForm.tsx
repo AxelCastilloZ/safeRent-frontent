@@ -1,3 +1,5 @@
+import LanguageSelector from '../../../i18n/LanguageSelector';
+import { useTranslation } from 'react-i18next';
 import { useForm } from '@tanstack/react-form';
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -19,6 +21,7 @@ const linkClass =
   'rounded-sm font-semibold text-[#091426] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426]';
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const { user } = useAuth();
@@ -56,12 +59,11 @@ const LoginForm = () => {
 
       <section className="flex w-full max-w-[448px] flex-col gap-[23px] rounded-xl bg-white px-5 py-6 shadow-xl sm:px-6">
         <header className="flex flex-col gap-[7px] text-center">
-          <h1 className="text-[28px] leading-9 font-semibold tracking-[-0.32px] text-[#191c1d] sm:text-[32px] sm:leading-[38.4px]">
-            Welcome back
-          </h1>
-          <p className="text-base leading-[25.6px] text-[#45474c]">Sign in to your SafeRent account</p>
+          <h1 className="text-[28px] leading-9 font-semibold tracking-[-0.32px] text-[#191c1d] sm:text-[32px] sm:leading-[38.4px]">{t("auth:welcome")}</h1>
+          <p className="text-base leading-[25.6px] text-[#45474c]">{t("auth:signInDescription")}</p>
         </header>
 
+        <LanguageSelector />
         <form
           noValidate
           onSubmit={(e) => {
@@ -77,7 +79,7 @@ const LoginForm = () => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="login-email" className={labelClass}>Email address</label>
+                  <label htmlFor="login-email" className={labelClass}>{t("auth:email")}</label>
                   <div className="relative">
                     <Mail aria-hidden="true" className={iconClass} />
                     <input
@@ -85,7 +87,7 @@ const LoginForm = () => {
                       name={field.name}
                       type="email"
                       autoComplete="email"
-                      placeholder="name@company.com"
+                      placeholder={t("auth:emailPlaceholder")}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -95,7 +97,7 @@ const LoginForm = () => {
                     />
                   </div>
                   {isInvalid && (
-                    <p id="login-email-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    <p id="login-email-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                   )}
                 </div>
               );
@@ -109,10 +111,8 @@ const LoginForm = () => {
               return (
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="login-password" className={labelClass}>Password</label>
-                    <Link to="/forgot-password" className={`${linkClass} text-xs leading-3`}>
-                      Forgot Password?
-                    </Link>
+                    <label htmlFor="login-password" className={labelClass}>{t("auth:password")}</label>
+                    <Link to="/forgot-password" className={`${linkClass} text-xs leading-3`}>{t("auth:forgot")}</Link>
                   </div>
                   <div className="relative">
                     <Lock aria-hidden="true" className={iconClass} />
@@ -132,7 +132,7 @@ const LoginForm = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPassword ? t("auth:hidePassword") : t("auth:showPassword")}
                       aria-pressed={showPassword}
                       className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-[#45474c] transition-colors hover:text-[#191c1d] focus-visible:outline-2 focus-visible:outline-[#091426]"
                     >
@@ -140,7 +140,7 @@ const LoginForm = () => {
                     </button>
                   </div>
                   {isInvalid && (
-                    <p id="login-password-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    <p id="login-password-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                   )}
                 </div>
               );
@@ -148,7 +148,7 @@ const LoginForm = () => {
           </form.Field>
 
           {login.isError && <Alert severity={getAuthErrorSeverity(login.error)}>{getAuthErrorMessage(login.error)}</Alert>}
-          {login.isSuccess && <Alert severity="success">Sesión iniciada correctamente. Te llevaremos al inicio.</Alert>}
+          {login.isSuccess && <Alert severity="success">{t("auth:signedIn")}</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
@@ -157,18 +157,15 @@ const LoginForm = () => {
                 aria-busy={isSubmitting}
                 className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#091426] py-4 text-sm leading-[16.8px] font-medium tracking-[0.7px] text-white shadow-md transition-colors hover:bg-[#15243d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#091426] active:bg-[#050b16] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {isSubmitting ? 'Signing in…' : 'Sign In'}
+                {isSubmitting ? t("auth:signingIn") : t("auth:signIn")}
                 {!isSubmitting && <ArrowRight aria-hidden="true" className="size-3" />}
               </button>
             )}
           </form.Subscribe>
         </form>
 
-        <p className="text-center text-base leading-[25.6px] text-[#45474c]">
-          Don't have an account?{' '}
-          <Link to="/register" search={{ next }} className={`${linkClass} text-sm tracking-[0.7px]`}>
-            Sign up
-          </Link>
+        <p className="text-center text-base leading-[25.6px] text-[#45474c]">{t("auth:noAccount")}{' '}
+          <Link to="/register" search={{ next }} className={`${linkClass} text-sm tracking-[0.7px]`}>{t("auth:signUp")}</Link>
         </p>
       </section>
     </main>

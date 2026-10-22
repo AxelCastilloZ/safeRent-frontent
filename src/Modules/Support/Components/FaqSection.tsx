@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { ChevronDown } from 'lucide-react'
 import Reveal from '../../LandingPage/Components/Reveal'
 import { SectionTitle } from '../../LandingPage/Components/BenefitsSection'
@@ -11,14 +13,15 @@ type FaqSectionProps = {
 }
 
 export default function FaqSection({ items, openIds, onToggle, hasActiveFilter }: FaqSectionProps) {
+  useTranslation();
   return (
     <section id="faq" className="scroll-mt-20 bg-blue-50 px-4 py-16 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <SectionTitle title="Preguntas frecuentes" description="Las dudas más comunes sobre cómo usar SafeRent." />
+        <SectionTitle title={i18n.t("support:faqsection_preguntas_frecuentes")} description={i18n.t("support:faqsection_las_dudas_mas_comunes_sobre_como_usar_saferent")} />
         <div className="mt-10 space-y-3" role="list">
           {items.length === 0 ? (
             <p className="text-center text-sm text-neutral/70">
-              {hasActiveFilter ? 'No encontramos resultados para tu búsqueda.' : 'Todavía no hay preguntas frecuentes disponibles.'}
+              {hasActiveFilter ? i18n.t("support:faqsection_no_encontramos_resultados_para_tu_busqueda") : i18n.t("support:faqsection_todavia_no_hay_preguntas_frecuentes_disponibles")}
             </p>
           ) : (
             items.map((item) => (
@@ -32,6 +35,7 @@ export default function FaqSection({ items, openIds, onToggle, hasActiveFilter }
 }
 
 function FaqAccordionItem({ item, isOpen, onToggle }: { item: FaqItem; isOpen: boolean; onToggle: () => void }) {
+  useTranslation();
   const panelId = `faq-panel-${item.id}`
   const buttonId = `faq-button-${item.id}`
 

@@ -1,0 +1,14 @@
+{
+  "reservepropertybutton_no_se_pudo_reservar_la_propiedad_intenta_nuevamente": "Unable to reserve the property. Please try again.",
+  "reservepropertybutton_la_propiedad_debe_estar_aprobada_y_activa_para_alquilarla": "The property must be approved and active to rent it",
+  "reservepropertybutton_propiedad_reservada": "Reserved property",
+  "reservepropertybutton_reservando": "Reserving…",
+  "reservepropertybutton_alquilar_a_esta_persona": "Rent to this person",
+  "reservedForYou": "Reserved for you",
+  "reservedByOther": "Reserved by someone else",
+  "reservedForTenant": "Reserved for {{name}}",
+  "reservedForOther": "Reserved for someone else",
+  "reserveForTenant": "Reserve for {{name}}",
+  "reserveForPerson": "Reserve for this person",
+  "activeRequired": "The property must be approved and active to reserve it."
+}

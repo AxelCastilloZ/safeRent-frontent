@@ -1,3 +1,4 @@
+import { message, messageFromError, resolveMessage, type MessageDescriptor } from '../../../i18n/messages';
 import { useEffect, useState } from 'react'
 import type { PropertyService } from '../interfaces/property.interface'
 import { getServices } from '../services/service.service'
@@ -6,7 +7,7 @@ export function useServices(attempt: number) {
   const [result, setResult] = useState<{
     attempt: number
     services: PropertyService[]
-    error: string
+    error: string | MessageDescriptor
   } | null>(null)
 
   useEffect(() => {
@@ -23,8 +24,8 @@ export function useServices(attempt: number) {
             services: [],
             error:
               reason instanceof Error
-                ? reason.message
-                : 'No se pudo cargar el catálogo de servicios.',
+                ? messageFromError(reason)
+                : message("explore:useservices_no_se_pudo_cargar_el_catalogo_de_servicios"),
           })
       })
     return () => controller.abort()
@@ -33,6 +34,6 @@ export function useServices(attempt: number) {
   return {
     services: result?.attempt === attempt ? result.services : [],
     loading: result?.attempt !== attempt,
-    error: result?.attempt === attempt ? result.error : '',
+    error: result?.attempt === attempt ? resolveMessage(result.error) : '',
   }
 }
