@@ -1,5 +1,5 @@
 import ReservePropertyButton from '../../Reservations/Components/ReservePropertyButton'
-import ReservationLabel from '../../Reservations/Components/ReservationLabel'
+import ReservedChip from '../../Reservations/Components/ReservedChip'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Building2, ExternalLink, ShieldCheck } from 'lucide-react'
 import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
@@ -42,7 +42,15 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
               )}
               {conversationContext(conversation, currentUserId)}
             </p>
-            {conversation.property && <ReservationLabel property={conversation.property} />}
+            {/* Al propietario el estado se lo muestra el propio botón de reservar; aquí solo al inquilino. */}
+            {conversation.property?.reservedTenantId && conversation.property.owner.id !== currentUserId && (
+              <div className="mt-1.5">
+                <ReservedChip
+                  highlight={conversation.property.reservedTenantId === currentUserId}
+                  label={conversation.property.reservedTenantId === currentUserId ? 'Reservada a tu nombre' : 'Reservada por otra persona'}
+                />
+              </div>
+            )}
           </div>
           {/* Las conversaciones directas (administrador ↔ usuario) no tienen propiedad: sin reservar ni "Ver propiedad". */}
           {conversation.property && (

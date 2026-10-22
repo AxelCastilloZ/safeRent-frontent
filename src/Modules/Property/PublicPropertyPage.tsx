@@ -1,7 +1,7 @@
 import PropertyComments from '../Comments/Components/PropertyComments'
 import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, BedDouble, Heart, MapPin, MessageCircle, Share2, Users } from 'lucide-react'
 import Navbar from '../LandingPage/Components/Navbar'
 import Footer from '../LandingPage/Components/Footer'
@@ -28,8 +28,10 @@ export default function PublicPropertyPage() {
   const savedIds = useSavedPropertyIds()
   const savedMutation = useToggleSavedProperty()
   const saved = property !== undefined && Boolean(savedIds.data?.includes(property.id))
-  // Solo el inquilino guarda propiedades, y nadie guarda la suya. Sin sesión (o mientras se verifica) el botón se muestra.
-  const canShowSave = property !== undefined && currentUser?.id !== property.owner.id && (!currentUser || currentUser.roles.includes('CLIENT'))
+  // Es la propiedad de quien tiene la sesión: no puede chatear ni guardarla (el backend también lo rechaza).
+  const isOwnProperty = Boolean(property && currentUser && currentUser.id === property.owner.id)
+  // Solo el inquilino guarda propiedades. Sin sesión (o mientras se verifica) el botón se muestra.
+  const canShowSave = property !== undefined && !isOwnProperty && (!currentUser || currentUser.roles.includes('CLIENT'))
 
   function contactOwner() {
     if (!property) return
@@ -46,10 +48,6 @@ export default function PublicPropertyPage() {
     if (!currentUser.roles.includes('CLIENT')) {
       setNotice('Necesitas el rol de inquilino para contactar al propietario.');
       return;
-    }
-    if (currentUser.id === property.owner.id) {
-      setNotice('Esta propiedad es tuya: no puedes chatear contigo mismo.')
-      return
     }
     startConversation.mutate({ participantIds: [currentUser.id, property.owner.id], propertyId: property.id })
   }
@@ -142,7 +140,15 @@ export default function PublicPropertyPage() {
             <ReservationLabel property={property} />
             <PriceDetails price={property.displayPrice} />
             <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
+            {isOwnProperty ? (
+              <div role="status" className="rounded-xl bg-slate-50 p-4 text-sm text-neutral">
+                <p className="font-bold text-primary">Esta propiedad es tuya</p>
+                <p className="mt-1 text-neutral/75">Los interesados te escribirán y verás sus mensajes en tu panel.</p>
+                <Link to="/dashboard/owner/properties" className="mt-2 inline-block font-bold text-secondary hover:underline">Ir a mis propiedades</Link>
+              </div>
+            ) : (
             <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>
+            )}
           </aside>
         </div>
       </>}
