@@ -36,7 +36,7 @@ export default function RecentConversationsSection({
     .slice(0, SHOWN);
 
   return (
-    <HomeSection title={title} to={basePath} linkLabel="Ir a mensajes">
+    <HomeSection title={title} to={basePath} linkLabel={i18n.t("dashboard:goMessages")}>
       {conversations.isPending ? (
         <SectionLoading />
       ) : conversations.isError ? (

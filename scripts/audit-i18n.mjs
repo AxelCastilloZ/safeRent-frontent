@@ -4,6 +4,7 @@ import path from 'node:path';
 import ts from 'typescript';
 const root = path.resolve(import.meta.dirname, '../src');
 const candidates = [];
+const visibleAttribute = name => /(?:label|title|description|message|placeholder|hint|caption|tooltip|helperText|emptyText|loadingText|alt)$/i.test(name);
 function scan(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const filename = path.join(directory, entry.name);
@@ -13,7 +14,7 @@ function scan(directory) {
     function visit(node) {
       if (ts.isTypeNode(node) || ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) return;
       const jsxText = ts.isJsxText(node) && /[\p{L}]/u.test(node.text) && node.text.trim() !== 'SafeRent';
-      const attribute = ts.isStringLiteral(node) && ts.isJsxAttribute(node.parent) && ['title', 'description', 'label', 'aria-label', 'placeholder', 'hint', 'alt'].includes(node.parent.name.getText(source));
+      const attribute = ts.isStringLiteral(node) && ts.isJsxAttribute(node.parent) && visibleAttribute(node.parent.name.getText(source));
       const literal = ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateExpression(node);
       let text = ts.isTemplateExpression(node) ? node.head.text + node.templateSpans.map(span => span.literal.text).join('') : node.text;
       let owner = node.parent;
@@ -21,7 +22,7 @@ function scan(directory) {
       let ignored = false;
       while (owner && !ts.isFunctionLike(owner)) {
         if (ts.isJsxExpression(owner)) insideExpression = true;
-        if (ts.isJsxAttribute(owner) && !['title', 'description', 'label', 'aria-label', 'placeholder', 'hint', 'alt'].includes(owner.name.getText(source))) ignored = true;
+        if (ts.isJsxAttribute(owner) && !visibleAttribute(owner.name.getText(source))) ignored = true;
         if (ts.isPropertyAssignment(owner) && ['category', 'keywords'].includes(owner.name.getText(source))) ignored = true;
         owner = owner.parent;
       }

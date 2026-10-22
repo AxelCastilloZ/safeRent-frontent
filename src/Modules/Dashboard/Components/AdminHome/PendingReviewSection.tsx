@@ -15,7 +15,7 @@ export default function PendingReviewSection() {
   const next = review.data?.queue.slice(0, SHOWN) ?? [];
 
   return (
-    <HomeSection title={i18n.t("dashboard:pendingreviewsection_pendientes_de_revision")} to="/dashboard/admin/properties" linkLabel="Ver propiedades">
+    <HomeSection title={i18n.t("dashboard:pendingreviewsection_pendientes_de_revision")} to="/dashboard/admin/properties" linkLabel={i18n.t("dashboard:viewProperties")}>
       {review.isPending ? (
         <SectionLoading />
       ) : review.isError ? (

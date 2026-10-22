@@ -19,7 +19,7 @@ export default function AttentionSection() {
     .sort((a, b) => Number(b.status === 'CHANGES_REQUESTED') - Number(a.status === 'CHANGES_REQUESTED'));
 
   return (
-    <HomeSection title={i18n.t("dashboard:attentionsection_requieren_tu_atencion")} to="/dashboard/owner/properties" linkLabel="Mis propiedades">
+    <HomeSection title={i18n.t("dashboard:attentionsection_requieren_tu_atencion")} to="/dashboard/owner/properties" linkLabel={i18n.t("dashboard:myProperties")}>
       {properties.isPending ? (
         <SectionLoading />
       ) : properties.isError ? (

@@ -15,7 +15,7 @@ export default function OwnerReservedSection() {
     .sort((a, b) => (b.reservedAt ?? '').localeCompare(a.reservedAt ?? ''));
 
   return (
-    <HomeSection title={i18n.t("dashboard:ownerreservedsection_propiedades_reservadas")} to="/dashboard/owner/properties" linkLabel="Mis propiedades">
+    <HomeSection title={i18n.t("dashboard:ownerreservedsection_propiedades_reservadas")} to="/dashboard/owner/properties" linkLabel={i18n.t("dashboard:myProperties")}>
       {properties.isPending ? (
         <SectionLoading shape="cards" />
       ) : properties.isError ? (

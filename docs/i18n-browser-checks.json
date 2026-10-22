@@ -1,0 +1,152 @@
+{
+  "date": "2026-10-22",
+  "method": "Local browser, transactional PostgreSQL fixtures, real controllers/guards, outbound workers disabled",
+  "checks": [
+    {
+      "role": "CLIENT",
+      "language": "en",
+      "overflow": false,
+      "title": "Settings | SafeRent",
+      "width": 390
+    },
+    {
+      "role": "CLIENT",
+      "language": "pt",
+      "overflow": false,
+      "title": "Configurações | SafeRent",
+      "width": 390
+    },
+    {
+      "role": "CLIENT",
+      "language": "es",
+      "overflow": false,
+      "title": "Ajustes | SafeRent",
+      "width": 390
+    },
+    {
+      "role": "CLIENT",
+      "language": "fr",
+      "overflow": false,
+      "title": "Paramètres | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "en",
+      "overflow": false,
+      "role": "OWNER",
+      "title": "Settings | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "role": "OWNER",
+      "title": "Configurações | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "role": "OWNER",
+      "title": "Ajustes | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "role": "OWNER",
+      "title": "Paramètres | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "en",
+      "overflow": false,
+      "role": "ADMIN",
+      "title": "Settings | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "role": "ADMIN",
+      "title": "Configurações | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "role": "ADMIN",
+      "title": "Ajustes | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "role": "ADMIN",
+      "title": "Paramètres | SafeRent",
+      "width": 390
+    },
+    {
+      "baseName": "Servicio QA temporal",
+      "language": "en",
+      "overflow": false,
+      "screen": "catalog",
+      "width": 390
+    },
+    {
+      "baseName": "Servicio QA temporal",
+      "language": "pt",
+      "overflow": false,
+      "screen": "catalog",
+      "width": 390
+    },
+    {
+      "baseName": "Servicio QA temporal",
+      "language": "es",
+      "overflow": false,
+      "screen": "catalog",
+      "width": 390
+    },
+    {
+      "baseName": "Servicio QA temporal",
+      "language": "fr",
+      "overflow": false,
+      "screen": "catalog",
+      "width": 390
+    }
+  ],
+  "catalogDesktop": [
+    {
+      "language": "en",
+      "overflow": false,
+      "width": 1440
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "width": 1440
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "width": 1440
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "width": 1440
+    }
+  ],
+  "smallViewport": {
+    "width": 320,
+    "language": "fr",
+    "overflow": false
+  },
+  "catalogRoundtrip": {
+    "created": true,
+    "editedFrench": true,
+    "reloaded": true,
+    "portugueseVisible": true
+  },
+  "limitation": "Responsive viewport checks; physical mobile devices and the exhaustive business-state matrix were not tested."
+}

@@ -16,7 +16,7 @@ export default function RecentSavedSection() {
   const recent = saved.data?.slice(0, SHOWN) ?? [];
 
   return (
-    <HomeSection title={i18n.t("dashboard:recentsavedsection_guardadas_recientemente")} to="/dashboard/saved" linkLabel="Ver todas">
+    <HomeSection title={i18n.t("dashboard:recentsavedsection_guardadas_recientemente")} to="/dashboard/saved" linkLabel={i18n.t("dashboard:viewAll")}>
       {saved.isPending ? (
         <SectionLoading shape="cards" />
       ) : saved.isError ? (
@@ -25,7 +25,7 @@ export default function RecentSavedSection() {
         <SectionEmpty
           title={i18n.t("dashboard:recentsavedsection_todavia_no_guardaste_propiedades")}
           description={i18n.t("dashboard:recentsavedsection_pulsa_guardar_en_las_que_te_interesen_para_compararlas")}
-          actionLabel="Explorar propiedades"
+          actionLabel={i18n.t("dashboard:exploreProperties")}
           actionTo="/explorar"
         />
       ) : (

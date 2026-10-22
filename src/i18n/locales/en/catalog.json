@@ -17,5 +17,6 @@
   "description": "Description",
   "incomplete": "Complete the names and descriptions in the other three languages.",
   "created": "Amenity “{{name}}” created. It is now available for properties.",
-  "updated": "Amenity “{{name}}” updated."
+  "updated": "Amenity “{{name}}” updated.",
+  "creating": "Creating…"
 }

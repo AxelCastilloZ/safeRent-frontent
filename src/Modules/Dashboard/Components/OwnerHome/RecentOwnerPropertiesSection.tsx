@@ -18,7 +18,7 @@ export default function RecentOwnerPropertiesSection() {
     .slice(0, SHOWN);
 
   return (
-    <HomeSection title={i18n.t("dashboard:recentownerpropertiessection_tus_propiedades_recientes")} to="/dashboard/owner/properties" linkLabel="Ver todas">
+    <HomeSection title={i18n.t("dashboard:recentownerpropertiessection_tus_propiedades_recientes")} to="/dashboard/owner/properties" linkLabel={i18n.t("dashboard:viewAll")}>
       {properties.isPending ? (
         <SectionLoading shape="cards" />
       ) : properties.isError ? (
@@ -27,7 +27,7 @@ export default function RecentOwnerPropertiesSection() {
         <SectionEmpty
           title={i18n.t("dashboard:recentownerpropertiessection_aun_no_has_publicado_propiedades")}
           description={i18n.t("dashboard:recentownerpropertiessection_crea_tu_primera_publicacion_la_revisara_un_administrador_antes")}
-          actionLabel="Publicar propiedad"
+          actionLabel={i18n.t("dashboard:publishProperty")}
           actionTo="/dashboard/owner/properties/new"
         />
       ) : (

@@ -11,6 +11,7 @@ export default function RootLayout() {
       : pathname.includes('terminos-del-servicio') ? 'auth:terms'
       : pathname.includes('sobre-nosotros') ? 'landing:footer_sobre_nosotros'
       : pathname.includes('soporte') ? 'landing:footer_soporte'
+      : pathname.startsWith('/admin/services') ? 'services:servicesadminpage_servicios_del_catalogo'
       : pathname.includes('settings') ? 'settings:title'
       : pathname.includes('messages') ? 'navigation:messages'
       : pathname.includes('reservations') ? 'navigation:reservations'

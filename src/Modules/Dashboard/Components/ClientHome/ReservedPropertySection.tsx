@@ -21,7 +21,7 @@ export default function ReservedPropertySection() {
   const photo = property ? photoUrl(property) : undefined;
 
   return (
-    <HomeSection title={i18n.t("dashboard:reservedpropertysection_tu_propiedad_reservada")} to="/dashboard/reservations" linkLabel="Mis reservaciones">
+    <HomeSection title={i18n.t("dashboard:reservedpropertysection_tu_propiedad_reservada")} to="/dashboard/reservations" linkLabel={i18n.t("dashboard:myReservations")}>
       {reserved.isPending ? (
         <SectionLoading shape="media" />
       ) : reserved.isError ? (
@@ -30,7 +30,7 @@ export default function ReservedPropertySection() {
         <SectionEmpty
           title={i18n.t("dashboard:reservedpropertysection_aun_no_tienes_una_propiedad_reservada")}
           description={i18n.t("dashboard:reservedpropertysection_cuando_un_propietario_confirme_tu_reserva_la_veras_aqui")}
-          actionLabel="Explorar propiedades"
+          actionLabel={i18n.t("dashboard:exploreProperties")}
           actionTo="/explorar"
         />
       ) : (

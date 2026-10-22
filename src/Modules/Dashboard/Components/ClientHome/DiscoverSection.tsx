@@ -11,13 +11,13 @@ export default function DiscoverSection() {
   const discover = useDiscoverProperties();
 
   return (
-    <HomeSection title={i18n.t("dashboard:discoversection_descubre")} to="/explorar" linkLabel="Explorar todas">
+    <HomeSection title={i18n.t("dashboard:discoversection_descubre")} to="/explorar" linkLabel={i18n.t("dashboard:exploreAll")}>
       {discover.isPending ? (
         <SectionLoading shape="cards" />
       ) : discover.isError ? (
         <SectionError message={i18n.t("dashboard:discoversection_no_pudimos_cargar_las_propiedades")} onRetry={() => void discover.refetch()} />
       ) : discover.data.length === 0 ? (
-        <SectionEmpty title={i18n.t("dashboard:discoversection_no_hay_propiedades_nuevas_por_ahora")} description={i18n.t("dashboard:discoversection_vuelve_pronto_o_explora_todo_el_catalogo")} actionLabel="Explorar propiedades" actionTo="/explorar" />
+        <SectionEmpty title={i18n.t("dashboard:discoversection_no_hay_propiedades_nuevas_por_ahora")} description={i18n.t("dashboard:discoversection_vuelve_pronto_o_explora_todo_el_catalogo")} actionLabel={i18n.t("dashboard:exploreProperties")} actionTo="/explorar" />
       ) : (
         <ul className="-mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
           {discover.data.map((property) => (

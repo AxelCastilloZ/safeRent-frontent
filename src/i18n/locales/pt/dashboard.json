@@ -184,5 +184,16 @@
   "clienthomepage_hola_a1c317": "Olá, {{v0}}",
   "clienthomepage_hola_e633f4": "Olá",
   "ownerpropertiespage_quitar_reserva_61b7f5": "Remover reserva",
-  "ownerpropertiespage_quitar_reserva_37aa93": "Remover reserva: {{v0}}"
+  "ownerpropertiespage_quitar_reserva_37aa93": "Remover reserva: {{v0}}",
+  "viewProperties": "Ver imóveis",
+  "viewUsers": "Ver usuários",
+  "exploreAll": "Explorar todos",
+  "exploreProperties": "Explorar imóveis",
+  "goMessages": "Ir para mensagens",
+  "viewAll": "Ver todos",
+  "myReservations": "Minhas reservas",
+  "myProperties": "Meus imóveis",
+  "publishProperty": "Publicar imóvel",
+  "adminConversationHelp": "Inicie uma conversa direta com um usuário pela lista de usuários.",
+  "ownerConversationHelp": "Quando alguém entrar em contato por um dos seus imóveis, a conversa aparecerá aqui."
 }

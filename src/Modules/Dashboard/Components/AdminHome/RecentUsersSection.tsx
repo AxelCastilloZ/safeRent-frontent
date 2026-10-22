@@ -22,7 +22,7 @@ export default function RecentUsersSection() {
   const recent = [...(users.data ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id - a.id).slice(0, SHOWN);
 
   return (
-    <HomeSection title={i18n.t("dashboard:recentuserssection_usuarios_recientes")} to="/dashboard/admin/users" linkLabel="Ver usuarios">
+    <HomeSection title={i18n.t("dashboard:recentuserssection_usuarios_recientes")} to="/dashboard/admin/users" linkLabel={i18n.t("dashboard:viewUsers")}>
       {users.isPending ? (
         <SectionLoading />
       ) : users.isError ? (

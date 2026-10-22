@@ -26,5 +26,8 @@
   "loading": "Carregando…",
   "availableCount_one": "{{count}} imóvel disponível",
   "availableCount_other": "{{count}} imóveis disponíveis",
-  "availableCount_many": "{{count}} imóveis disponíveis"
+  "availableCount_many": "{{count}} imóveis disponíveis",
+  "room_one": "quarto",
+  "room_other": "quartos",
+  "room_many": "quartos"
 }

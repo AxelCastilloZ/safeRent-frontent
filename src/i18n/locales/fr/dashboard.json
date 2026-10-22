@@ -184,5 +184,16 @@
   "clienthomepage_hola_a1c317": "Bonjour, {{v0}}",
   "clienthomepage_hola_e633f4": "Bonjour",
   "ownerpropertiespage_quitar_reserva_61b7f5": "Supprimer la réservation",
-  "ownerpropertiespage_quitar_reserva_37aa93": "Supprimer la réservation : {{v0}}"
+  "ownerpropertiespage_quitar_reserva_37aa93": "Supprimer la réservation : {{v0}}",
+  "viewProperties": "Voir les biens",
+  "viewUsers": "Voir les utilisateurs",
+  "exploreAll": "Tout explorer",
+  "exploreProperties": "Explorer les biens",
+  "goMessages": "Aller aux messages",
+  "viewAll": "Tout voir",
+  "myReservations": "Mes réservations",
+  "myProperties": "Mes biens",
+  "publishProperty": "Publier un bien",
+  "adminConversationHelp": "Démarrez une conversation directe avec un utilisateur depuis la liste des utilisateurs.",
+  "ownerConversationHelp": "Lorsqu’une personne vous contactera depuis l’un de vos biens, la conversation apparaîtra ici."
 }

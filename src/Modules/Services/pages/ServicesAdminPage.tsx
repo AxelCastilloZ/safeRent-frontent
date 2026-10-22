@@ -6,6 +6,7 @@ import { message } from '../../../i18n/messages';
 import { useMessageState } from '../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
+import LanguageSelector from '../../../i18n/LanguageSelector';
 import ServiceActions from '../components/ServiceActions'
 import EditServiceModal from '../components/EditServiceModal'
 import type { Service } from '../interfaces/service.interface'
@@ -17,7 +18,7 @@ import {
   Check,
   CheckCircle2,
   LayoutGrid,
-  // LoaderCircle,
+  LoaderCircle,
   Plus,
   Search,
   ShieldCheck,
@@ -108,6 +109,7 @@ export default function ServicesAdminPage() {
         </Link>
         <span className="sa-admin-label">
           <ShieldCheck size={15} />{' '}{i18n.t("services:servicesadminpage_administracion")}</span>
+        <div className="ml-auto"><LanguageSelector /></div>
         {/* <Link to="/" className="sa-explore">
           Ver hospedajes <ArrowUpRight size={16} />
         </Link> */}
@@ -244,7 +246,7 @@ export default function ServicesAdminPage() {
                 )}
                 <div className="sa-form-footer">
                   <p>{i18n.t("services:servicesadminpage_disponible_para_todos_los_hospedajes")}</p>
-                  {/* <button
+                  <button
                     className="sa-primary"
                     type="submit"
                     disabled={mutation.isPending}
@@ -254,8 +256,8 @@ export default function ServicesAdminPage() {
                     ) : (
                       <Plus size={17} />
                     )}
-                    {mutation.isPending ? 'Creando…' : 'Crear servicio'}
-                  </button> */}
+                    {mutation.isPending ? i18n.t('catalog:creating') : i18n.t('services:servicesadminpage_crear_un_servicio')}
+                  </button>
                 </div>
               </form>
             </section>

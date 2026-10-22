@@ -17,5 +17,6 @@
   "description": "Descripción",
   "incomplete": "Completa los nombres y las descripciones en los otros tres idiomas.",
   "created": "Servicio «{{name}}» creado. Ya está disponible para las propiedades.",
-  "updated": "Servicio «{{name}}» actualizado."
+  "updated": "Servicio «{{name}}» actualizado.",
+  "creating": "Creando…"
 }

@@ -3,7 +3,7 @@
 ## Estado — 22 de octubre de 2026
 
 Se integró JSON + i18next + react-i18next + Intl nativo en los módulos de la aplicación.
-Hay 23 namespaces y 1.172 claves por idioma: español (es-CR), inglés (en-US), francés (fr-FR) y portugués de Brasil (pt-BR).
+Hay 23 namespaces y 1.187 claves por idioma: español (es-CR), inglés (en-US), francés (fr-FR) y portugués de Brasil (pt-BR).
 Los recursos están en src/i18n/locales/{es,en,fr,pt}/{modulo}.json. Los correos tienen sus propios cuatro JSON en el backend.
 
 | Área del trabajo pendiente original | Implementación incorporada |
@@ -65,7 +65,7 @@ En desarrollo, la sincronización existente crea las columnas; CatalogBootstrap 
 Con DB_SYNCHRONIZE=false se ejecutan las migraciones registradas al iniciar, incluida la asociación inicial de códigos.
 
 **Desplegar/reiniciar primero el backend y después el frontend.** Un backend antiguo no devuelve catalogCode/translations ni reconoce los campos nuevos.
-No se aplicaron migraciones contra la base de datos durante esta entrega. Los datos originales de los catálogos no se renombraron.
+El 22 de octubre se aplicaron las dos migraciones de internacionalización en la base configurada y se verificó que no quedan migraciones pendientes. Se comprobaron persistencia real y protección de identidad/roles con fixtures revertidos. Los nombres originales de los catálogos no se renombraron. Esto no certifica un destino de producción diferente.
 Las entradas adicionales creadas en otro entorno requieren traducciones explícitas; no se inventan traducciones de contenido desconocido.
 
 ## Contratos de errores y correo
@@ -89,16 +89,33 @@ El enlace lleva lang, y la duración distingue singular/plural. Los tests simula
 - Los tests también comprueban errores almacenados al alternar idioma, códigos de catálogo independientes del nombre, traducciones personalizadas, fechas sin desplazamiento y precios grandes exactos en los cuatro locales.
 - pnpm build ejecuta el control antes de TypeScript/Vite. TypeScript, Vite y ESLint del frontend pasan. El backend compila y empaqueta los cuatro JSON de correo.
 - El control de rutas por rol verifica CLIENT, OWNER, ADMIN, cuentas con varios roles y redirección por pérdida de sesión.
-- En la selección ampliada del backend: 151 pruebas aprobadas y 4 fallidas en property-search.spec.ts. Las 13 suites restantes pasan, incluidas las nuevas pruebas de idioma, catálogo, validación y correo.
-- La ejecución final de esas 13 suites aprobó sus 139 pruebas; la suite de búsqueda con las cuatro fallas sigue registrada por separado y no se declara aprobada.
-- Las cuatro fallas de búsqueda corresponden a expectativas existentes de serviceIds vacío/1e2 y a fixtures sin UserService. Ese DTO no fue modificado y la dependencia ya existía en HEAD; no se consideran pruebas aprobadas ni se ocultaron cambiando expectativas.
+- Las 15 suites relevantes del backend aprobaron 169 pruebas, incluidos los contratos de búsqueda y catálogo corregidos.
+- La suite global final aprobó 34/49 suites: 381 pruebas aprobadas y 24 fallidas; otras dos suites no ejecutan casos por Jest/ESM. El detalle y los comandos están en [el informe del backend](../../safeRent-backend/docs/i18n-verification.md). La suite global no se declara aprobada.
 - Revisión en navegador: cambios de idioma, conservación de formularios/errores (primera etapa), búsqueda traducida de FAQ en francés y política completa con fecha localizada en portugués. Hay capturas en esta carpeta.
 
-## Verificación restante antes de publicar
+## Verificación previa a publicación — 22 de octubre de 2026
 
-1. Aplicar las migraciones en el entorno destino y verificar persistencia real de preferencias y traducciones del catálogo.
-2. Revisar con cuentas de los tres roles todos los estados en los cuatro idiomas, especialmente formularios administrativos largos y pantallas móviles. No se ejecutó esa matriz manual completa.
-3. Revisar las traducciones con el grupo y conservar la revisión editorial del borrador legal antes de publicarlo; su estructura y fecha no se alteraron.
-4. Resolver por separado los fixtures/expectativas antiguos de búsqueda y las demás pruebas antiguas con dependencias incompletas si se desea certificar la suite global.
+Completado en esta base y checkout:
 
-La implementación no declara completada una certificación de cobertura total mientras esas verificaciones de despliegue y uso real sigan pendientes.
+- Migraciones versionadas aplicadas y registradas, prueba up/down/repetición en tablas temporales y comprobación posterior sin pendientes.
+- Persistencia PostgreSQL de preferencias para CLIENT, OWNER y ADMIN en los cuatro idiomas, sin cambiar identidad o roles. Catálogo JSON creado, editado y leído. Datos de prueba revertidos.
+- Navegador con cuentas temporales, autenticación y guards reales: ajustes de los tres roles × cuatro idiomas a 390 px, sin desbordamiento horizontal. Se verificó recarga del perfil del inquilino.
+- Paneles iniciales de los tres roles y estado vacío de reservas en francés. Las entradas del catálogo existente se presentan traducidas por código.
+- Formulario administrativo: validación, conservación de campos al cambiar entre los cuatro idiomas, creación, edición francesa, recarga y presentación portuguesa del registro temporal. Revisión a 390 y 1440 px en cuatro idiomas; revisión adicional a 320 px en francés.
+- La revisión encontró 15 textos en propiedades personalizadas como linkLabel y emptyDescription. Se tradujeron y el auditor ahora cubre estos atributos. También se corrigieron plurales de habitaciones/personas.
+- Se habilitó el botón de creación que estaba comentado, se incorporó un selector de idioma al catálogo y se hicieron visibles/legibles los campos de traducción en móvil. Se corrigió el mínimo global del body que provocaba desbordamiento a 320 px.
+- Se corrigió el título de navegador del catálogo y el comando productivo del backend para usar su salida compilada real.
+
+La evidencia de navegador está en i18n-browser-checks.json y la captura i18n-catalog-mobile-pt.png. El servidor QA usa una transacción PostgreSQL y sustituye los workers de recuperación/correo y sincronización de monedas. No envía mensajes ni correos. Al finalizar se verificaron **cero cuentas y cero catálogos temporales persistidos**.
+
+### Pendiente para autorizar publicación
+
+1. Resolver las 15 suites globales pendientes (24 casos fallidos y dos suites con error de carga ESM); ver el informe del backend. No se consideran aprobadas.
+2. Completar la matriz exhaustiva de estados de negocio: propiedades con datos y moderación, reservas, adjuntos, conversaciones, formularios de publicación y errores de red en cada rol/idioma. Las comprobaciones descritas arriba son pruebas de humo concretas; no equivalen a recorrer todos los estados.
+3. Revisar en dispositivos móviles físicos. Los tamaños de navegador comprobados verifican diseño adaptable y no emulan teclado táctil, Safari/iOS ni Android real.
+4. Revisión editorial del grupo, especialmente francés/portugués y el borrador legal. Se conservó su estructura y fecha; esta comprobación técnica no sustituye su aprobación editorial.
+5. Si producción utiliza otra base/servidor, ejecutar allí las migraciones y el mismo control de persistencia; desplegar backend antes del frontend y comprobar el enrutamiento /api.
+
+El build mantiene un aviso de tamaño del chunk principal: aproximadamente 1,24 MB minificado / 370 kB gzip. La carga diferida por idioma puede evaluarse como mejora de rendimiento; el aviso no se ocultó.
+
+**Estado: verificación técnica ampliada, publicación todavía pendiente.**

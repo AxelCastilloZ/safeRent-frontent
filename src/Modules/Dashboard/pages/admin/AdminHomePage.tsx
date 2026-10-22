@@ -78,7 +78,7 @@ export default function AdminHomePage() {
         <RecentConversationsSection
           basePath="/dashboard/admin/messages"
           title={i18n.t("dashboard:adminhomepage_mensajes_recientes")}
-          emptyDescription="Inicia una conversación directa con un usuario desde la lista de usuarios."
+          emptyDescription={i18n.t("dashboard:adminConversationHelp")}
           emptyAction={{ label: i18n.t("dashboard:adminhomepage_ir_a_usuarios"), to: '/dashboard/admin/users' }}
         />
       </div>

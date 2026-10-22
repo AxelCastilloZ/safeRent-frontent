@@ -77,7 +77,7 @@ export default function OwnerHomePage() {
         <AttentionSection />
         <RecentConversationsSection
           basePath="/dashboard/owner/messages"
-          emptyDescription="Cuando un interesado te escriba desde una de tus propiedades, la conversación aparecerá aquí."
+          emptyDescription={i18n.t("dashboard:ownerConversationHelp")}
           emptyAction={null}
         />
       </div>

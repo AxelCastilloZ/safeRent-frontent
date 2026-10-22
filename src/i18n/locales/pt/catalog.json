@@ -17,5 +17,6 @@
   "description": "Descrição",
   "incomplete": "Preencha os nomes e as descrições nos outros três idiomas.",
   "created": "Comodidade “{{name}}” criada. Já está disponível para os imóveis.",
-  "updated": "Comodidade “{{name}}” atualizada."
+  "updated": "Comodidade “{{name}}” atualizada.",
+  "creating": "Criando…"
 }

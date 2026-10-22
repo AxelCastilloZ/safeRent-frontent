@@ -26,5 +26,8 @@
   "loading": "Chargement…",
   "availableCount_one": "{{count}} bien disponible",
   "availableCount_other": "{{count}} biens disponibles",
-  "availableCount_many": "{{count}} biens disponibles"
+  "availableCount_many": "{{count}} biens disponibles",
+  "room_one": "chambre",
+  "room_other": "chambres",
+  "room_many": "chambres"
 }

@@ -47,9 +47,9 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <div className="mt-4 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5">
           <BedDouble size={19} className="shrink-0 text-primary" aria-hidden="true" />
-          <span className="text-sm text-neutral/65">{property.rooms}{' '}{i18n.t("landing:propertycard_habitaciones")}</span>
+          <span className="text-sm text-neutral/65">{property.rooms}{' '}{i18n.t('common:room', { count: property.rooms })}</span>
           <Users size={19} className="shrink-0 text-primary" aria-hidden="true" />
-          <span className="text-sm text-neutral/65">{property.guest}{' '}{i18n.t("dashboard:savedpropertiespage_huespedes")}</span>
+          <span className="text-sm text-neutral/65">{property.guest}{' '}{i18n.t('common:person', { count: property.guest })}</span>
         </div>
 
         <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">

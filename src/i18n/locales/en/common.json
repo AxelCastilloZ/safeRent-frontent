@@ -26,5 +26,8 @@
   "loading": "Loading…",
   "availableCount_one": "{{count}} available property",
   "availableCount_other": "{{count}} available properties",
-  "availableCount_many": "{{count}} available properties"
+  "availableCount_many": "{{count}} available properties",
+  "room_one": "room",
+  "room_other": "rooms",
+  "room_many": "rooms"
 }

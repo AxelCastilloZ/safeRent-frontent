@@ -17,5 +17,6 @@
   "description": "Description",
   "incomplete": "Complétez les noms et descriptions dans les trois autres langues.",
   "created": "Équipement « {{name}} » créé. Il est désormais disponible pour les biens.",
-  "updated": "Équipement « {{name}} » mis à jour."
+  "updated": "Équipement « {{name}} » mis à jour.",
+  "creating": "Création…"
 }
