@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, BedDouble, Building2, CheckCircle2, ChevronRight, Circle, MapPin, Save, ShieldCheck, Users, type LucideIcon } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BedDouble, Building2, CheckCircle2, ChevronRight, Circle, MapPin, ShieldCheck, Users, type LucideIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import Stepper from './Stepper'
 import { PROPERTY_STEPS } from '../constants/propertySteps'
@@ -82,13 +82,13 @@ export function PropertyFormLayout({ step, editing, preview, children, actions }
   </div>
 }
 
-export function PropertyActions({ step, busy, disabled, onBack, onDraft, onPrimary, finalLabel = 'Enviar a revisión' }: {
-  step: 1 | 2; busy: boolean; disabled?: boolean; onBack?: () => void; onDraft: () => void; onPrimary: () => void; finalLabel?: string
+export function PropertyActions({ step, busy, disabled, onBack, onPrimary, finalLabel = 'Enviar a revisión' }: {
+  step: 1 | 2; busy: boolean; disabled?: boolean; onBack?: () => void; onPrimary: () => void; finalLabel?: string
 }) {
   return <footer className="property-actions sticky bottom-0 z-20 border-t border-slate-200 bg-white">
     <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-      <div>{step === 2 ? <button type="button" className="property-button" onClick={onBack} disabled={busy || disabled}><ArrowLeft size={16} />Atrás</button> : <span className="hidden text-xs text-slate-500 sm:block">Puedes guardar y continuar más tarde.</span>}</div>
-      <div className="flex flex-1 gap-2 sm:flex-none"><button type="button" className="property-button flex-1" disabled={busy || disabled} onClick={onDraft}><Save size={16} /><span>Guardar borrador</span></button><button type="button" className="property-button property-primary flex-1" disabled={busy || disabled} onClick={onPrimary}>{busy ? 'Guardando…' : step === 1 ? 'Siguiente' : finalLabel}<ArrowRight size={16} /></button></div>
+      <div>{step === 2 ? <button type="button" className="property-button" onClick={onBack} disabled={busy || disabled}><ArrowLeft size={16} />Atrás</button> : <span className="hidden text-xs text-slate-500 sm:block">Tu avance se guarda al pasar al siguiente paso.</span>}</div>
+      <div className="flex flex-1 gap-2 sm:flex-none"><button type="button" className="property-button property-primary flex-1" disabled={busy || disabled} onClick={onPrimary}>{busy ? 'Guardando…' : step === 1 ? 'Siguiente' : finalLabel}<ArrowRight size={16} /></button></div>
     </div>
   </footer>
 }

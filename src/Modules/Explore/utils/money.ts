@@ -1,3 +1,14 @@
+/** Símbolo de una moneda ("₡" para CRC, "$" para USD); si no tiene uno propio, el mismo código. */
+export function currencySymbol(code: string) {
+  try {
+    const symbol = new Intl.NumberFormat('es-CR', { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol' })
+      .formatToParts(0).find(part => part.type === 'currency')?.value
+    return symbol ?? code
+  } catch {
+    return code
+  }
+}
+
 /** Format decimal strings without converting monetary values to Number. */
 export function formatMoney(amount: string | number, currency: string) {
   try {

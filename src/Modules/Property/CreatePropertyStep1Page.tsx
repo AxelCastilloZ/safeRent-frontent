@@ -9,12 +9,12 @@ import { ApiError } from './services/api'
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useServices } from '../Services/hooks/useServices'
 import { getPropertyTypes } from '../Explore/services/property.service'
-
-/** Monedas en las que se puede publicar un precio (el backend guarda `typeOfCoin`, por defecto CRC). */
-const CURRENCIES = [
-  { code: 'CRC', label: '₡ Colones (CRC)' },
-  { code: 'USD', label: '$ Dólares (USD)' },
-]
+import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
+import CurrencySelect from './Components/CurrencySelect'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Components/Select'
+import UnsavedChangesDialog from './Components/UnsavedChangesDialog'
+import { propertyTypeIcon } from './constants/propertyTypeIcons'
+import { useUnsavedChangesWarning } from './hooks/useUnsavedChangesWarning'
 
 interface FormData {
   title: string
@@ -25,6 +25,11 @@ interface FormData {
   guest: number
   description: string
   serviceIds: number[]
+}
+
+/** `typeOfCoin` vacío = todavía sin elegir: se usa la moneda del perfil del usuario. */
+const EMPTY_FORM: FormData = {
+  title: '', cost: '', typeOfCoin: '', typeOfPropertyId: null, rooms: 1, guest: 1, description: '', serviceIds: [],
 }
 
 interface FormErrors {
@@ -73,9 +78,11 @@ export default function CreatePropertyStep1Page() {
   const services = useServices()
   const propertyTypes = useQuery({ queryKey: ['properties', 'types'], queryFn: ({ signal }) => getPropertyTypes(signal) })
 
-  const [form, setForm] = useState<FormData>({
-    title: '', cost: '', typeOfCoin: 'CRC', typeOfPropertyId: null, rooms: 1, guest: 1, description: '', serviceIds: [],
-  })
+  const { currency: profileCurrency, ready: currencyReady } = useDisplayCurrency()
+  const [form, setForm] = useState<FormData>(EMPTY_FORM)
+  // Lo último guardado (o el formulario vacío): sirve para saber si hay cambios sin guardar.
+  const [baseline, setBaseline] = useState<FormData>(EMPTY_FORM)
+  const currency = form.typeOfCoin || profileCurrency
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -93,7 +100,7 @@ export default function CreatePropertyStep1Page() {
         if (cancelled) return
         setLoadedProperty(p)
         setLoadedFiles(files)
-        setForm({
+        const loaded: FormData = {
           title: p.title ?? '',
           cost: p.cost ? String(p.cost) : '',
           typeOfCoin: p.typeOfCoin || 'CRC',
@@ -102,7 +109,9 @@ export default function CreatePropertyStep1Page() {
           guest: p.guest || 1,
           description: p.description ?? '',
           serviceIds: p.services?.map((s) => s.id) ?? [],
-        })
+        }
+        setForm(loaded)
+        setBaseline(loaded)
       } catch (err) {
         if (!cancelled) {
           setLoadFailed(true)
@@ -117,6 +126,8 @@ export default function CreatePropertyStep1Page() {
   }, [editId])
 
   const errorCount = Object.keys(errors).length
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline)
+  const { blocker, allowLeaving } = useUnsavedChangesWarning(dirty)
 
   function handleChange<K extends keyof FormData>(field: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -133,12 +144,12 @@ export default function CreatePropertyStep1Page() {
     handleChange('serviceIds', form.serviceIds.includes(id) ? form.serviceIds.filter((s) => s !== id) : [...form.serviceIds, id])
   }
 
-  function payload(draft: boolean): CreatePropertyPayload {
+  function payload(): CreatePropertyPayload {
     return {
-      title: draft ? form.title || 'Sin título' : form.title,
+      title: form.title,
       description: form.description,
       cost: Number(form.cost) || 0,
-      typeOfCoin: form.typeOfCoin,
+      typeOfCoin: currency,
       typeOfPropertyId: form.typeOfPropertyId ?? undefined,
       rooms: form.rooms,
       guest: form.guest,
@@ -146,30 +157,16 @@ export default function CreatePropertyStep1Page() {
     }
   }
 
-  /** Crea o actualiza el borrador y devuelve su id. */
-  async function save(draft: boolean): Promise<number> {
+  /** Crea o actualiza la propiedad (queda como borrador hasta enviarla a revisión) y devuelve su id. */
+  async function save(): Promise<number> {
     if (editId) {
-      await propertyService.update(editId, payload(draft))
+      await propertyService.update(editId, payload())
       return editId
     }
-    const property = await propertyService.create(payload(draft))
+    const property = await propertyService.create(payload())
     // Crear una propiedad otorga el rol de propietario; refrescamos la sesión para que se refleje de una vez.
     queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
     return property.id
-  }
-
-  async function handleSaveDraft() {
-    if (saving || loadFailed) return
-    setSaving(true)
-    setApiError(null)
-    try {
-      await save(true)
-      navigate({ to: '/dashboard/owner/properties' })
-    } catch (err) {
-      setApiError(err instanceof ApiError ? err.message : 'Error al guardar borrador')
-    } finally {
-      setSaving(false)
-    }
   }
 
   async function handleNext() {
@@ -186,7 +183,8 @@ export default function CreatePropertyStep1Page() {
     setSaving(true)
 
     try {
-      const propertyId = await save(false)
+      const propertyId = await save()
+      allowLeaving()
       navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId } })
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
@@ -204,14 +202,15 @@ export default function CreatePropertyStep1Page() {
 
   return (
 <PropertyFormLayout step={1} editing={!!editId} preview={{
-      title: form.title, cost: Number(form.cost), currency: form.typeOfCoin,
+      title: form.title, cost: Number(form.cost), currency,
       type: propertyTypes.data?.find(type => type.id === form.typeOfPropertyId)?.name,
       rooms: form.rooms, guests: form.guest, description: form.description,
       services: services.data?.filter(service => form.serviceIds.includes(service.id)) ?? [],
       address: loadedProperty?.address,
       located: loadedProperty?.latitude != null && loadedProperty?.longitude != null,
       photos: loadedFiles.map(file => (import.meta.env.VITE_API_URL ?? 'http://localhost:3000') + '/' + file.path),
-    }} actions={<PropertyActions step={1} busy={saving} disabled={loadFailed} onDraft={handleSaveDraft} onPrimary={handleNext} />}>
+    }} actions={<PropertyActions step={1} busy={saving} disabled={loadFailed || (!editId && !currencyReady)} onPrimary={handleNext} />}>
+      <UnsavedChangesDialog blocked={blocker.status === 'blocked'} onLeave={() => blocker.proceed?.()} onStay={() => blocker.reset?.()} />
       {apiError && (
         <div role="alert" className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
@@ -247,16 +246,11 @@ export default function CreatePropertyStep1Page() {
           <div>
             <label htmlFor="property-cost" className="mb-1.5 block text-sm font-medium text-primary">Precio / mes</label>
             <div className="flex rounded-xl border border-slate-300 bg-white focus-within:ring-2 focus-within:ring-teal-700">
-              <select
-                aria-label="Moneda"
-                className="min-h-12 max-w-24 shrink-0 rounded-l-xl border-r border-slate-200 px-3 text-sm"
-                value={form.typeOfCoin}
-                onChange={(e) => handleChange('typeOfCoin', e.target.value)}
-              >
-                {CURRENCIES.map((currency) => (
-                  <option key={currency.code} value={currency.code}>{currency.code === 'CRC' ? '₡ CRC' : '$ USD'}</option>
-                ))}
-              </select>
+              <CurrencySelect
+                value={currency}
+                profileCurrency={profileCurrency}
+                onChange={(code) => handleChange('typeOfCoin', code)}
+              />
               <input
                 id="property-cost"
                 type="number"
@@ -270,24 +264,35 @@ export default function CreatePropertyStep1Page() {
                 min="0"
               />
             </div>
-            {errors.cost && <span id="property-cost-error" className="mt-1 block text-xs text-red-500">{errors.cost}</span>}
+            {errors.cost
+              ? <span id="property-cost-error" className="mt-1 block text-xs text-red-500">{errors.cost}</span>
+              : <span className="mt-1 block text-xs text-slate-500">{currency === profileCurrency ? 'Moneda de tu perfil. Pulsa la moneda para cambiarla.' : `Distinta a la moneda de tu perfil (${profileCurrency}).`}</span>}
           </div>
           <div>
             <label htmlFor="property-type" className="mb-1.5 block text-sm font-medium text-primary">Tipo de propiedad</label>
-            <select
-              id="property-type"
-            aria-invalid={!!errors.typeOfPropertyId}
-            aria-describedby={errors.typeOfPropertyId ? 'property-type-error' : undefined}
-              className={`${inputBase} ${errors.typeOfPropertyId ? inputError : ''}`}
-              value={form.typeOfPropertyId ?? ''}
-              onChange={(e) => handleChange('typeOfPropertyId', e.target.value ? Number(e.target.value) : null)}
+            <Select
+              value={form.typeOfPropertyId ? String(form.typeOfPropertyId) : ''}
+              onValueChange={(value) => handleChange('typeOfPropertyId', Number(value))}
               disabled={propertyTypes.isPending}
             >
-              <option value="">{propertyTypes.isPending ? 'Cargando tipos...' : 'Selecciona un tipo'}</option>
-              {propertyTypes.data?.map((type) => (
-                <option key={type.id} value={type.id}>{type.name}</option>
-              ))}
-            </select>
+              <SelectTrigger
+                id="property-type"
+                aria-invalid={!!errors.typeOfPropertyId}
+                aria-describedby={errors.typeOfPropertyId ? 'property-type-error' : undefined}
+              >
+                <SelectValue placeholder={propertyTypes.isPending ? 'Cargando tipos...' : 'Selecciona un tipo'} />
+              </SelectTrigger>
+              <SelectContent>
+                {propertyTypes.data?.map((type) => {
+                  const Icon = propertyTypeIcon(type.name)
+                  return (
+                    <SelectItem key={type.id} value={String(type.id)} description={type.description ?? undefined}>
+                      <span className="flex items-center gap-2"><Icon size={16} className="text-slate-500" aria-hidden="true" />{type.name}</span>
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
             {propertyTypes.isError && <span className="mt-1 block text-xs text-red-500">No se pudieron cargar los tipos de propiedad.</span>}
             {errors.typeOfPropertyId && <span id="property-type-error" className="mt-1 block text-xs text-red-500">{errors.typeOfPropertyId}</span>}
           </div>

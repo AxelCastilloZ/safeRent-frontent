@@ -63,6 +63,7 @@ export async function getProperties(
 export interface PropertyType {
   id: number
   name: string
+  description?: string | null
 }
 
 export async function getPropertyTypes(signal: AbortSignal): Promise<PropertyType[]> {

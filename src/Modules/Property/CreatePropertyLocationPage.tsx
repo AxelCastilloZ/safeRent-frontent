@@ -8,6 +8,8 @@ import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { LocationSuggestion } from './services/locationService'
 import type { Property, PropertyFile, PropertyStatus } from './types/property'
+import UnsavedChangesDialog from './Components/UnsavedChangesDialog'
+import { useUnsavedChangesWarning } from './hooks/useUnsavedChangesWarning'
 
 const MIN_IMAGES = 3
 /** En estos estados la propiedad ya se envió: el paso solo guarda cambios, no la vuelve a enviar a revisión. */
@@ -116,6 +118,17 @@ export default function CreatePropertyLocationPage() {
   const totalImages = existingFiles.length + newImages.length
   const alreadySubmitted = status !== null && ALREADY_SUBMITTED.includes(status)
 
+  // Cambios sin guardar: imágenes nuevas todavía sin subir, o dirección / punto distintos de los guardados.
+  const savedLatitude = typeof property?.latitude === 'number' ? property.latitude : null
+  const savedLongitude = typeof property?.longitude === 'number' ? property.longitude : null
+  const dirty = !loading && !loadFailed && (
+    newImages.length > 0
+    || address.trim() !== (property?.address ?? '').trim()
+    || (point?.latitude ?? null) !== savedLatitude
+    || (point?.longitude ?? null) !== savedLongitude
+  )
+  const { blocker, allowLeaving } = useUnsavedChangesWarning(dirty)
+
   /** Guarda la ubicación y sube las imágenes nuevas (una vez subidas pasan a ser imágenes existentes). */
   async function saveData() {
     if (!propertyId) return
@@ -130,18 +143,16 @@ export default function CreatePropertyLocationPage() {
     }
   }
 
-  async function save(draft: boolean) {
+  async function save() {
     if (!propertyId || loadFailed || saving || removing) return
-    if (!draft) {
-      if (!address.trim() || !point) { setError('Escribe la dirección y selecciona la ubicación en el mapa.'); return }
-      if (totalImages < MIN_IMAGES) { setError(`Se requieren al menos ${MIN_IMAGES} imágenes. Faltan ${MIN_IMAGES - totalImages}.`); return }
-    }
+    if (!address.trim() || !point) { setError('Escribe la dirección y selecciona la ubicación en el mapa.'); return }
+    if (totalImages < MIN_IMAGES) { setError(`Se requieren al menos ${MIN_IMAGES} imágenes. Faltan ${MIN_IMAGES - totalImages}.`); return }
     setSaving(true)
     setError('')
     try {
       await saveData()
-      if (draft) { navigate({ to: '/dashboard/owner/properties' }); return }
       if (!alreadySubmitted) await propertyService.publish(propertyId)
+      allowLeaving()
       navigate({ to: '/dashboard/owner/properties/detail/$propertyId', params: { propertyId: String(propertyId) } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la propiedad.')
@@ -157,6 +168,7 @@ export default function CreatePropertyLocationPage() {
     setError('')
     try {
       await saveData()
+      allowLeaving()
       await navigate({ to: '/dashboard/owner/properties/new', search: { editId: propertyId } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudieron guardar los cambios antes de volver.')
@@ -167,7 +179,7 @@ export default function CreatePropertyLocationPage() {
     type: property?.typeOfProperty?.name, description: property?.description ?? '',
     rooms: property?.rooms ?? 1, guests: property?.guest ?? 1, services: property?.services ?? [],
     address, located: !!point, photos: [...existingFiles.map(file => API_BASE + '/' + file.path), ...newImages.map(image => image.url)],
-  }} actions={<PropertyActions step={2} busy={saving} disabled={disabled || locating} onBack={() => { void back() }} onDraft={() => { void save(true) }} onPrimary={() => { void save(false) }} finalLabel={alreadySubmitted ? 'Guardar cambios' : 'Enviar a revisión'} />}>
+  }} actions={<><UnsavedChangesDialog blocked={blocker.status === 'blocked'} onLeave={() => blocker.proceed?.()} onStay={() => blocker.reset?.()} /><PropertyActions step={2} busy={saving} disabled={disabled || locating} onBack={() => { void back() }} onPrimary={() => { void save() }} finalLabel={alreadySubmitted ? 'Guardar cambios' : 'Enviar a revisión'} /></>}>
     {error && <div role="alert" className="mb-5 flex gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700"><AlertCircle size={18} className="shrink-0" />{error}</div>}
     <FormSection icon={MapPin} title="Ubicación" description="Ayuda a los inquilinos a encontrar tu propiedad.">
       <div>
