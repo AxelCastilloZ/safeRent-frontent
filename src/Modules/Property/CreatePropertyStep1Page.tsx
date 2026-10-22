@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertCircle, Check, Minus, Plus } from 'lucide-react'
-import Stepper from './Components/Stepper'
+import { AlertCircle, Check, FileText, Minus, Plus, Sparkles, Users } from 'lucide-react'
+import { FormSection, PropertyActions, PropertyFormLayout } from './Components/PropertyFormLayout'
+import type { CreatePropertyPayload, Property, PropertyFile } from './types/property'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
-import type { CreatePropertyPayload } from './types/property'
 import ServiceIcon from '../Services/components/ServiceIcon'
 import { useServices } from '../Services/hooks/useServices'
 import { getPropertyTypes } from '../Explore/services/property.service'
-
-import { PROPERTY_STEPS as STEPS } from './constants/propertySteps'
 
 /** Monedas en las que se puede publicar un precio (el backend guarda `typeOfCoin`, por defecto CRC). */
 const CURRENCIES = [
@@ -40,7 +38,7 @@ interface FormErrors {
 function validate(data: FormData): FormErrors {
   const errors: FormErrors = {}
   if (!data.title.trim()) errors.title = 'El título es obligatorio'
-  if (!data.cost.trim() || Number(data.cost) <= 0) errors.cost = 'Debe ser mayor a 0'
+  if (!data.cost.trim() || !Number.isFinite(Number(data.cost)) || Number(data.cost) <= 0) errors.cost = 'Debe ser mayor a 0'
   if (!data.typeOfPropertyId) errors.typeOfPropertyId = 'Selecciona el tipo de propiedad'
   if (!data.description.trim()) errors.description = 'La descripción es obligatoria'
   if (data.serviceIds.length === 0) errors.serviceIds = 'Selecciona al menos un servicio'
@@ -49,9 +47,9 @@ function validate(data: FormData): FormErrors {
 
 /** Campo numérico con botones − / + (mínimo 1, como exige el backend). */
 function Counter({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
-  const button = 'grid size-10 place-items-center rounded-xl border border-slate-200 text-primary transition hover:bg-slate-50 disabled:opacity-40'
+  const button = 'grid size-11 place-items-center rounded-xl border border-slate-200 text-primary transition hover:bg-slate-50 disabled:opacity-40'
   return (
-    <div>
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
       <span className="mb-1.5 block text-sm font-medium text-primary">{label}</span>
       <div className="flex items-center gap-3">
         <button type="button" className={button} onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label={`Restar ${label.toLowerCase()}`}>
@@ -81,6 +79,9 @@ export default function CreatePropertyStep1Page() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [loadedProperty, setLoadedProperty] = useState<Property | null>(null)
+  const [loadedFiles, setLoadedFiles] = useState<PropertyFile[]>([])
+  const [loadFailed, setLoadFailed] = useState(false)
   const [loadingProperty, setLoadingProperty] = useState(!!editId)
 
   useEffect(() => {
@@ -88,8 +89,10 @@ export default function CreatePropertyStep1Page() {
     let cancelled = false
     async function load() {
       try {
-        const p = await propertyService.getById(editId!)
+        const [p, files] = await Promise.all([propertyService.getById(editId!), propertyService.getFiles(editId!)])
         if (cancelled) return
+        setLoadedProperty(p)
+        setLoadedFiles(files)
         setForm({
           title: p.title ?? '',
           cost: p.cost ? String(p.cost) : '',
@@ -102,6 +105,7 @@ export default function CreatePropertyStep1Page() {
         })
       } catch (err) {
         if (!cancelled) {
+          setLoadFailed(true)
           setApiError(err instanceof ApiError ? err.message : 'No se pudo cargar la propiedad')
         }
       } finally {
@@ -155,6 +159,7 @@ export default function CreatePropertyStep1Page() {
   }
 
   async function handleSaveDraft() {
+    if (saving || loadFailed) return
     setSaving(true)
     setApiError(null)
     try {
@@ -168,6 +173,7 @@ export default function CreatePropertyStep1Page() {
   }
 
   async function handleNext() {
+    if (saving || loadFailed) return
     const validationErrors = validate(form)
     setErrors(validationErrors)
 
@@ -189,7 +195,7 @@ export default function CreatePropertyStep1Page() {
     }
   }
 
-  const inputBase = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-primary outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10'
+  const inputBase = 'property-input'
   const inputError = 'border-red-400 focus:border-red-500 focus:ring-red-100'
 
   if (loadingProperty) {
@@ -197,14 +203,17 @@ export default function CreatePropertyStep1Page() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-primary">{editId ? 'Editar propiedad' : 'Nueva propiedad'}</h1>
-        <Stepper steps={STEPS} currentStep={1} />
-      </div>
-
+<PropertyFormLayout step={1} editing={!!editId} preview={{
+      title: form.title, cost: Number(form.cost), currency: form.typeOfCoin,
+      type: propertyTypes.data?.find(type => type.id === form.typeOfPropertyId)?.name,
+      rooms: form.rooms, guests: form.guest, description: form.description,
+      services: services.data?.filter(service => form.serviceIds.includes(service.id)) ?? [],
+      address: loadedProperty?.address,
+      located: loadedProperty?.latitude != null && loadedProperty?.longitude != null,
+      photos: loadedFiles.map(file => (import.meta.env.VITE_API_URL ?? 'http://localhost:3000') + '/' + file.path),
+    }} actions={<PropertyActions step={1} busy={saving} disabled={loadFailed} onDraft={handleSaveDraft} onPrimary={handleNext} />}>
       {apiError && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
           <div>
             <span>{apiError}</span>
@@ -215,51 +224,60 @@ export default function CreatePropertyStep1Page() {
         </div>
       )}
 
-      <form className="flex flex-col gap-5" onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => { e.preventDefault(); void handleNext() }}>
+        <fieldset disabled={saving || loadFailed} className="min-w-0 space-y-6">
+        <FormSection icon={FileText} title="Información general" description="Lo primero que verán los inquilinos.">
         <div>
           <label htmlFor="property-title" className="mb-1.5 block text-sm font-medium text-primary">Título</label>
           <input
             id="property-title"
+            aria-invalid={!!errors.title}
+            aria-describedby={errors.title ? 'property-title-error' : undefined}
             type="text"
             maxLength={200}
             className={`${inputBase} ${errors.title ? inputError : ''}`}
             value={form.title}
             onChange={(e) => handleChange('title', e.target.value)}
-            placeholder="Nombre de la propiedad"
+            placeholder="Ej. Apartamento amueblado en Barrio Escalante"
           />
-          {errors.title && <span className="mt-1 block text-xs text-red-500">{errors.title}</span>}
+          {errors.title && <span id="property-title-error" className="mt-1 block text-xs text-red-500">{errors.title}</span>}
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="property-cost" className="mb-1.5 block text-sm font-medium text-primary">Precio / mes</label>
-            <div className="flex gap-2">
+            <div className="flex rounded-xl border border-slate-300 bg-white focus-within:ring-2 focus-within:ring-teal-700">
               <select
                 aria-label="Moneda"
-                className={`${inputBase} w-auto`}
+                className="min-h-12 max-w-24 shrink-0 rounded-l-xl border-r border-slate-200 px-3 text-sm"
                 value={form.typeOfCoin}
                 onChange={(e) => handleChange('typeOfCoin', e.target.value)}
               >
                 {CURRENCIES.map((currency) => (
-                  <option key={currency.code} value={currency.code}>{currency.label}</option>
+                  <option key={currency.code} value={currency.code}>{currency.code === 'CRC' ? '₡ CRC' : '$ USD'}</option>
                 ))}
               </select>
               <input
                 id="property-cost"
                 type="number"
-                className={`${inputBase} ${errors.cost ? inputError : ''}`}
+                step="0.01"
+                aria-invalid={!!errors.cost}
+                aria-describedby="property-cost-error"
+                className="min-h-12 min-w-0 flex-1 rounded-r-xl px-3 text-sm"
                 value={form.cost}
                 onChange={(e) => handleChange('cost', e.target.value)}
                 placeholder="0"
                 min="0"
               />
             </div>
-            {errors.cost && <span className="mt-1 block text-xs text-red-500">{errors.cost}</span>}
+            {errors.cost && <span id="property-cost-error" className="mt-1 block text-xs text-red-500">{errors.cost}</span>}
           </div>
           <div>
             <label htmlFor="property-type" className="mb-1.5 block text-sm font-medium text-primary">Tipo de propiedad</label>
             <select
               id="property-type"
+            aria-invalid={!!errors.typeOfPropertyId}
+            aria-describedby={errors.typeOfPropertyId ? 'property-type-error' : undefined}
               className={`${inputBase} ${errors.typeOfPropertyId ? inputError : ''}`}
               value={form.typeOfPropertyId ?? ''}
               onChange={(e) => handleChange('typeOfPropertyId', e.target.value ? Number(e.target.value) : null)}
@@ -271,46 +289,51 @@ export default function CreatePropertyStep1Page() {
               ))}
             </select>
             {propertyTypes.isError && <span className="mt-1 block text-xs text-red-500">No se pudieron cargar los tipos de propiedad.</span>}
-            {errors.typeOfPropertyId && <span className="mt-1 block text-xs text-red-500">{errors.typeOfPropertyId}</span>}
+            {errors.typeOfPropertyId && <span id="property-type-error" className="mt-1 block text-xs text-red-500">{errors.typeOfPropertyId}</span>}
           </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-5">
-          <Counter label="Habitaciones" value={form.rooms} onChange={(value) => handleChange('rooms', value)} />
-          <Counter label="Huéspedes" value={form.guest} onChange={(value) => handleChange('guest', value)} />
         </div>
 
         <div>
           <label htmlFor="property-description" className="mb-1.5 block text-sm font-medium text-primary">Descripción</label>
           <textarea
             id="property-description"
-            className={`${inputBase} resize-none ${errors.description ? inputError : ''}`}
+            aria-invalid={!!errors.description}
+            aria-describedby={errors.description ? 'property-description-error' : undefined}
+            className={`${inputBase} resize-y ${errors.description ? inputError : ''}`}
             value={form.description}
             onChange={(e) => handleChange('description', e.target.value)}
             placeholder="Describe la propiedad..."
             rows={4}
           />
-          {errors.description && <span className="mt-1 block text-xs text-red-500">{errors.description}</span>}
+          {errors.description && <span id="property-description-error" className="mt-1 block text-xs text-red-500">{errors.description}</span>}
         </div>
 
+        </FormSection>
+        <FormSection icon={Users} title="Capacidad" description="Cuántas personas pueden vivir cómodamente.">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Counter label="Habitaciones" value={form.rooms} onChange={(value) => handleChange('rooms', value)} />
+          <Counter label="Huéspedes" value={form.guest} onChange={(value) => handleChange('guest', value)} />
+        </div>
+
+        </FormSection>
+        <FormSection icon={Sparkles} title="Servicios" description="Selecciona todo lo que incluye el alquiler." aside={<span className="text-xs text-slate-500" aria-live="polite">{form.serviceIds.length} seleccionados</span>}>
         <div>
-          <p className="mb-3 text-sm font-medium text-primary">Servicios verificables</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {services.data?.map((service) => {
               const selected = form.serviceIds.includes(service.id)
               return (
                 <button
                   key={service.id}
                   type="button"
-                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition ${
+                  className={`relative flex min-h-24 flex-col items-start justify-center gap-3 rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
                     selected
-                      ? 'bg-secondary text-white'
-                      : 'border border-slate-200 bg-white text-slate-600 hover:border-secondary hover:text-secondary'
+                      ? 'border-teal-700 bg-teal-50 text-teal-800'
+                      : 'border border-slate-200 bg-white text-slate-600 hover:border-teal-700 hover:text-teal-800'
                   }`}
                   aria-pressed={selected}
                   onClick={() => toggleService(service.id)}
                 >
-                  <ServiceIcon name={service.icono} size={18} />{selected && <Check size={14} />}
+                  <ServiceIcon name={service.icono} size={18} />{selected && <Check size={16} className="absolute right-2 top-2" />}
                   {service.name}
                 </button>
               )
@@ -322,25 +345,9 @@ export default function CreatePropertyStep1Page() {
           {errors.serviceIds && <span className="mt-2 block text-xs text-red-500">{errors.serviceIds}</span>}
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <button
-            type="button"
-            className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
-            onClick={handleSaveDraft}
-            disabled={saving}
-          >
-            Guardar borrador
-          </button>
-          <button
-            type="button"
-            className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
-            onClick={handleNext}
-            disabled={saving}
-          >
-            {saving ? 'Guardando...' : 'Siguiente'}
-          </button>
-        </div>
+        </FormSection>
+        </fieldset>
       </form>
-    </div>
+    </PropertyFormLayout>
   )
 }

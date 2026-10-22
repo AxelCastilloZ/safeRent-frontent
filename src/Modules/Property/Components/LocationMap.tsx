@@ -49,7 +49,7 @@ export default function LocationMap({ point, onChange, disabled = false }: Props
         title: 'Ubicación de la propiedad. Arrastra para ajustar.',
         icon: L.divIcon({
           className: '',
-          html: '<div style="width:28px;height:28px;background:#2563eb;border:4px solid white;border-radius:50%;box-shadow:0 2px 8px #0005"></div>',
+          html: '<div style="width:28px;height:28px;background:#0a2540;border:4px solid white;border-radius:50%;box-shadow:0 2px 8px #0005"></div>',
           iconSize: [28, 28], iconAnchor: [14, 14],
         }),
       }).addTo(instance)
@@ -64,7 +64,7 @@ export default function LocationMap({ point, onChange, disabled = false }: Props
   }, [point, disabled])
 
   return <div>
-    <div ref={container} className="relative z-0 h-80 w-full overflow-hidden rounded-xl border border-slate-200 sm:h-96" aria-label="Seleccionar ubicación de la propiedad" />
+    <div ref={container} className="relative z-0 h-72 w-full overflow-hidden rounded-xl border border-slate-200 sm:h-80" aria-label="Seleccionar ubicación de la propiedad" />
     {notice && <p role="status" className="mt-2 text-sm text-red-600">{notice}</p>}
   </div>
 }
