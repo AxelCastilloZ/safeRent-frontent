@@ -178,7 +178,7 @@ export default function CreatePropertyLocationPage() {
     title: property?.title ?? '', cost: property?.cost ?? 0, currency: property?.typeOfCoin || 'CRC',
     type: property?.typeOfProperty?.name, description: property?.description ?? '',
     rooms: property?.rooms ?? 1, guests: property?.guest ?? 1, services: property?.services ?? [],
-    address, located: !!point, photos: [...existingFiles.map(file => API_BASE + '/' + file.path), ...newImages.map(image => image.url)],
+    address, located: !!point, photos: [...existingFiles.map(file => file.url || API_BASE + '/' + file.path), ...newImages.map(image => image.url)],
   }} actions={<><UnsavedChangesDialog blocked={blocker.status === 'blocked'} onLeave={() => blocker.proceed?.()} onStay={() => blocker.reset?.()} /><PropertyActions step={2} busy={saving} disabled={disabled || locating} onBack={() => { void back() }} onPrimary={() => { void save() }} finalLabel={alreadySubmitted ? 'Guardar cambios' : 'Enviar a revisión'} /></>}>
     {error && <div role="alert" className="mb-5 flex gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700"><AlertCircle size={18} className="shrink-0" />{error}</div>}
     <FormSection icon={MapPin} title="Ubicación" description="Ayuda a los inquilinos a encontrar tu propiedad.">
@@ -216,7 +216,7 @@ export default function CreatePropertyLocationPage() {
       <div className={totalImages ? 'grid grid-cols-2 gap-3 sm:grid-cols-3' : 'hidden'}>
         {existingFiles.map((file) => (
           <div key={`existing-${file.id}`} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
-            <img src={`${API_BASE}/${file.path}`} alt={file.fileName} className="size-full object-cover" loading="lazy" />
+            <img src={file.url || `${API_BASE}/${file.path}`} alt={file.fileName} className="size-full object-cover" loading="lazy" />
             <button type="button" disabled={disabled} onClick={() => removeExistingFile(file.id)} aria-label="Eliminar imagen"
               className="absolute right-0 top-0 grid size-11 place-items-center rounded-bl-xl bg-white/90 text-primary shadow-sm transition hover:bg-red-50 hover:text-red-700">
               <X size={14} />

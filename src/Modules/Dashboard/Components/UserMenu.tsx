@@ -1,3 +1,4 @@
+import { useProfile } from '../../Auth/hooks/profileHooks';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { ArrowRight, LayoutDashboard, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ import { useDashboardUser } from '../hooks/useDashboardUser';
  */
 export default function UserMenu({ onAction }: { onAction?: () => void }) {
   const { fullName, initials, email, logout, roles } = useDashboardUser();
+  const profile = useProfile();
   const { pathname } = useLocation();
   const home = roleHome(roles);
   const area = getAreaFromPath(home);
@@ -62,11 +64,11 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
         aria-haspopup="true"
         aria-expanded={open}
         aria-controls="user-menu-panel"
-        className={`relative grid size-10 place-items-center rounded-full bg-primary text-sm font-semibold text-white transition hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+        className={`relative grid size-10 place-items-center overflow-hidden rounded-full bg-primary text-sm font-semibold text-white transition hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
           open ? 'ring-2 ring-secondary ring-offset-2' : ''
         }`}
       >
-        {initials || '?'}
+        {profile.data?.profilePhotoUrl ? <img src={profile.data.profilePhotoUrl} alt="" className="size-full rounded-full object-cover" /> : initials || '?'}
         {unreadMessages > 0 && (
           <span aria-hidden="true" className="absolute right-0 top-0 size-3 rounded-full border-2 border-white bg-secondary-dark" />
         )}
@@ -78,8 +80,8 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
           className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-3 shadow-xl"
         >
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white" aria-hidden="true">
-              {initials || '?'}
+            <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-primary text-sm font-bold text-white" aria-hidden="true">
+              {profile.data?.profilePhotoUrl ? <img src={profile.data.profilePhotoUrl} alt="" className="size-full rounded-full object-cover" /> : initials || '?'}
             </span>
             <div className="min-w-0">
               <p className="truncate font-bold text-primary">{fullName ?? 'Mi cuenta'}</p>

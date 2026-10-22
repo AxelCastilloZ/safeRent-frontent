@@ -1,5 +1,6 @@
 import apiAxios from '../../../api/apiConfig';
 export interface Profile {
+  profilePhotoUrl?: string | null;
   id: number; idCard: string; name: string; surname1: string; surname2: string;
   email: string; phoneNumber: string; birthdate: string; roles: string[]; createdAt: string;
   countryCode: string | null; preferredCurrency: string | null;
@@ -16,3 +17,9 @@ export interface ChangePasswordRequest { currentPassword: string; password: stri
 export async function getProfile() { return (await apiAxios.get<Profile>('/auth/profile')).data; }
 export async function updateProfile(payload: UpdateProfileRequest) { return (await apiAxios.patch<Profile>('/auth/profile', payload)).data; }
 export async function changePassword(payload: ChangePasswordRequest) { return (await apiAxios.post<{ message: string }>('/auth/change-password', payload)).data; }
+
+export async function uploadProfilePhoto(file: File) {
+  const body = new FormData(); body.append('file', file);
+  return (await apiAxios.post<Profile>('/auth/profile/photo', body, { timeout: 120000 })).data;
+}
+export async function deleteProfilePhoto() { return (await apiAxios.delete<Profile>('/auth/profile/photo')).data; }

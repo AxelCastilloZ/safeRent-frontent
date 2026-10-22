@@ -1,3 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { uploadProfilePhoto, deleteProfilePhoto } from '../../Auth/services/profileServices';
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import Alert from '@mui/material/Alert';
@@ -74,6 +76,33 @@ function ProfileEditor({ profile, options, onSaved, onCancel }: { profile: Profi
   );
 }
 
+function ProfilePhoto({ user }: { user: Profile }) {
+  const qc = useQueryClient();
+  const [error, setError] = useState('');
+  const photo = useMutation({
+    mutationFn: (file: File | null) => file ? uploadProfilePhoto(file) : deleteProfilePhoto(),
+    onSuccess: async () => { setError(''); await qc.invalidateQueries({ queryKey: ['auth', 'profile'] }); },
+    onError: error => setError(getAuthErrorMessage(error)),
+  });
+  return <div className="space-y-3">
+    <div className="flex flex-wrap items-center gap-4">
+      {user.profilePhotoUrl ? <img src={user.profilePhotoUrl} alt="Tu foto de perfil" className="size-20 rounded-full object-cover" /> : <span className="grid size-20 place-items-center rounded-full bg-slate-100 text-2xl font-bold text-primary">{user.name[0]}</span>}
+      <label className={buttonClass + (photo.isPending ? ' pointer-events-none opacity-60' : ' cursor-pointer')}>
+        {photo.isPending ? 'Guardando…' : 'Cambiar foto'}
+        <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={photo.isPending} onChange={event => {
+          const file = event.target.files?.[0]; event.target.value = '';
+          if (!file) return;
+          if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) { setError('Selecciona una imagen JPG, PNG o WebP de hasta 5 MB.'); return; }
+          photo.mutate(file);
+        }} />
+      </label>
+      {user.profilePhotoUrl && <button type="button" disabled={photo.isPending} onClick={() => photo.mutate(null)} className="text-sm font-semibold text-primary underline disabled:opacity-60">Eliminar foto</button>}
+    </div>
+    <p className="text-xs text-muted-ink">JPG, PNG o WebP. Máximo 5 MB.</p>
+    {error && <Alert severity="error">{error}</Alert>}
+  </div>;
+}
+
 export default function ProfilePanel() {
   const profile = useProfile();
   const options = useProfileCurrencyOptions();
@@ -84,6 +113,7 @@ export default function ProfilePanel() {
   const user = profile.data;
   const details = [ ['Cédula', user.idCard], ['Nombre completo', [user.name, user.surname1, user.surname2].filter(Boolean).join(' ')], ['Correo', user.email], ['Teléfono', user.phoneNumber], ['Fecha de nacimiento', user.birthdate], ['Tipo de cuenta', user.roles.join(', ')], ['Miembro desde', new Date(user.createdAt).toLocaleDateString('es-CR')], ['País o territorio', options.data?.countries.find(country => country.code === user.countryCode)?.name || user.countryCode || 'Sin indicar'], ['Moneda preferida', user.preferredCurrency || 'Automática según el país'], ['Moneda del perfil', user.resolvedCurrency || 'CRC'] ];
   return <div className="space-y-4">
+    <ProfilePhoto user={user} />
     {saved && <Alert severity="success" onClose={() => setSaved(false)}>Tu perfil se actualizó correctamente.</Alert>}
     {options.isError && <Alert severity="error">No se pudieron cargar los países y monedas. <button type="button" className="underline" onClick={() => { void options.refetch(); }}>Reintentar</button></Alert>}
     {editing && options.data ? <><p className="text-sm text-muted-ink">Cédula: {user.idCard} (solo lectura)</p><ProfileEditor profile={user} options={options.data} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); setSaved(true); }} /></> : <>

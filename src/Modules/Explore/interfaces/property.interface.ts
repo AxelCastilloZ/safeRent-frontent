@@ -21,6 +21,6 @@ export interface Property extends ReservationState {
   latitude?: number | string | null
   longitude?: number | string | null
   services?: PropertyService[]
-  files?: { path: string; mimeType: string }[]
+  files?: { path: string; mimeType: string; url?: string | null }[]
   typeOfProperty?: { name: string }
 }
