@@ -1,4 +1,3 @@
-import { listServices } from '../../Services/services/service.service'
 import { api } from './api'
 import type {
   Property,
@@ -49,8 +48,4 @@ export const propertyService = {
 
   removeFile: (propertyId: number, fileId: number) =>
     api.delete<PropertyFile>(`/properties/${propertyId}/files/${fileId}`),
-}
-
-export const serviceService = {
-  getAll: () => listServices(),
 }

@@ -1,1 +1,1 @@
-export const PROPERTY_STEPS = ['Datos', 'Ubicación', 'Imágenes', 'Publicar']
+export const PROPERTY_STEPS = ['Datos', 'Ubicación e imágenes']
