@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { ArrowRight, LayoutDashboard, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -13,6 +14,7 @@ import { useDashboardUser } from '../hooks/useDashboardUser';
  * Se cierra al volver a pulsar el avatar, al hacer clic fuera, con Escape y al elegir una opción.
  */
 export default function UserMenu({ onAction }: { onAction?: () => void }) {
+  const { t } = useTranslation();
   const { fullName, initials, email, logout, roles } = useDashboardUser();
   const { pathname } = useLocation();
   const home = roleHome(roles);
@@ -58,7 +60,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        aria-label={`Menú de ${fullName ?? 'mi cuenta'}${unreadMessages > 0 ? `, ${unreadMessages} mensajes sin leer` : ''}`}
+        aria-label={unreadMessages > 0 ? t('navigation:accountMenuUnread', { name: fullName ?? t('navigation:account'), count: unreadMessages }) : t('navigation:accountMenu', { name: fullName ?? t('navigation:account') })}
         aria-haspopup="true"
         aria-expanded={open}
         aria-controls="user-menu-panel"
@@ -82,7 +84,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
               {initials || '?'}
             </span>
             <div className="min-w-0">
-              <p className="truncate font-bold text-primary">{fullName ?? 'Mi cuenta'}</p>
+              <p className="truncate font-bold text-primary">{fullName ?? t("navigation:account")}</p>
               {email && <p className="truncate text-xs text-muted-ink">{email}</p>}
             </div>
           </div>
@@ -93,9 +95,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
             className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark"
           >
             <span className="flex items-center gap-2">
-              <LayoutDashboard size={18} aria-hidden="true" />
-              Ir a mi panel
-            </span>
+              <LayoutDashboard size={18} aria-hidden="true" />{t("navigation:goToPanel")}</span>
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
 
@@ -104,7 +104,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
               <li key={to}>
                 <Link to={to} onClick={close} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-primary transition hover:bg-slate-100">
                   <Icon size={18} className="text-muted-ink" aria-hidden="true" />
-                  {label}
+                  {t(label)}
                   {to === DASHBOARD_AREAS[area].messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
                 </Link>
               </li>
@@ -116,9 +116,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
             onClick={() => void handleLogout()}
             className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
           >
-            <LogOut size={18} aria-hidden="true" />
-            Cerrar sesión
-          </button>
+            <LogOut size={18} aria-hidden="true" />{t("navigation:logout")}</button>
         </div>
       )}
     </div>

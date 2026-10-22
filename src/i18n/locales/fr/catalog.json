@@ -1,0 +1,21 @@
+{
+  "service_wifi": "Wi-Fi",
+  "service_hot_water": "Eau chaude",
+  "service_parking": "Stationnement",
+  "service_laundry": "Buanderie",
+  "service_air_conditioning": "Climatisation",
+  "service_kitchen": "Cuisine",
+  "service_security": "Sécurité",
+  "service_pool": "Piscine",
+  "type_house": "Maison",
+  "type_apartment": "Appartement",
+  "type_room": "Chambre",
+  "type_studio": "Studio",
+  "translations": "Traductions du catalogue",
+  "translationsHint": "Le nom et la description principaux sont en espagnol. Complétez les autres langues.",
+  "name": "Nom",
+  "description": "Description",
+  "incomplete": "Complétez les noms et descriptions dans les trois autres langues.",
+  "created": "Équipement « {{name}} » créé. Il est désormais disponible pour les biens.",
+  "updated": "Équipement « {{name}} » mis à jour."
+}

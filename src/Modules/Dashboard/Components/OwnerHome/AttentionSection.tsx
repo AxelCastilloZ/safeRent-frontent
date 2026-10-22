@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
@@ -9,6 +11,7 @@ const SHOWN = 4;
 
 /** "Requieren tu atención": borradores sin enviar y propiedades a las que el administrador pidió cambios. */
 export default function AttentionSection() {
+  useTranslation();
   const properties = useOwnerProperties();
   const pending = (properties.data ?? [])
     .filter((property) => property.status === 'CHANGES_REQUESTED' || property.status === 'DRAFT')
@@ -16,13 +19,13 @@ export default function AttentionSection() {
     .sort((a, b) => Number(b.status === 'CHANGES_REQUESTED') - Number(a.status === 'CHANGES_REQUESTED'));
 
   return (
-    <HomeSection title="Requieren tu atención" to="/dashboard/owner/properties" linkLabel="Mis propiedades">
+    <HomeSection title={i18n.t("dashboard:attentionsection_requieren_tu_atencion")} to="/dashboard/owner/properties" linkLabel="Mis propiedades">
       {properties.isPending ? (
         <SectionLoading />
       ) : properties.isError ? (
-        <SectionError message="No pudimos cargar tus propiedades." onRetry={() => void properties.refetch()} />
+        <SectionError message={i18n.t("dashboard:attentionsection_no_pudimos_cargar_tus_propiedades")} onRetry={() => void properties.refetch()} />
       ) : pending.length === 0 ? (
-        <SectionEmpty title="Todo en orden" description="Ninguna de tus propiedades tiene cambios pendientes ni borradores sin enviar." />
+        <SectionEmpty title={i18n.t("dashboard:attentionsection_todo_en_orden")} description={i18n.t("dashboard:attentionsection_ninguna_de_tus_propiedades_tiene_cambios_pendientes_ni_borradores")} />
       ) : (
         <>
           <ul className="space-y-3">
@@ -42,12 +45,12 @@ export default function AttentionSection() {
                   search={{ editId: property.id }}
                   className="shrink-0 rounded-lg bg-secondary px-3 py-1.5 text-xs font-bold text-white transition hover:bg-secondary-dark"
                 >
-                  {property.status === 'DRAFT' ? 'Continuar' : 'Corregir'}
+                  {property.status === 'DRAFT' ? i18n.t("dashboard:attentionsection_continuar") : i18n.t("dashboard:attentionsection_corregir")}
                 </Link>
               </li>
             ))}
           </ul>
-          {pending.length > SHOWN && <p className="mt-3 text-xs text-muted-ink">y {pending.length - SHOWN} más en Mis propiedades</p>}
+          {pending.length > SHOWN && <p className="mt-3 text-xs text-muted-ink">{i18n.t("dashboard:pendingreviewsection_y")}{' '}{pending.length - SHOWN}{' '}{i18n.t("dashboard:attentionsection_mas_en_mis_propiedades")}</p>}
         </>
       )}
     </HomeSection>

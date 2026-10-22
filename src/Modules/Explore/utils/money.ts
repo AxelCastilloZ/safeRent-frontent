@@ -1,7 +1,9 @@
+import { currentLocale } from '../../../i18n/formatters.ts';
+
 /** Format decimal strings without converting monetary values to Number. */
-export function formatMoney(amount: string | number, currency: string) {
+export function formatMoney(amount: string | number, currency: string, locale = currentLocale()) {
   try {
-    const formatter = new Intl.NumberFormat('es-CR', { style: 'currency', currency, currencyDisplay: 'code' })
+    const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency, currencyDisplay: 'code' })
     const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2
     const match = /^(\d+)(?:\.(\d+))?$/.exec(String(amount))
     if (!match) return `${currency} ${amount}`

@@ -1,0 +1,19 @@
+{
+  "unavailable": "Não foi possível concluir a solicitação. Tente novamente.",
+  "network": "Não foi possível conectar ao servidor. Tente novamente.",
+  "userUnavailable": "Usuário indisponível.",
+  "emailRegistered": "Este e-mail já está cadastrado.",
+  "emailPassword": "Informe sua senha atual correta para alterar o e-mail.",
+  "currentPassword": "A senha atual está incorreta.",
+  "passwordDifferent": "A nova senha deve ser diferente da atual.",
+  "attempts": "Muitas tentativas. Tente novamente em 15 minutos.",
+  "country": "País ou território não aceito.",
+  "currency": "Moeda não aceita.",
+  "credentials": "Credenciais incorretas.",
+  "identityRegistered": "O documento de identidade ou o e-mail já está cadastrado.",
+  "invalidLink": "O link é inválido ou expirou. Solicite um novo.",
+  "sessionExpired": "Sua sessão expirou. Entre novamente.",
+  "invalidFields": "Verifique os dados do formulário.",
+  "pageError": "Não foi possível carregar esta página",
+  "pageNotFound": "Página não encontrada"
+}

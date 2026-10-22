@@ -1,0 +1,10 @@
+{
+  "managerolesmodal_no_se_pudo_actualizar_el_rol": "No se pudo actualizar el rol.",
+  "managerolesmodal_roles_de": "Roles de",
+  "managerolesmodal_agrega_o_quita_roles_de_esta_cuenta": "Agrega o quita roles de esta cuenta.",
+  "managerolesmodal_cerrar": "Cerrar",
+  "managerolesmodal_cargando_roles": "Cargando roles…",
+  "managerolesmodal_no_se_pudieron_cargar_los_roles": "No se pudieron cargar los roles.",
+  "managerolesmodal_el_usuario_debe_conservar_al_menos_un_rol": "El usuario debe conservar al menos un rol.",
+  "managerolesmodal_agregar": "Agregar"
+}

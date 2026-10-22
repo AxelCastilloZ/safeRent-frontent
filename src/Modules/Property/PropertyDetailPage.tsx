@@ -1,3 +1,8 @@
+import { catalogText } from '../../i18n/catalog';
+import { messageFromError, message } from '../../i18n/messages';
+import { useMessageState } from '../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -13,6 +18,7 @@ import PriceDetails from '../Explore/PriceDetails'
 import { useSessionToken } from '../Auth/services/authSession'
 
 export default function PropertyDetailPage() {
+  useTranslation();
   const { currency, ready } = useDisplayCurrency()
   const token = useSessionToken()
   const { propertyId } = useParams({ strict: false }) as { propertyId: string }
@@ -25,8 +31,8 @@ export default function PropertyDetailPage() {
   })
   const property = propertyQuery.data
   const loading = propertyQuery.isPending
-  const loadError = propertyQuery.isError ? 'No se pudo cargar la propiedad' : null
-  const [error, setError] = useState<string | null>(null)
+  const loadError = propertyQuery.isError ? i18n.t("property:createpropertystep1page_no_se_pudo_cargar_la_propiedad") : null
+  const [error, setError] = useMessageState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
 
   async function handlePublish() {
@@ -36,27 +42,25 @@ export default function PropertyDetailPage() {
       await propertyService.publish(property.id)
       await propertyQuery.refetch()
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Error al publicar')
+      setError(err instanceof ApiError ? messageFromError(err) : message("property:propertydetailpage_error_al_publicar"))
     } finally {
       setPublishing(false)
     }
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center py-24 text-sm text-slate-400">Cargando propiedad...</div>
+    return <div className="flex items-center justify-center py-24 text-sm text-slate-400">{i18n.t("property:createpropertylocationpage_cargando_propiedad")}</div>
   }
 
   if (error || loadError || !property) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <p className="text-sm text-red-600">{error ?? loadError ?? 'Propiedad no encontrada'}</p>
+        <p className="text-sm text-red-600">{error ?? loadError ?? i18n.t("property:propertydetailpage_propiedad_no_encontrada")}</p>
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
           onClick={() => navigate({ to: '/dashboard/owner/properties' })}
-        >
-          Volver a mis propiedades
-        </button>
+        >{i18n.t("property:propertydetailpage_volver_a_mis_propiedades")}</button>
       </div>
     )
   }
@@ -72,41 +76,33 @@ export default function PropertyDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-        Confirma la ubicación en el mapa para publicar.
-        <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
+      {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{i18n.t("property:propertydetailpage_confirma_la_ubicacion_en_el_mapa_para_publicar")}<button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>{i18n.t("property:propertydetailpage_completar_ubicacion")}</button>
       </div>}
       <div className="mb-6 flex items-start justify-between">
-        <h1 className="text-2xl font-bold text-primary">{property.title || 'Sin título'}</h1>
+        <h1 className="text-2xl font-bold text-primary">{property.title || i18n.t("property:createpropertystep1page_sin_titulo")}</h1>
         <StatusBadge variant={statusBadgeVariant(property.status)} />
       </div>
 
       {property.status === 'DRAFT' && (
-        <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-          Propiedad creada y vinculada a tu cuenta. Aún no la has enviado a revisión.
-        </div>
+        <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">{i18n.t("property:propertydetailpage_propiedad_creada_y_vinculada_a_tu_cuenta_aun_no")}</div>
       )}
       {property.status === 'PENDING' && (
-        <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-          En revisión: un administrador está verificando los datos. Te avisaremos cuando la apruebe.
-        </div>
+        <div className="mb-6 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700">{i18n.t("property:propertydetailpage_en_revision_un_administrador_esta_verificando_los_datos_te")}</div>
       )}
       {property.status === 'CHANGES_REQUESTED' && (
         <div className="mb-6 flex items-start gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <span>
-            <strong className="font-semibold">El administrador pidió corregir algo:</strong>{' '}
-            {property.reviewNote || 'Revisa los datos de la propiedad.'} Corrige lo necesario y vuelve a enviarla a revisión.
-          </span>
+            <strong className="font-semibold">{i18n.t("property:propertydetailpage_el_administrador_pidio_corregir_algo")}</strong>{' '}
+            {property.reviewNote || i18n.t("property:propertydetailpage_revisa_los_datos_de_la_propiedad")}{' '}{i18n.t("property:propertydetailpage_corrige_lo_necesario_y_vuelve_a_enviarla_a_revision")}</span>
         </div>
       )}
       {property.status === 'INACTIVE' && (
         <div className="mb-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <span>
-            <strong className="font-semibold">Propiedad inactiva.</strong>{' '}
-            {property.reviewNote || 'No es visible para inquilinos.'} Puedes corregirla y enviarla a revisión de nuevo.
-          </span>
+            <strong className="font-semibold">{i18n.t("property:propertydetailpage_propiedad_inactiva")}</strong>{' '}
+            {property.reviewNote || i18n.t("property:propertydetailpage_no_es_visible_para_inquilinos")}{' '}{i18n.t("property:propertydetailpage_puedes_corregirla_y_enviarla_a_revision_de_nuevo")}</span>
         </div>
       )}
 
@@ -115,50 +111,48 @@ export default function PropertyDetailPage() {
       {/* Property data */}
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-primary">Datos de la propiedad</h3>
+          <h3 className="text-sm font-bold text-primary">{i18n.t("property:propertydetailpage_datos_de_la_propiedad")}</h3>
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
             onClick={() => navigate({ to: '/dashboard/owner/properties/new', search: { editId: property.id } })}
           >
-            <Pencil size={13} />
-            Editar datos
-          </button>
+            <Pencil size={13} />{i18n.t("property:propertydetailpage_editar_datos")}</button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex items-start gap-2">
             <MapPin size={16} className="mt-0.5 shrink-0 text-slate-400" />
             <div>
-              <span className="block text-xs font-medium text-slate-400">Dirección</span>
+              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:createpropertylocationpage_direccion")}</span>
               <span className="text-sm text-primary">{property.address || '—'}</span>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <DollarSign size={16} className="mt-0.5 shrink-0 text-slate-400" />
             <div>
-              <span className="block text-xs font-medium text-slate-400">Precio / mes</span>
+              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:createpropertystep1page_precio_mes")}</span>
               <div className="text-sm text-primary">{priceLabel(property)}<PriceDetails price={property.displayPrice} /></div>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <BedDouble size={16} className="mt-0.5 shrink-0 text-slate-400" />
             <div>
-              <span className="block text-xs font-medium text-slate-400">Habitaciones</span>
+              <span className="block text-xs font-medium text-slate-400">{i18n.t("explore:explorepage_habitaciones")}</span>
               <span className="text-sm text-primary">{property.rooms ?? '—'}</span>
             </div>
           </div>
           {property.typeOfProperty && (
             <div>
-              <span className="block text-xs font-medium text-slate-400">Tipo</span>
-              <span className="text-sm text-primary">{property.typeOfProperty.name}</span>
+              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:propertydetailpage_tipo")}</span>
+              <span className="text-sm text-primary">{catalogText(property.typeOfProperty)}</span>
             </div>
           )}
         </div>
 
         {property.description && (
           <div className="mt-4 border-t border-slate-100 pt-4">
-            <span className="mb-1 block text-xs font-medium text-slate-400">Descripción</span>
+            <span className="mb-1 block text-xs font-medium text-slate-400">{i18n.t("property:propertyformlayout_descripcion")}</span>
             <p className="text-sm leading-relaxed text-slate-600">{property.description}</p>
           </div>
         )}
@@ -167,7 +161,7 @@ export default function PropertyDetailPage() {
       {/* Image gallery */}
       <div className="mb-6">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-primary">Imágenes ({property.files?.length ?? 0})</h3>
+          <h3 className="text-sm font-bold text-primary">{i18n.t("property:propertydetailpage_imagenes")}{property.files?.length ?? 0})</h3>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {property.files?.length > 0 ? (
@@ -182,38 +176,36 @@ export default function PropertyDetailPage() {
               </div>
             ))
           ) : (
-            <div className="col-span-full rounded-xl bg-slate-50 py-8 text-center text-sm text-slate-400">
-              Sin imágenes
-            </div>
+            <div className="col-span-full rounded-xl bg-slate-50 py-8 text-center text-sm text-slate-400">{i18n.t("property:propertydetailpage_sin_imagenes")}</div>
           )}
         </div>
       </div>
 
       {/* Service tags */}
       <div className="mb-6">
-        <h3 className="mb-3 text-sm font-bold text-primary">Servicios</h3>
+        <h3 className="mb-3 text-sm font-bold text-primary">{i18n.t("dashboard:adminhomepage_servicios")}</h3>
         {property.services?.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {property.services.map((s) => (
               <span key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                {s.name}
+                {catalogText(s)}
               </span>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-400">Sin servicios asignados</p>
+          <p className="text-sm text-slate-400">{i18n.t("property:propertydetailpage_sin_servicios_asignados")}</p>
         )}
       </div>
 
       {/* Pre-publish checklist */}
       {property.status !== 'ACTIVE' && property.status !== 'PENDING' && (
         <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-3 text-sm font-bold text-primary">Antes de enviar a revisión</h3>
+          <h3 className="mb-3 text-sm font-bold text-primary">{i18n.t("property:propertydetailpage_antes_de_enviar_a_revision")}</h3>
           <ul className="flex flex-col gap-2">
             {[
-              { ok: hasData, label: 'Datos completos' },
-              { ok: hasImages, label: '3 imágenes' },
-              { ok: hasServices, label: 'Servicios' },
+              { ok: hasData, label: i18n.t("property:propertydetailpage_datos_completos") },
+              { ok: hasImages, label: i18n.t("property:propertydetailpage_3_imagenes") },
+              { ok: hasServices, label: i18n.t("dashboard:adminhomepage_servicios") },
             ].map((item) => (
               <li key={item.label} className="flex items-center gap-2 text-sm">
                 {item.ok ? (
@@ -234,18 +226,16 @@ export default function PropertyDetailPage() {
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
           onClick={() => navigate({ to: '/dashboard/owner/properties' })}
-        >
-          Mis propiedades
-        </button>
+        >{i18n.t("dashboard:ownerhomepage_mis_propiedades")}</button>
         {(property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
           <button
             type="button"
             className="rounded-xl bg-secondary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-secondary-dark disabled:opacity-50"
             onClick={handlePublish}
             disabled={publishing || !canPublish}
-            title={canPublish ? '' : 'Completa todos los requisitos antes de enviar a revisión'}
+            title={canPublish ? '' : i18n.t("property:propertydetailpage_completa_todos_los_requisitos_antes_de_enviar_a_revision")}
           >
-            {publishing ? 'Enviando...' : 'Enviar a revisión'}
+            {publishing ? 'Enviando...' : i18n.t("property:propertyformlayout_enviar_a_revision")}
           </button>
         )}
       </div>

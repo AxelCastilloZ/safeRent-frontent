@@ -1,0 +1,10 @@
+{
+  "managerolesmodal_no_se_pudo_actualizar_el_rol": "Impossible de modifier le rôle.",
+  "managerolesmodal_roles_de": "Rôles de",
+  "managerolesmodal_agrega_o_quita_roles_de_esta_cuenta": "Ajoutez ou retirez des rôles pour ce compte.",
+  "managerolesmodal_cerrar": "Fermer",
+  "managerolesmodal_cargando_roles": "Chargement des rôles…",
+  "managerolesmodal_no_se_pudieron_cargar_los_roles": "Impossible de charger les rôles.",
+  "managerolesmodal_el_usuario_debe_conservar_al_menos_un_rol": "L’utilisateur doit conserver au moins un rôle.",
+  "managerolesmodal_agregar": "Ajouter"
+}

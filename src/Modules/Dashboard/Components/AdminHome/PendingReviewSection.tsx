@@ -1,3 +1,6 @@
+import { currentLocale } from '../../../../i18n/formatters';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 import { useAdminReviewQueue } from '../../hooks/useAdminReviewQueue';
 import { SectionEmpty, SectionError, SectionLoading } from '../ClientHome/SectionStates';
@@ -7,17 +10,18 @@ const SHOWN = 5;
 
 /** "Pendientes de revisión": las 5 que llevan más tiempo esperando, para atenderlas en orden. */
 export default function PendingReviewSection() {
+  useTranslation();
   const review = useAdminReviewQueue();
   const next = review.data?.queue.slice(0, SHOWN) ?? [];
 
   return (
-    <HomeSection title="Pendientes de revisión" to="/dashboard/admin/properties" linkLabel="Ver propiedades">
+    <HomeSection title={i18n.t("dashboard:pendingreviewsection_pendientes_de_revision")} to="/dashboard/admin/properties" linkLabel="Ver propiedades">
       {review.isPending ? (
         <SectionLoading />
       ) : review.isError ? (
-        <SectionError message="No pudimos cargar la cola de revisión." onRetry={() => void review.refetch()} />
+        <SectionError message={i18n.t("dashboard:pendingreviewsection_no_pudimos_cargar_la_cola_de_revision")} onRetry={() => void review.refetch()} />
       ) : next.length === 0 ? (
-        <SectionEmpty title="No hay propiedades por revisar" description="Cuando un propietario envíe una propiedad, aparecerá aquí." />
+        <SectionEmpty title={i18n.t("dashboard:pendingreviewsection_no_hay_propiedades_por_revisar")} description={i18n.t("dashboard:pendingreviewsection_cuando_un_propietario_envie_una_propiedad_aparecera_aqui")} />
       ) : (
         <>
           <ul className="-mx-2">
@@ -26,17 +30,15 @@ export default function PendingReviewSection() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-primary">{property.title}</p>
                   <p className="truncate text-xs text-muted-ink">
-                    {property.owner.name} {property.owner.surname1} · creada el {new Date(property.createdAt).toLocaleDateString('es-CR')}
+                    {property.owner.name} {property.owner.surname1}{' '}{i18n.t("dashboard:pendingreviewsection_creada_el")}{' '}{new Date(property.createdAt).toLocaleDateString(currentLocale())}
                   </p>
                 </div>
-                <Link to="/dashboard/admin/properties" className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary">
-                  Revisar
-                </Link>
+                <Link to="/dashboard/admin/properties" className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary">{i18n.t("dashboard:pendingreviewsection_revisar")}</Link>
               </li>
             ))}
           </ul>
           {(review.data?.total ?? 0) > next.length && (
-            <p className="mt-2 text-xs text-muted-ink">y {(review.data?.total ?? 0) - next.length} más en espera</p>
+            <p className="mt-2 text-xs text-muted-ink">{i18n.t("dashboard:pendingreviewsection_y")}{' '}{(review.data?.total ?? 0) - next.length}{' '}{i18n.t("dashboard:pendingreviewsection_mas_en_espera")}</p>
           )}
         </>
       )}

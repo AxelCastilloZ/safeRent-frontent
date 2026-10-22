@@ -1,3 +1,5 @@
+import { currentLocale } from '../../../i18n/formatters';
+import i18n from '../../../i18n/instance';
 import { getPrimaryRole, ROLE_LABELS } from '../../Auth/utils/roles'
 import type { Conversation, ConversationParticipant } from '../types/message'
 
@@ -29,17 +31,17 @@ export function isPropertyOwner(conversation: Conversation, currentUserId: numbe
  * si no, es el "Arrendatario". En una directa no hay propiedad: se rotula por su rol en la plataforma.
  */
 export function otherParticipantRole(conversation: Conversation, currentUserId: number): string {
-  if (!isDirectConversation(conversation)) return isPropertyOwner(conversation, currentUserId) ? 'Inquilino' : 'Arrendatario'
+  if (!isDirectConversation(conversation)) return isPropertyOwner(conversation, currentUserId) ? i18n.t("auth:roles_inquilino") : i18n.t("messages:conversation_arrendatario")
 
   const role = getPrimaryRole(otherParticipant(conversation, currentUserId)?.roles ?? [])
-  return role ? ROLE_LABELS[role] : 'Usuario'
+  return role ? ROLE_LABELS()[role] : i18n.t("dashboard:recentconversationssection_usuario")
 }
 
 /** Segunda línea de la bandeja y del chat: la propiedad, o quién escribe si es una conversación directa. */
 export function conversationContext(conversation: Conversation, currentUserId: number): string {
   if (conversation.property) return conversation.property.title
   const isAdmin = otherParticipant(conversation, currentUserId)?.roles?.includes('ADMIN')
-  return isAdmin ? 'Mensaje del administrador' : 'Conversación directa'
+  return isAdmin ? i18n.t("messages:conversation_mensaje_del_administrador") : i18n.t("messages:conversation_conversacion_directa")
 }
 
 /** Fecha corta para la bandeja: "hoy", "ayer" o "12 oct". */
@@ -48,7 +50,7 @@ export function shortDate(iso: string, now: Date = new Date()): string {
   const dayMs = 24 * 60 * 60 * 1000
   const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
   const diffDays = Math.round((startOfDay(now) - startOfDay(date)) / dayMs)
-  if (diffDays === 0) return 'Hoy'
-  if (diffDays === 1) return 'Ayer'
-  return date.toLocaleDateString('es', { day: 'numeric', month: 'short' })
+  if (diffDays === 0) return i18n.t("messages:conversation_hoy")
+  if (diffDays === 1) return i18n.t("messages:conversation_ayer")
+  return date.toLocaleDateString(currentLocale(), { day: 'numeric', month: 'short' })
 }

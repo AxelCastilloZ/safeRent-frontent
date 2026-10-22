@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
+import LanguageSelector from '../../../i18n/LanguageSelector';
 import AuthActions from '../../Auth/components/AuthActions'
 import UserMenu from '../../Dashboard/Components/UserMenu'
 import { useSessionToken } from '../../Auth/services/authSession'
@@ -8,6 +10,7 @@ import { useSessionToken } from '../../Auth/services/authSession'
 type NavItem = { kind: 'route'; label: string; to: string } | { kind: 'anchor'; label: string; href: string }
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false)
   const token = useSessionToken()
   const closeMenu = () => setIsOpen(false)
@@ -19,9 +22,9 @@ export default function Navbar() {
   // si no, apuntan a "/#..." para volver al inicio y hacer scroll — el mismo
   // patrón que ya usa el header de ExplorePage.
   const navigationItems: NavItem[] = [
-    { kind: 'route', label: 'Explorar', to: '/explorar' },
-    { kind: 'anchor', label: 'Cómo funciona', href: isHome ? '#how-it-works' : '/#how-it-works' },
-    { kind: 'anchor', label: 'Para propietarios', href: isHome ? '#owner-cta' : '/#owner-cta' },
+    { kind: 'route', label: t("navigation:explore"), to: '/explorar' },
+    { kind: 'anchor', label: t("navigation:howItWorks"), href: isHome ? '#how-it-works' : '/#how-it-works' },
+    { kind: 'anchor', label: t("navigation:forOwners"), href: isHome ? '#owner-cta' : '/#owner-cta' },
   ]
 
   const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -29,20 +32,20 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label="Navegación principal">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label={t("navigation:main")}>
         {isHome ? (
-          <a href="#top" className="flex items-center gap-2 font-bold text-ink" aria-label="SafeRent, inicio" onClick={closeMenu}>
+          <a href="#top" className="flex items-center gap-2 font-bold text-ink" aria-label={t("navigation:brandHome")} onClick={closeMenu}>
             <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg object-contain" />
             <span className="text-xl tracking-tight">SafeRent</span>
           </a>
         ) : (
-          <Link to="/" className="flex items-center gap-2 font-bold text-ink" aria-label="SafeRent, inicio" onClick={closeMenu}>
+          <Link to="/" className="flex items-center gap-2 font-bold text-ink" aria-label={t("navigation:brandHome")} onClick={closeMenu}>
             <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg object-contain" />
             <span className="text-xl tracking-tight">SafeRent</span>
           </Link>
         )}
 
-        <div className="hidden items-center gap-7 md:flex">
+        <div className="hidden items-center gap-7 lg:flex">
           {navigationItems.map((item) =>
             item.kind === 'route' ? (
               <Link key={item.to} to={item.to} className={navLinkClassName({ isActive: pathname === item.to || pathname.startsWith(`${item.to}/`) })}>
@@ -55,18 +58,20 @@ export default function Navbar() {
             ),
           )}
         </div>
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <LanguageSelector />
           {token ? <UserMenu /> : <AuthActions />}
         </div>
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
         {token && <UserMenu onAction={closeMenu} />}
-        <button type="button" className="rounded-lg p-2 text-ink hover:bg-slate-100 md:hidden" aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
+        <button type="button" className="rounded-lg p-2 text-ink hover:bg-slate-100 lg:hidden" aria-label={isOpen ? t("navigation:closeMenu") : t("navigation:openMenu")} aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
           {isOpen ? <X size={23} /> : <Menu size={23} />}
         </button>
         </div>
       </nav>
-      {isOpen && <div className="border-t border-slate-100 bg-white px-4 py-4 shadow-lg md:hidden">
+      {isOpen && <div className="border-t border-slate-100 bg-white px-4 py-4 shadow-lg lg:hidden">
         <div className="mx-auto flex max-w-7xl flex-col gap-1">
+          <LanguageSelector />
           {navigationItems.map((item) =>
             item.kind === 'route' ? (
               <Link key={item.to} to={item.to} onClick={closeMenu} className="rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-slate-50">

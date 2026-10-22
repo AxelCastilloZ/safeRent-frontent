@@ -1,26 +1,26 @@
 import { z } from 'zod'
 
 export const PASSWORD_MIN_LENGTH = 8
-const requiredText = (message: string, max: number) => z.string().trim().min(1, message).max(max)
+const requiredText = (message: string, max: number) => z.string().trim().min(1, message).max(max, 'validation:maxLength')
 
 export const createAccountSchema = z.object({
-  idCard: requiredText('Identification card is required.', 30),
-  name: requiredText('Name is required.', 200),
-  surname1: requiredText('First surname is required.', 100),
-  surname2: z.string().trim().max(100),
-  phoneNumber: requiredText('Phone number is required.', 20)
-    .regex(/^\+?[0-9]{8,20}$/, 'Use 8 to 20 digits, optionally starting with +.'),
-  birthdate: z.iso.date('Enter a valid birthdate.'),
-  email: requiredText('Email address is required.', 150).pipe(z.email('Enter a valid email address.')),
+  idCard: requiredText("validation:idCard", 30),
+  name: requiredText("validation:name", 200),
+  surname1: requiredText("validation:surname1", 100),
+  surname2: z.string().trim().max(100, 'validation:maxLength'),
+  phoneNumber: requiredText("validation:phone", 20)
+    .regex(/^\+?[0-9]{8,20}$/, "validation:phoneFormat"),
+  birthdate: z.iso.date("validation:birthdate"),
+  email: requiredText("validation:email", 150).pipe(z.email("validation:emailFormat")),
   password: z.string()
-    .min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`)
-    .max(72, 'Password cannot exceed 72 characters.')
-    .regex(/[A-Z]/, 'Include at least one uppercase letter.')
-    .regex(/[a-z]/, 'Include at least one lowercase letter.')
-    .regex(/[0-9]/, 'Include at least one number.')
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Include at least one special character: !@#$%^&*(),.?":{}|<>')
-    .refine((value) => new TextEncoder().encode(value).length <= 72, 'Password cannot exceed 72 UTF-8 bytes.'),
-  acceptTerms: z.boolean().refine((accepted) => accepted, 'You must accept the Terms of Service and Privacy Policy.'),
+    .min(PASSWORD_MIN_LENGTH, 'validation:passwordMin')
+    .max(72, "validation:passwordMax")
+    .regex(/[A-Z]/, "validation:uppercase")
+    .regex(/[a-z]/, "validation:lowercase")
+    .regex(/[0-9]/, "validation:number")
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, "validation:symbol")
+    .refine((value) => new TextEncoder().encode(value).length <= 72, "validation:passwordBytes"),
+  acceptTerms: z.boolean().refine((accepted) => accepted, "validation:terms"),
 })
 
 export type CreateAccountValues = z.infer<typeof createAccountSchema>

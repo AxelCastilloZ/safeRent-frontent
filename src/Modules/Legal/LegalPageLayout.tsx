@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import { Link } from '@tanstack/react-router'
 import Navbar from '../LandingPage/Components/Navbar'
 import Footer from '../LandingPage/Components/Footer'
@@ -19,6 +21,7 @@ type LegalPageLayoutProps = {
  * en `data/*.ts` para que sea fácil de editar más adelante.
  */
 export default function LegalPageLayout({ eyebrow, title, description, lastUpdated, sections }: LegalPageLayoutProps) {
+  useTranslation();
   return (
     <div className="min-h-screen bg-white text-ink">
       <Navbar />
@@ -27,12 +30,12 @@ export default function LegalPageLayout({ eyebrow, title, description, lastUpdat
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
           <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{title}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-neutral/75">{description}</p>
-          <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-neutral/50">Última actualización: {lastUpdated}</p>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-neutral/50">{i18n.t("legal:legalpagelayout_ultima_actualizacion")}{' '}{lastUpdated}</p>
         </Reveal>
 
         <div className="mx-auto mt-12 max-w-6xl lg:grid lg:grid-cols-[220px_1fr] lg:items-start lg:gap-12">
-          <nav aria-label="Índice de contenidos" className="mb-10 lg:sticky lg:top-24 lg:mb-0">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral/60">Índice</p>
+          <nav aria-label={i18n.t("legal:legalpagelayout_indice_de_contenidos")} className="mb-10 lg:sticky lg:top-24 lg:mb-0">
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral/60">{i18n.t("legal:legalpagelayout_indice")}</p>
             <ul className="space-y-2 border-l border-slate-200 pl-4 text-sm">
               {sections.map((section) => (
                 <li key={section.id}>
@@ -57,9 +60,7 @@ export default function LegalPageLayout({ eyebrow, title, description, lastUpdat
                 </div>
               </section>
             ))}
-            <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-secondary transition hover:text-secondary-dark">
-              ← Volver al inicio
-            </Link>
+            <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-secondary transition hover:text-secondary-dark">{i18n.t("legal:legalpagelayout_volver_al_inicio")}</Link>
           </div>
         </div>
       </main>

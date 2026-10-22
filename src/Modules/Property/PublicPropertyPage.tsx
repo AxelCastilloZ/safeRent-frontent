@@ -1,6 +1,12 @@
+import { errorMessage } from '../../i18n/messages';
+import { catalogText } from '../../i18n/catalog';
+import { message } from '../../i18n/messages';
+import { useMessageState } from '../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import PropertyComments from '../Comments/Components/PropertyComments'
 import ReservationLabel from '../Reservations/Components/ReservationLabel'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, BedDouble, Heart, MapPin, MessageCircle, Share2, Users } from 'lucide-react'
 import Navbar from '../LandingPage/Components/Navbar'
@@ -17,10 +23,11 @@ import { useSavedPropertyIds, useToggleSavedProperty } from '../SavedProperties/
 import { consumePendingSaveProperty, setPendingSaveProperty } from '../SavedProperties/utils/pendingSave'
 
 export default function PublicPropertyPage() {
+  useTranslation();
   const { propertyId } = useParams({ strict: false })
   const id = Number(propertyId)
   const query = usePublicProperty(id)
-  const [notice, setNotice] = useState('')
+  const [notice, setNotice] = useMessageState('')
   const property = query.data
   const navigate = useNavigate()
   const { user: currentUser, hasSession } = useAuth()
@@ -40,15 +47,15 @@ export default function PublicPropertyPage() {
       return
     }
     if (!currentUser) {
-      setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
+      setNotice(message("property:publicpropertypage_estamos_verificando_tu_sesion_intenta_de_nuevo_en_un"))
       return
     }
     if (!currentUser.roles.includes('CLIENT')) {
-      setNotice('Necesitas el rol de inquilino para contactar al propietario.');
+      setNotice(message("property:publicpropertypage_necesitas_el_rol_de_inquilino_para_contactar_al_propietario"));
       return;
     }
     if (currentUser.id === property.owner.id) {
-      setNotice('Esta propiedad es tuya: no puedes chatear contigo mismo.')
+      setNotice(message("property:publicpropertypage_esta_propiedad_es_tuya_no_puedes_chatear_contigo_mismo"))
       return
     }
     startConversation.mutate({ participantIds: [currentUser.id, property.owner.id], propertyId: property.id })
@@ -67,8 +74,8 @@ export default function PublicPropertyPage() {
 
   function updateSaved(propertyId: number, save: boolean) {
     savedMutation.mutate({ propertyId, save }, {
-      onSuccess: () => setNotice(save ? 'Propiedad guardada en tu cuenta.' : 'Propiedad eliminada de tus guardadas.'),
-      onError: () => setNotice('No pudimos actualizar tus guardadas. Intenta de nuevo.'),
+      onSuccess: () => setNotice(save ? message("property:publicpropertypage_propiedad_guardada_en_tu_cuenta") : message("property:publicpropertypage_propiedad_eliminada_de_tus_guardadas")),
+      onError: () => setNotice(message("property:publicpropertypage_no_pudimos_actualizar_tus_guardadas_intenta_de_nuevo")),
     })
   }
 
@@ -80,11 +87,11 @@ export default function PublicPropertyPage() {
     saveMutate(
       { propertyId: loadedPropertyId, save: true },
       {
-        onSuccess: () => setNotice('Propiedad guardada en tu cuenta.'),
-        onError: () => setNotice('No pudimos guardar la propiedad. Intenta de nuevo.'),
+        onSuccess: () => setNotice(message("property:publicpropertypage_propiedad_guardada_en_tu_cuenta")),
+        onError: () => setNotice(message("property:publicpropertypage_no_pudimos_guardar_la_propiedad_intenta_de_nuevo")),
       },
     )
-  }, [loadedPropertyId, ownerId, currentUserId, saveMutate])
+  }, [loadedPropertyId, ownerId, currentUserId, saveMutate, setNotice])
 
   function toggleSaved() {
     if (!property) return
@@ -95,7 +102,7 @@ export default function PublicPropertyPage() {
       return
     }
     if (!currentUser) {
-      setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
+      setNotice(message("property:publicpropertypage_estamos_verificando_tu_sesion_intenta_de_nuevo_en_un"))
       return
     }
     updateSaved(property.id, !saved)
@@ -103,46 +110,46 @@ export default function PublicPropertyPage() {
   async function share() {
     try {
       if (navigator.share) await navigator.share({ title: property?.title, url: window.location.href })
-      else { await navigator.clipboard.writeText(window.location.href); setNotice('Enlace copiado.') }
+      else { await navigator.clipboard.writeText(window.location.href); setNotice(message("property:publicpropertypage_enlace_copiado")) }
     } catch (reason) {
-      if (!(reason instanceof DOMException && reason.name === 'AbortError')) setNotice('Puedes compartir el enlace de la barra de direcciones.')
+      if (!(reason instanceof DOMException && reason.name === 'AbortError')) setNotice(message("property:publicpropertypage_puedes_compartir_el_enlace_de_la_barra_de_direcciones"))
     }
   }
   return <div className="min-h-screen bg-surface text-primary">
     <Navbar />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <a href="/#properties" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral hover:text-secondary"><ArrowLeft size={18} />Volver a resultados</a>
+        <a href="/#properties" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral hover:text-secondary"><ArrowLeft size={18} />{i18n.t("property:publicpropertypage_volver_a_resultados")}</a>
         {property && <div className="flex gap-2">
-          {canShowSave && <button type="button" onClick={toggleSaved} disabled={savedMutation.isPending} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary disabled:opacity-60"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? 'Guardada' : 'Guardar'}</button>}
-          <button type="button" onClick={() => void share()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Share2 size={16} />Compartir</button>
+          {canShowSave && <button type="button" onClick={toggleSaved} disabled={savedMutation.isPending} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary disabled:opacity-60"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? i18n.t("property:publicpropertypage_guardada") : i18n.t("property:publicpropertypage_guardar")}</button>}
+          <button type="button" onClick={() => void share()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Share2 size={16} />{i18n.t("property:publicpropertypage_compartir")}</button>
         </div>}
       </div>
       <p role="status" className="mb-3 text-sm text-secondary-dark">{notice}</p>
-      {startConversation.isError && <p role="alert" className="mb-3 text-sm text-red-700">No pudimos abrir el chat. Intenta nuevamente.</p>}
-      {(!Number.isInteger(id) || id <= 0) ? <h1 className="py-20 text-center text-xl font-bold">Propiedad no válida</h1> : query.isPending ? <p role="status" className="py-24 text-center">Cargando propiedad...</p> : query.isError ? <div role="alert" className="rounded-2xl bg-white p-12 text-center"><h1 className="text-xl font-bold">{query.error.message}</h1><button type="button" onClick={() => void query.refetch()} className="mt-4 font-bold text-secondary">Reintentar</button></div> : property && <>
+      {startConversation.isError && <p role="alert" className="mb-3 text-sm text-red-700">{i18n.t("property:publicpropertypage_no_pudimos_abrir_el_chat_intenta_nuevamente")}</p>}
+      {(!Number.isInteger(id) || id <= 0) ? <h1 className="py-20 text-center text-xl font-bold">{i18n.t("property:publicpropertypage_propiedad_no_valida")}</h1> : query.isPending ? <p role="status" className="py-24 text-center">{i18n.t("property:createpropertylocationpage_cargando_propiedad")}</p> : query.isError ? <div role="alert" className="rounded-2xl bg-white p-12 text-center"><h1 className="text-xl font-bold">{errorMessage(query.error)}</h1><button type="button" onClick={() => void query.refetch()} className="mt-4 font-bold text-secondary">{i18n.t("comments:propertycomments_reintentar")}</button></div> : property && <>
         <PropertyGallery key={property.id} property={property} />
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <article>
-            <p className="text-xs font-bold uppercase tracking-widest text-secondary">{property.typeOfProperty?.name || 'Propiedad en alquiler'}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-secondary">{catalogText(property.typeOfProperty) || i18n.t("property:publicpropertypage_propiedad_en_alquiler")}</p>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">{property.title}</h1>
             <p className="mt-3 flex items-center gap-2 text-neutral"><MapPin size={18} className="shrink-0" />{property.address}</p>
-            <div className="mt-4 flex flex-wrap gap-5 text-sm text-neutral"><span className="inline-flex items-center gap-2"><BedDouble size={19} />{property.rooms} habitaciones</span><span className="inline-flex items-center gap-2"><Users size={19} />{property.guest} huéspedes</span></div>
-            <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">Servicios incluidos</h2>
-              <ul className="mt-4 flex flex-wrap gap-2">{property.services?.map((service) => <li key={service.id} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm"><ServiceIcon name={service.icono} size={17} className="text-secondary" />{service.name}</li>)}</ul>
-              {!property.services?.length && <p className="mt-3 text-sm text-neutral/70">No se han especificado servicios.</p>}
+            <div className="mt-4 flex flex-wrap gap-5 text-sm text-neutral"><span className="inline-flex items-center gap-2"><BedDouble size={19} />{property.rooms}{' '}{i18n.t("landing:propertycard_habitaciones")}</span><span className="inline-flex items-center gap-2"><Users size={19} />{property.guest}{' '}{i18n.t("dashboard:savedpropertiespage_huespedes")}</span></div>
+            <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">{i18n.t("explore:explorepage_servicios_incluidos")}</h2>
+              <ul className="mt-4 flex flex-wrap gap-2">{property.services?.map((service) => <li key={service.id} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm"><ServiceIcon name={service.icono} size={17} className="text-secondary" />{catalogText(service)}</li>)}</ul>
+              {!property.services?.length && <p className="mt-3 text-sm text-neutral/70">{i18n.t("property:publicpropertypage_no_se_han_especificado_servicios")}</p>}
             </section>
-            <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">Acerca de esta propiedad</h2><p className="mt-4 whitespace-pre-wrap break-words leading-7 text-neutral">{property.description || 'Sin descripción disponible.'}</p>
+            <section className="mt-8 border-t border-slate-200 pt-6"><h2 className="text-xl font-bold">{i18n.t("property:publicpropertypage_acerca_de_esta_propiedad")}</h2><p className="mt-4 whitespace-pre-wrap break-words leading-7 text-neutral">{property.description || i18n.t("property:publicpropertypage_sin_descripcion_disponible")}</p>
               <ul className="mt-4 flex flex-wrap gap-3">{property.iconDescriptions?.map((detail) => <li key={detail.id} className="inline-flex items-center gap-2 text-sm"><ServiceIcon name={detail.icon} size={18} />{detail.title}</li>)}</ul>
             </section>
             <PropertyComments propertyId={property.id} tenantId={property.reservedTenantId} />
           </article>
-          <aside aria-label="Precio y contacto" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
-            <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70"> / mes</span></p>
+          <aside aria-label={i18n.t("property:publicpropertypage_precio_y_contacto")} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
+            <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70">{' '}{i18n.t("common:perMonth")}</span></p>
             <ReservationLabel property={property} />
             <PriceDetails price={property.displayPrice} />
-            <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
-            <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>
+            <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">{i18n.t("property:publicpropertypage_publicado_por")}</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
+            <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? i18n.t("property:publicpropertypage_abriendo_chat") : i18n.t("property:publicpropertypage_chatear_con_el_propietario")}</button>
           </aside>
         </div>
       </>}

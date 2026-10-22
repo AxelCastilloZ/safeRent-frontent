@@ -1,95 +1,96 @@
+import i18n from '../../../i18n/instance';
 import type { LegalSection } from '../types/legal'
 
-export const privacyPolicySections: LegalSection[] = [
+export const privacyPolicySections: () => LegalSection[] = () => ([
   {
     id: 'introduccion',
-    title: '1. Introducción',
+    title: i18n.t("legal:privacypolicy_1_introduccion"),
     paragraphs: [
-      'Esta Política de Privacidad describe, de forma preliminar, cómo SafeRent planea recopilar, utilizar y proteger la información de las personas que usan la plataforma. Este contenido es un borrador de trabajo del proyecto y está sujeto a revisión antes de su publicación definitiva.',
+      i18n.t("legal:privacypolicy_esta_politica_de_privacidad_describe_de_forma_preliminar_como"),
     ],
   },
   {
     id: 'informacion-que-recopilamos',
-    title: '2. Información que recopilamos',
+    title: i18n.t("legal:privacypolicy_2_informacion_que_recopilamos"),
     paragraphs: [
-      'Podemos recopilar la información que proporcionas directamente al crear una cuenta, publicar una propiedad o comunicarte con otros usuarios, como tu nombre, correo electrónico, número de teléfono y los datos de la propiedad que publiques.',
+      i18n.t("legal:privacypolicy_podemos_recopilar_la_informacion_que_proporcionas_directamente_al_crear"),
     ],
   },
   {
     id: 'como-utilizamos-la-informacion',
-    title: '3. Cómo utilizamos la información',
+    title: i18n.t("legal:privacypolicy_3_como_utilizamos_la_informacion"),
     paragraphs: [
-      'La información recopilada se utiliza para operar la plataforma: mostrar propiedades, facilitar la comunicación entre arrendadores e inquilinos, y mejorar la experiencia general del servicio.',
+      i18n.t("legal:privacypolicy_la_informacion_recopilada_se_utiliza_para_operar_la_plataforma"),
     ],
   },
   {
     id: 'informacion-de-cuenta-y-perfil',
-    title: '4. Información de cuenta y perfil',
+    title: i18n.t("legal:privacypolicy_4_informacion_de_cuenta_y_perfil"),
     paragraphs: [
-      'Tu perfil puede incluir datos básicos de identificación y contacto. Buscamos que únicamente la información necesaria sea visible para otros usuarios de la plataforma.',
+      i18n.t("legal:privacypolicy_tu_perfil_puede_incluir_datos_basicos_de_identificacion_y"),
     ],
   },
   {
     id: 'informacion-de-propiedades',
-    title: '5. Información relacionada con propiedades',
+    title: i18n.t("legal:privacypolicy_5_informacion_relacionada_con_propiedades"),
     paragraphs: [
-      'Las publicaciones de propiedades pueden incluir dirección aproximada, fotografías, precio, servicios disponibles y reseñas de otros usuarios, con el fin de ofrecer información más completa a quienes buscan alquilar.',
+      i18n.t("legal:privacypolicy_las_publicaciones_de_propiedades_pueden_incluir_direccion_aproximada_fotografias"),
     ],
   },
   {
     id: 'mensajes-y-comunicaciones',
-    title: '6. Mensajes y comunicaciones',
+    title: i18n.t("legal:privacypolicy_6_mensajes_y_comunicaciones"),
     paragraphs: [
-      'La mensajería interna busca permitir el contacto entre arrendadores e inquilinos sin exponer datos personales desde el primer momento. El contenido de las conversaciones se conserva mientras la cuenta permanezca activa.',
+      i18n.t("legal:privacypolicy_la_mensajeria_interna_busca_permitir_el_contacto_entre_arrendadores"),
     ],
   },
   {
     id: 'tecnologias-necesarias',
-    title: '7. Uso de tecnologías necesarias para el funcionamiento del servicio',
+    title: i18n.t("legal:privacypolicy_7_uso_de_tecnologias_necesarias_para_el_funcionamiento_del"),
     paragraphs: [
-      'SafeRent utiliza tecnologías básicas de almacenamiento en el navegador únicamente para el funcionamiento esencial de la plataforma, como mantener tu sesión iniciada.',
+      i18n.t("legal:privacypolicy_saferent_utiliza_tecnologias_basicas_de_almacenamiento_en_el_navegador"),
     ],
   },
   {
     id: 'como-compartimos-la-informacion',
-    title: '8. Cómo compartimos la información',
+    title: i18n.t("legal:privacypolicy_8_como_compartimos_la_informacion"),
     paragraphs: [
-      'No vendemos la información de nuestros usuarios. La información de contacto solo se comparte entre las partes involucradas en una conversación o solicitud de alquiler, cuando corresponde.',
+      i18n.t("legal:privacypolicy_no_vendemos_la_informacion_de_nuestros_usuarios_la_informacion"),
     ],
   },
   {
     id: 'seguridad-de-los-datos',
-    title: '9. Seguridad de los datos',
+    title: i18n.t("legal:privacypolicy_9_seguridad_de_los_datos"),
     paragraphs: [
-      'Trabajamos en implementar medidas razonables para proteger la información almacenada. Ningún sistema es completamente infalible, y seguimos mejorando estas prácticas conforme evoluciona la plataforma.',
+      i18n.t("legal:privacypolicy_trabajamos_en_implementar_medidas_razonables_para_proteger_la_informacion"),
     ],
   },
   {
     id: 'conservacion-de-informacion',
-    title: '10. Conservación de información',
+    title: i18n.t("legal:privacypolicy_10_conservacion_de_informacion"),
     paragraphs: [
-      'Conservamos la información mientras la cuenta esté activa o sea necesaria para prestar el servicio, y buscamos eliminarla o anonimizarla cuando ya no cumple ningún propósito.',
+      i18n.t("legal:privacypolicy_conservamos_la_informacion_mientras_la_cuenta_este_activa_o"),
     ],
   },
   {
     id: 'derechos-de-los-usuarios',
-    title: '11. Derechos de los usuarios',
+    title: i18n.t("legal:privacypolicy_11_derechos_de_los_usuarios"),
     paragraphs: [
-      'Como usuario, podrás solicitar acceder, actualizar o eliminar tu información personal a través de los canales de contacto que SafeRent habilite para este fin.',
+      i18n.t("legal:privacypolicy_como_usuario_podras_solicitar_acceder_actualizar_o_eliminar_tu"),
     ],
   },
   {
     id: 'cambios-en-la-politica',
-    title: '12. Cambios en la política',
+    title: i18n.t("legal:privacypolicy_12_cambios_en_la_politica"),
     paragraphs: [
-      'Esta política podrá actualizarse conforme el proyecto evolucione. Buscaremos comunicar los cambios relevantes dentro de la plataforma cuando corresponda.',
+      i18n.t("legal:privacypolicy_esta_politica_podra_actualizarse_conforme_el_proyecto_evolucione_buscaremos"),
     ],
   },
   {
     id: 'contacto',
-    title: '13. Contacto',
+    title: i18n.t("legal:privacypolicy_13_contacto"),
     paragraphs: [
-      'Si tienes dudas sobre esta Política de Privacidad, puedes escribirnos a través de los canales de contacto disponibles en la sección de Soporte.',
+      i18n.t("legal:privacypolicy_si_tienes_dudas_sobre_esta_politica_de_privacidad_puedes"),
     ],
   },
-]
+])

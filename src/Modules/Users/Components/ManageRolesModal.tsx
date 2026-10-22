@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { messageFromError, message } from '../../../i18n/messages';
+import { useMessageState } from '../../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { LoaderCircle, Plus, X } from 'lucide-react'
 import { ROLE_LABELS } from '../../Auth/utils/roles'
@@ -7,7 +11,7 @@ import { useAddUserRole, useRemoveUserRole, useRoles } from '../hooks/useAdminUs
 import type { AdminUser } from '../types/user'
 
 function roleLabel(name: string): string {
-  return ROLE_LABELS[name as AppRole] ?? name
+  return ROLE_LABELS()[name as AppRole] ?? name
 }
 
 interface ManageRolesModalProps {
@@ -17,11 +21,12 @@ interface ManageRolesModalProps {
 
 /** Agrega o quita roles de un usuario (p. ej. convertir a un inquilino también en propietario). */
 export default function ManageRolesModal({ user, onClose }: ManageRolesModalProps) {
+  useTranslation();
   const dialog = useRef<HTMLDialogElement>(null)
   const roles = useRoles()
   const addRole = useAddUserRole()
   const removeRole = useRemoveUserRole()
-  const [error, setError] = useState('')
+  const [error, setError] = useMessageState('')
 
   useEffect(() => {
     const element = dialog.current!
@@ -46,7 +51,7 @@ export default function ManageRolesModal({ user, onClose }: ManageRolesModalProp
         await addRole.mutateAsync({ id: user.id, roleId })
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar el rol.')
+      setError(err instanceof Error ? messageFromError(err) : message("users:managerolesmodal_no_se_pudo_actualizar_el_rol"))
     }
   }
 
@@ -63,20 +68,19 @@ export default function ManageRolesModal({ user, onClose }: ManageRolesModalProp
       <div className="p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 id="manage-roles-title" className="text-base font-bold text-primary">
-              Roles de {user.name} {user.surname1}
+            <h2 id="manage-roles-title" className="text-base font-bold text-primary">{i18n.t("users:managerolesmodal_roles_de")}{' '}{user.name} {user.surname1}
             </h2>
-            <p className="mt-1 text-sm text-muted-ink">Agrega o quita roles de esta cuenta.</p>
+            <p className="mt-1 text-sm text-muted-ink">{i18n.t("users:managerolesmodal_agrega_o_quita_roles_de_esta_cuenta")}</p>
           </div>
-          <button type="button" className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Cerrar" onClick={onClose} disabled={busy}>
+          <button type="button" className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label={i18n.t("users:managerolesmodal_cerrar")} onClick={onClose} disabled={busy}>
             <X size={18} />
           </button>
         </div>
 
         {roles.isPending ? (
-          <p className="py-6 text-center text-sm text-muted-ink">Cargando roles…</p>
+          <p className="py-6 text-center text-sm text-muted-ink">{i18n.t("users:managerolesmodal_cargando_roles")}</p>
         ) : roles.isError ? (
-          <p role="alert" className="py-6 text-center text-sm text-red-700">No se pudieron cargar los roles.</p>
+          <p role="alert" className="py-6 text-center text-sm text-red-700">{i18n.t("users:managerolesmodal_no_se_pudieron_cargar_los_roles")}</p>
         ) : (
           <ul className="space-y-2">
             {(roles.data ?? []).map((role) => {
@@ -91,14 +95,14 @@ export default function ManageRolesModal({ user, onClose }: ManageRolesModalProp
                   <button
                     type="button"
                     disabled={busy || (has && lastRole)}
-                    title={has && lastRole ? 'El usuario debe conservar al menos un rol.' : undefined}
+                    title={has && lastRole ? i18n.t("users:managerolesmodal_el_usuario_debe_conservar_al_menos_un_rol") : undefined}
                     onClick={() => void toggleRole(role.id, has)}
                     className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition disabled:opacity-50 ${
                       has ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-secondary/10 text-secondary hover:bg-secondary/20'
                     }`}
                   >
                     {has ? <X size={14} /> : <Plus size={14} />}
-                    {has ? 'Quitar' : 'Agregar'}
+                    {has ? i18n.t("dashboard:savedpropertiespage_quitar") : i18n.t("users:managerolesmodal_agregar")}
                   </button>
                 </li>
               )
@@ -114,9 +118,7 @@ export default function ManageRolesModal({ user, onClose }: ManageRolesModalProp
 
         <div className="mt-5 flex justify-end">
           <button type="button" className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:bg-slate-50" onClick={onClose} disabled={busy}>
-            {busy && <LoaderCircle size={14} className="mr-1.5 inline animate-spin" />}
-            Cerrar
-          </button>
+            {busy && <LoaderCircle size={14} className="mr-1.5 inline animate-spin" />}{i18n.t("users:managerolesmodal_cerrar")}</button>
         </div>
       </div>
     </dialog>,

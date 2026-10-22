@@ -1,3 +1,5 @@
+import { LocalizedHttpError } from '../../../i18n/messages';
+import { LocalizedError } from '../../../i18n/messages';
 import type { UpdateServiceInput } from '../interfaces/service.interface'
 import type {
   CreateServiceInput,
@@ -8,23 +10,7 @@ const baseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
 
 async function readResponse(response: Response): Promise<unknown> {
   const body: unknown = await response.json().catch(() => null)
-  if (!response.ok) {
-    if (response.status === 409)
-      throw new Error('Ya existe un servicio con ese nombre.')
-    if (response.status === 401 || response.status === 403)
-      throw new Error('No tienes permiso para administrar servicios.')
-    const message =
-      body && typeof body === 'object' && 'message' in body
-        ? body.message
-        : null
-    throw new Error(
-      typeof message === 'string'
-        ? message
-        : Array.isArray(message)
-          ? message.join(' ')
-          : 'No pudimos completar la solicitud. Intenta nuevamente.',
-    )
-  }
+  if (!response.ok) throw new LocalizedHttpError(response.status, body)
   return body
 }
 
@@ -46,7 +32,7 @@ export async function listServices(signal?: AbortSignal): Promise<Service[]> {
     headers: token ? { Authorization: 'Bearer ' + token } : {},
   }))
   if (!Array.isArray(data) || !data.every(isService))
-    throw new Error('El catálogo recibido no tiene el formato esperado.')
+    throw new LocalizedError("services:service.service_el_catalogo_recibido_no_tiene_el_formato_esperado")
   return data
 }
 
@@ -62,15 +48,14 @@ export async function createService(
     },
     body: JSON.stringify({
       name: input.name.trim(),
+      translations: input.translations,
       icono: input.icono,
       description: input.description?.trim() || undefined,
     }),
   })
   const data = await readResponse(response)
   if (!isService(data))
-    throw new Error(
-      'La respuesta no contiene el servicio creado. Revisa el catálogo antes de intentar nuevamente.',
-    )
+    throw new LocalizedError("services:service.service_la_respuesta_no_contiene_el_servicio_creado_revisa_el")
   return data
 }
 
@@ -95,8 +80,6 @@ export async function updateService(
   })
   const data = await readResponse(response)
   if (!isService(data))
-    throw new Error(
-      'La respuesta no contiene el servicio actualizado. Revisa el catálogo antes de intentar nuevamente.',
-    )
+    throw new LocalizedError("services:service.service_la_respuesta_no_contiene_el_servicio_actualizado_revisa_el")
   return data
 }

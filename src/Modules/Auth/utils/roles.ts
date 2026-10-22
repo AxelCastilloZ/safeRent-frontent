@@ -1,11 +1,12 @@
+import i18n from '../../../i18n/instance';
 import type { AppRole } from '../types/roles';
 
 /** Nombre con el que se muestra cada rol en la interfaz. */
-export const ROLE_LABELS: Record<AppRole, string> = {
-  CLIENT: 'Inquilino',
-  OWNER: 'Propietario',
-  ADMIN: 'Administrador',
-};
+export const ROLE_LABELS: () => Record<AppRole, string> = () => ({
+  CLIENT: i18n.t("auth:roles_inquilino"),
+  OWNER: i18n.t("auth:roles_propietario"),
+  ADMIN: i18n.t("auth:roles_administrador"),
+});
 
 // De mayor a menor: si un usuario tiene varios roles, manda el primero que tenga.
 const ROLE_PRIORITY: AppRole[] = ['ADMIN', 'OWNER', 'CLIENT'];

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 
 type LoadingShape = 'rows' | 'cards' | 'media';
@@ -6,8 +8,9 @@ const bar = 'animate-pulse rounded bg-slate-100';
 
 /** Marcador de carga con la forma del contenido que va a aparecer (filas, tarjetas o foto + texto). */
 export function SectionLoading({ shape = 'rows' }: { shape?: LoadingShape }) {
+  useTranslation();
   return (
-    <div role="status" aria-label="Cargando">
+    <div role="status" aria-label={i18n.t("dashboard:sectionstates_cargando")}>
       {shape === 'rows' && (
         <div className="space-y-3">
           {[0, 1, 2].map((row) => (
@@ -49,12 +52,11 @@ export function SectionLoading({ shape = 'rows' }: { shape?: LoadingShape }) {
 }
 
 export function SectionError({ message, onRetry }: { message: string; onRetry: () => void }) {
+  useTranslation();
   return (
     <div role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-700">
       {message}
-      <button type="button" onClick={onRetry} className="ml-2 font-semibold underline">
-        Reintentar
-      </button>
+      <button type="button" onClick={onRetry} className="ml-2 font-semibold underline">{i18n.t("comments:propertycomments_reintentar")}</button>
     </div>
   );
 }
@@ -69,6 +71,7 @@ interface SectionEmptyProps {
 
 /** Estado vacío de un bloque: dice qué falta y qué puede hacer la persona. */
 export function SectionEmpty({ title, description, actionLabel, actionTo }: SectionEmptyProps) {
+  useTranslation();
   return (
     <div className="rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center">
       <p className="text-sm font-bold text-primary">{title}</p>

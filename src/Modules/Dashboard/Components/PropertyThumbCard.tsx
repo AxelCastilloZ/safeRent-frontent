@@ -1,3 +1,5 @@
+import i18n from '../../../i18n/instance';
+import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { ImageOff, MapPin } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -19,6 +21,7 @@ interface PropertyThumbCardProps {
 
 /** Tarjeta compacta con foto, título, ubicación y precio. */
 export default function PropertyThumbCard({ property, to, badge, footer, unavailable = false, className = '' }: PropertyThumbCardProps) {
+  useTranslation();
   const photo = photoUrl(property);
 
   const content = (
@@ -40,7 +43,7 @@ export default function PropertyThumbCard({ property, to, badge, footer, unavail
           <span className="truncate">{property.address}</span>
         </p>
         <p className="mt-1 text-sm font-extrabold text-primary">
-          {priceLabel(property)} <span className="text-[11px] font-normal text-muted-ink">/ mes</span>
+          {priceLabel(property)} <span className="text-[11px] font-normal text-muted-ink">{i18n.t("common:perMonth")}</span>
         </p>
         {footer && <div className="mt-1 text-xs text-muted-ink">{footer}</div>}
       </div>

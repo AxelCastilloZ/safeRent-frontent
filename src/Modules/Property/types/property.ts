@@ -1,3 +1,4 @@
+import type { CatalogTranslations } from '../../../i18n/catalog';
 export interface User {
   id: number
   name: string
@@ -7,6 +8,8 @@ export interface User {
 }
 
 export interface TypeOfProperty {
+  catalogCode?: string | null
+  translations?: CatalogTranslations | null
   id: number
   name: string
   description: string

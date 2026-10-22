@@ -1,3 +1,4 @@
+import { message, messageFromError, resolveMessage, type MessageDescriptor } from '../../../i18n/messages';
 import { useEffect, useState } from 'react'
 import type { Property } from '../interfaces/property.interface'
 import { getProperties, type PropertyFilters } from '../services/property.service'
@@ -8,7 +9,7 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
   const [result, setResult] = useState<{
     key: string
     properties: Property[]
-    error: string
+    error: string | MessageDescriptor
   } | null>(null)
 
   const serializedFilters = JSON.stringify({ ...filters, displayCurrency: currency })
@@ -28,8 +29,8 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
             properties: [],
             error:
               reason instanceof Error
-                ? reason.message
-                : 'No se pudo conectar con el servidor.',
+                ? messageFromError(reason)
+                : message("explore:useproperties_no_se_pudo_conectar_con_el_servidor"),
           })
       }) }
     const onVisible = () => { if (document.visibilityState === 'visible') refresh() }
@@ -47,6 +48,6 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
     properties:
       result?.key === requestKey && !result.error ? result.properties : [],
     loading: result?.key !== requestKey,
-    error: result?.key === requestKey ? result.error : '',
+    error: result?.key === requestKey ? resolveMessage(result.error) : '',
   }
 }

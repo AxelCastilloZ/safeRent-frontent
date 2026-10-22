@@ -1,3 +1,10 @@
+import { errorMessage } from '../../../i18n/messages';
+import { catalogTranslations, completeTranslations, type CatalogTranslations } from '../../../i18n/catalog';
+import CatalogTranslationsEditor from './CatalogTranslationsEditor';
+import { message } from '../../../i18n/messages';
+import { useMessageState } from '../../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, LoaderCircle, Save, Search, X } from 'lucide-react'
@@ -21,15 +28,17 @@ export default function EditServiceModal({
   onClose: () => void
   onSaved: (service: Service) => void
 }) {
+  useTranslation();
   const dialog = useRef<HTMLDialogElement>(null)
   const submitting = useRef(false)
   const mutation = useUpdateService()
   const [name, setName] = useState(service.name)
+  const [translations, setTranslations] = useState<CatalogTranslations>(() => catalogTranslations(service))
   const [description, setDescription] = useState(service.description || '')
   const [icono, setIcono] = useState<string | null>(service.icono ?? null)
   const [search, setSearch] = useState('')
-  const [validation, setValidation] = useState('')
-  const icons = serviceIcons.filter((icon) =>
+  const [validation, setValidation] = useMessageState('')
+  const icons = serviceIcons().filter((icon) =>
     normalize(icon.label + ' ' + icon.name).includes(normalize(search)),
   )
   useEffect(() => {
@@ -48,11 +57,11 @@ export default function EditServiceModal({
     setValidation('')
     mutation.reset()
     if (!name.trim()) {
-      setValidation('Escribe un nombre para el servicio.')
+      setValidation(message("services:editservicemodal_escribe_un_nombre_para_el_servicio"))
       return
     }
     if (name.trim().length > 100 || description.trim().length > 255) {
-      setValidation('Revisa la longitud del nombre y la descripción.')
+      setValidation(message("services:editservicemodal_revisa_la_longitud_del_nombre_y_la_descripcion"))
       return
     }
     if (
@@ -62,14 +71,15 @@ export default function EditServiceModal({
           normalize(item.name.trim()) === normalize(name.trim()),
       )
     ) {
-      setValidation('Ya existe otro servicio con ese nombre.')
+      setValidation(message("services:editservicemodal_ya_existe_otro_servicio_con_ese_nombre"))
       return
     }
+    if (!completeTranslations(translations, description)) { setValidation(message('catalog:incomplete')); return }
     submitting.current = true
     try {
       const updated = await mutation.mutateAsync({
         id: service.id,
-        input: { name, icono, description: description.trim() || null },
+        input: { name, icono, description: description.trim() || null, translations: { ...translations, es: { name, description } } },
       })
       onSaved(updated)
     } catch {
@@ -92,24 +102,22 @@ export default function EditServiceModal({
       >
         <div className="sa-modal-heading">
           <div>
-            <h2 id="edit-service-title">Editar servicio</h2>
-            <p id="edit-service-subtitle">
-              Actualiza el servicio del catálogo y su icono.
-            </p>
+            <h2 id="edit-service-title">{i18n.t("services:editservicemodal_editar_servicio")}</h2>
+            <p id="edit-service-subtitle">{i18n.t("services:editservicemodal_actualiza_el_servicio_del_catalogo_y_su_icono")}</p>
           </div>
           <button
             type="button"
             className="sa-more-button"
-            aria-label="Cerrar edición"
+            aria-label={i18n.t("services:editservicemodal_cerrar_edicion")}
             disabled={mutation.isPending}
             onClick={onClose}
           >
             <X size={20} />
           </button>
         </div>
-        <form onSubmit={submit}>
+        <form noValidate onSubmit={submit}>
           <fieldset className="sa-form-fields" disabled={mutation.isPending}>
-            <label htmlFor="edit-service-name">Nombre del servicio</label>
+            <label htmlFor="edit-service-name">{i18n.t("services:editservicemodal_nombre_del_servicio")}</label>
             <input
               id="edit-service-name"
               required
@@ -119,8 +127,7 @@ export default function EditServiceModal({
               aria-describedby={validation ? 'edit-service-error' : undefined}
             />
             <div className="sa-label-row">
-              <label htmlFor="edit-service-description">
-                Descripción <span className="sa-optional">Opcional</span>
+              <label htmlFor="edit-service-description">{i18n.t("property:propertyformlayout_descripcion")}{' '}<span className="sa-optional">{i18n.t("services:editservicemodal_opcional")}</span>
               </label>
               <span>{description.length}/255</span>
             </div>
@@ -132,22 +139,22 @@ export default function EditServiceModal({
               onChange={(event) => setDescription(event.target.value)}
             />
             <fieldset className="sa-icon-fieldset">
-              <legend>Icono del servicio</legend>
+              <legend>{i18n.t("services:editservicemodal_icono_del_servicio")}</legend>
               <div className="sa-current-icon">
                 <ServiceIcon name={icono} size={25} />
                 <span>
-                  {name.trim() || 'Servicio'}
+                  {name.trim() || i18n.t("services:editservicemodal_servicio")}
                   <small>
-                    {serviceIcons.find((icon) => icon.name === icono)?.label ||
-                      'Icono actual'}
+                    {serviceIcons().find((icon) => icon.name === icono)?.label ||
+                      i18n.t("services:editservicemodal_icono_actual")}
                   </small>
                 </span>
               </div>
               <label className="sa-search">
                 <Search size={17} />
                 <input
-                  aria-label="Buscar iconos para editar"
-                  placeholder="Buscar agua, internet, cocina…"
+                  aria-label={i18n.t("services:editservicemodal_buscar_iconos_para_editar")}
+                  placeholder={i18n.t("services:editservicemodal_buscar_agua_internet_cocina")}
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                 />
@@ -157,7 +164,7 @@ export default function EditServiceModal({
                   <button
                     type="button"
                     key={key}
-                    aria-label={'Icono: ' + label}
+                    aria-label={i18n.t("services:editservicemodal_icono") + label}
                     aria-pressed={icono === key}
                     className={
                       'sa-icon-option' + (icono === key ? ' selected' : '')
@@ -173,15 +180,14 @@ export default function EditServiceModal({
                 ))}
               </div>
               {icons.length === 0 && (
-                <p className="sa-muted" role="status">
-                  No encontramos ese icono. Prueba otra palabra.
-                </p>
+                <p className="sa-muted" role="status">{i18n.t("services:editservicemodal_no_encontramos_ese_icono_prueba_otra_palabra")}</p>
               )}
             </fieldset>
           </fieldset>
+          <CatalogTranslationsEditor value={translations} onChange={setTranslations} disabled={mutation.isPending} />
           {(validation || mutation.error) && (
             <p className="sa-error" id="edit-service-error" role="alert">
-              {validation || mutation.error?.message}
+              {validation || errorMessage(mutation.error)}
             </p>
           )}
           <div className="sa-form-footer sa-modal-footer">
@@ -190,9 +196,7 @@ export default function EditServiceModal({
               type="button"
               disabled={mutation.isPending}
               onClick={onClose}
-            >
-              Cancelar
-            </button>
+            >{i18n.t("comments:admincommentspage_cancelar")}</button>
             <button
               className="sa-primary"
               type="submit"
@@ -203,7 +207,7 @@ export default function EditServiceModal({
               ) : (
                 <Save size={17} />
               )}
-              {mutation.isPending ? 'Guardando…' : 'Guardar cambios'}
+              {mutation.isPending ? i18n.t("comments:admincommentspage_guardando") : i18n.t("property:createpropertylocationpage_guardar_cambios")}
             </button>
           </div>
         </form>

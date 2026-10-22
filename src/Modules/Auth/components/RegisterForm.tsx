@@ -1,3 +1,5 @@
+import LanguageSelector from '../../../i18n/LanguageSelector';
+import { Trans, useTranslation } from 'react-i18next';
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect } from 'react';
@@ -9,7 +11,6 @@ import { getAuthErrorMessage, getAuthErrorSeverity } from '../services/aurhServi
 import {
   createAccountDefaultValues,
   createAccountSchema,
-  PASSWORD_MIN_LENGTH,
 } from '../schemas/create-account.schema';
 
 const labelClass = 'text-sm leading-5 font-semibold tracking-[0.7px] text-[#111c2d]';
@@ -20,6 +21,7 @@ const legalLinkClass =
   'rounded-sm font-semibold text-[#0a2540] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]';
 
 const RegisterForm = () => {
+  const { t } = useTranslation();
   const register = useRegister();
   const navigate = useNavigate();
   const { next } = useSearch({ from: '/register' });
@@ -48,15 +50,12 @@ const RegisterForm = () => {
     <main className="flex min-h-svh flex-col justify-center bg-[#f9f9ff] px-4 py-12 font-sans sm:px-8">
       <header className="mx-auto flex w-full max-w-[448px] flex-col items-center gap-2 text-center">
         <img src={logo} alt="SafeRent" width={298} height={143} className="h-auto w-[240px] sm:w-[298px]" />
-        <h1 className="pt-2 text-[28px] leading-9 font-semibold tracking-[-0.8px] text-[#111c2d] sm:text-[32px] sm:leading-10">
-          Create your account
-        </h1>
-        <p className="text-base leading-6 text-[#43474d]">
-          Join our verified community of renters and landlords.
-        </p>
+        <h1 className="pt-2 text-[28px] leading-9 font-semibold tracking-[-0.8px] text-[#111c2d] sm:text-[32px] sm:leading-10">{t("auth:createTitle")}</h1>
+        <p className="text-base leading-6 text-[#43474d]">{t("auth:createDescription")}</p>
       </header>
 
       <section className="mx-auto mt-8 flex w-full max-w-[600px] flex-col gap-6 rounded-xl border border-[#e2e8f0] bg-white px-5 py-6 sm:px-10 sm:py-8">
+        <LanguageSelector />
         <form
           noValidate
           onSubmit={(e) => {
@@ -73,7 +72,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label htmlFor="full-name" className={labelClass}>Name</label>
+                    <label htmlFor="full-name" className={labelClass}>{t("auth:name")}</label>
                     <input
                       id="full-name"
                       name={field.name}
@@ -86,7 +85,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="full-name-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="full-name-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -99,7 +98,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="idCard" className={labelClass}>Identification card</label>
+                    <label htmlFor="idCard" className={labelClass}>{t("auth:idCard")}</label>
                     <input
                       id="idCard"
                       name={field.name}
@@ -112,7 +111,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="idCard-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="idCard-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -125,7 +124,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="surname1" className={labelClass}>First surname</label>
+                    <label htmlFor="surname1" className={labelClass}>{t("auth:surname1")}</label>
                     <input
                       id="surname1"
                       name={field.name}
@@ -138,7 +137,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="surname1-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="surname1-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -151,7 +150,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="surname2" className={labelClass}>Second surname (optional)</label>
+                    <label htmlFor="surname2" className={labelClass}>{t("auth:surname2")}</label>
                     <input
                       id="surname2"
                       name={field.name}
@@ -164,7 +163,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="surname2-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="surname2-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -177,7 +176,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="birthdate" className={labelClass}>Birthdate</label>
+                    <label htmlFor="birthdate" className={labelClass}>{t("auth:birthdate")}</label>
                     <input
                       id="birthdate"
                       name={field.name}
@@ -190,7 +189,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="birthdate-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="birthdate-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -203,7 +202,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="phone-number" className={labelClass}>Phone Number</label>
+                    <label htmlFor="phone-number" className={labelClass}>{t("auth:phone")}</label>
                     <input
                       id="phone-number"
                       name={field.name}
@@ -217,7 +216,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="phone-number-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="phone-number-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -230,7 +229,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label htmlFor="email" className={labelClass}>Email address</label>
+                    <label htmlFor="email" className={labelClass}>{t("auth:email")}</label>
                     <input
                       id="email"
                       name={field.name}
@@ -244,7 +243,7 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     {isInvalid && (
-                      <p id="email-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="email-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -257,7 +256,7 @@ const RegisterForm = () => {
                 const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label htmlFor="password" className={labelClass}>Password</label>
+                    <label htmlFor="password" className={labelClass}>{t("auth:password")}</label>
                     <input
                       id="password"
                       name={field.name}
@@ -271,10 +270,10 @@ const RegisterForm = () => {
                       className={inputClass}
                     />
                     <p id="password-hint" className="pt-1 text-xs leading-4 text-[#43474d]">
-                      Use {PASSWORD_MIN_LENGTH}–72 characters (up to 72 UTF-8 bytes), including uppercase, lowercase, a number and a special character: !@#$%^&amp;*(),.?&quot;:&#123;&#125;|&lt;&gt;
+                      {t('settings:passwordHint')}
                     </p>
                     {isInvalid && (
-                      <p id="password-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                      <p id="password-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                     )}
                   </div>
                 );
@@ -301,14 +300,11 @@ const RegisterForm = () => {
                       className="size-4 shrink-0 cursor-pointer rounded-[4px] border border-[#e2e8f0] accent-[#0a2540] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540]"
                     />
                     <label htmlFor="accept-terms" className="pl-2 text-xs leading-4 text-[#43474d]">
-                      I agree to the{' '}
-                      <Link to="/terminos-del-servicio" className={legalLinkClass}>Terms of Service</Link>{' '}
-                      and{' '}
-                      <Link to="/politica-de-privacidad" className={legalLinkClass}>Privacy Policy</Link>
+<Trans i18nKey="auth:acceptTerms" components={{ terms: <Link to="/terminos-del-servicio" className={legalLinkClass} />, privacy: <Link to="/politica-de-privacidad" className={legalLinkClass} /> }} />
                     </label>
                   </div>
                   {isInvalid && (
-                    <p id="accept-terms-error" className={errorClass}>{field.state.meta.errors[0]?.message}</p>
+                    <p id="accept-terms-error" className={errorClass}>{t(field.state.meta.errors[0]?.message ?? 'errors:unavailable')}</p>
                   )}
                 </div>
               );
@@ -316,7 +312,7 @@ const RegisterForm = () => {
           </form.Field>
 
           {register.isError && <Alert severity={getAuthErrorSeverity(register.error)}>{getAuthErrorMessage(register.error)}</Alert>}
-          {register.isSuccess && <Alert severity="success">Cuenta creada correctamente. Te llevaremos al login para iniciar sesión.</Alert>}
+          {register.isSuccess && <Alert severity="success">{t("auth:created")}</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <button
@@ -325,7 +321,7 @@ const RegisterForm = () => {
                 aria-busy={isSubmitting}
                 className="w-full rounded-lg bg-[#0a2540] px-4 py-3 text-center text-sm leading-5 font-semibold tracking-[0.7px] text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#12345a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#061a2e] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {isSubmitting ? 'Creating account…' : 'Create Account'}
+                {isSubmitting ? t("auth:creating") : t("auth:create")}
               </button>
             )}
           </form.Subscribe>
@@ -335,15 +331,13 @@ const RegisterForm = () => {
           <div aria-hidden="true" className="absolute inset-0 flex items-center">
             <div className="h-px w-full border-t border-[#e2e8f0]" />
           </div>
-          <span className="relative bg-white px-2 text-xs leading-4 text-[#43474d]">Already have an account?</span>
+          <span className="relative bg-white px-2 text-xs leading-4 text-[#43474d]">{t("auth:hasAccount")}</span>
         </div>
 
         <Link
           to="/login" search={{ next }}
           className="w-full rounded-lg border border-[#e2e8f0] bg-white px-[17px] py-[13px] text-center text-sm leading-5 font-semibold tracking-[0.7px] text-[#0a2540] drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#f9f9ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a2540] active:bg-[#f1f3fb]"
-        >
-          Sign In
-        </Link>
+        >{t("auth:signIn")}</Link>
       </section>
     </main>
   );

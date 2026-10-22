@@ -1,3 +1,8 @@
+import { catalogText } from '../../i18n/catalog';
+import { messageFromError, message, type MessageDescriptor } from '../../i18n/messages';
+import { useMessageState } from '../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -11,10 +16,10 @@ import { useServices } from '../Services/hooks/useServices'
 import { getPropertyTypes } from '../Explore/services/property.service'
 
 /** Monedas en las que se puede publicar un precio (el backend guarda `typeOfCoin`, por defecto CRC). */
-const CURRENCIES = [
-  { code: 'CRC', label: '₡ Colones (CRC)' },
-  { code: 'USD', label: '$ Dólares (USD)' },
-]
+const CURRENCIES = () => ([
+  { code: 'CRC', label: i18n.t("property:createpropertystep1page_colones_crc") },
+  { code: 'USD', label: i18n.t("property:createpropertystep1page_dolares_usd") },
+])
 
 interface FormData {
   title: string
@@ -35,28 +40,29 @@ interface FormErrors {
   serviceIds?: string
 }
 
-function validate(data: FormData): FormErrors {
-  const errors: FormErrors = {}
-  if (!data.title.trim()) errors.title = 'El título es obligatorio'
-  if (!data.cost.trim() || !Number.isFinite(Number(data.cost)) || Number(data.cost) <= 0) errors.cost = 'Debe ser mayor a 0'
-  if (!data.typeOfPropertyId) errors.typeOfPropertyId = 'Selecciona el tipo de propiedad'
-  if (!data.description.trim()) errors.description = 'La descripción es obligatoria'
-  if (data.serviceIds.length === 0) errors.serviceIds = 'Selecciona al menos un servicio'
+function validate(data: FormData): Partial<Record<keyof FormErrors, MessageDescriptor>> {
+  const errors: Partial<Record<keyof FormErrors, MessageDescriptor>> = {}
+  if (!data.title.trim()) errors.title = message("property:createpropertystep1page_el_titulo_es_obligatorio")
+  if (!data.cost.trim() || !Number.isFinite(Number(data.cost)) || Number(data.cost) <= 0) errors.cost = message("property:createpropertystep1page_debe_ser_mayor_a_0")
+  if (!data.typeOfPropertyId) errors.typeOfPropertyId = message("property:createpropertystep1page_selecciona_el_tipo_de_propiedad")
+  if (!data.description.trim()) errors.description = message("property:createpropertystep1page_la_descripcion_es_obligatoria")
+  if (data.serviceIds.length === 0) errors.serviceIds = message("property:createpropertystep1page_selecciona_al_menos_un_servicio")
   return errors
 }
 
 /** Campo numérico con botones − / + (mínimo 1, como exige el backend). */
 function Counter({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
+  useTranslation();
   const button = 'grid size-11 place-items-center rounded-xl border border-slate-200 text-primary transition hover:bg-slate-50 disabled:opacity-40'
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
       <span className="mb-1.5 block text-sm font-medium text-primary">{label}</span>
       <div className="flex items-center gap-3">
-        <button type="button" className={button} onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label={`Restar ${label.toLowerCase()}`}>
+        <button type="button" className={button} onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label={i18n.t("property:createpropertystep1page_restar", { v0: label.toLowerCase() })}>
           <Minus size={16} />
         </button>
         <span className="w-8 text-center text-base font-semibold text-primary" aria-live="polite">{value}</span>
-        <button type="button" className={button} onClick={() => onChange(value + 1)} disabled={value >= 50} aria-label={`Sumar ${label.toLowerCase()}`}>
+        <button type="button" className={button} onClick={() => onChange(value + 1)} disabled={value >= 50} aria-label={i18n.t("property:createpropertystep1page_sumar", { v0: label.toLowerCase() })}>
           <Plus size={16} />
         </button>
       </div>
@@ -65,6 +71,7 @@ function Counter({ label, value, onChange }: { label: string; value: number; onC
 }
 
 export default function CreatePropertyStep1Page() {
+  useTranslation();
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const search = useSearch({ strict: false })
@@ -76,8 +83,8 @@ export default function CreatePropertyStep1Page() {
   const [form, setForm] = useState<FormData>({
     title: '', cost: '', typeOfCoin: 'CRC', typeOfPropertyId: null, rooms: 1, guest: 1, description: '', serviceIds: [],
   })
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [apiError, setApiError] = useState<string | null>(null)
+  const [errors, setErrors] = useMessageState<FormErrors>({})
+  const [apiError, setApiError] = useMessageState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [loadedProperty, setLoadedProperty] = useState<Property | null>(null)
   const [loadedFiles, setLoadedFiles] = useState<PropertyFile[]>([])
@@ -106,7 +113,7 @@ export default function CreatePropertyStep1Page() {
       } catch (err) {
         if (!cancelled) {
           setLoadFailed(true)
-          setApiError(err instanceof ApiError ? err.message : 'No se pudo cargar la propiedad')
+          setApiError(err instanceof ApiError ? messageFromError(err) : message("property:createpropertystep1page_no_se_pudo_cargar_la_propiedad"))
         }
       } finally {
         if (!cancelled) setLoadingProperty(false)
@@ -114,7 +121,7 @@ export default function CreatePropertyStep1Page() {
     }
     load()
     return () => { cancelled = true }
-  }, [editId])
+  }, [editId, setApiError])
 
   const errorCount = Object.keys(errors).length
 
@@ -135,7 +142,7 @@ export default function CreatePropertyStep1Page() {
 
   function payload(draft: boolean): CreatePropertyPayload {
     return {
-      title: draft ? form.title || 'Sin título' : form.title,
+      title: draft ? form.title || i18n.t("property:createpropertystep1page_sin_titulo") : form.title,
       description: form.description,
       cost: Number(form.cost) || 0,
       typeOfCoin: form.typeOfCoin,
@@ -166,7 +173,7 @@ export default function CreatePropertyStep1Page() {
       await save(true)
       navigate({ to: '/dashboard/owner/properties' })
     } catch (err) {
-      setApiError(err instanceof ApiError ? err.message : 'Error al guardar borrador')
+      setApiError(err instanceof ApiError ? messageFromError(err) : message("property:createpropertystep1page_error_al_guardar_borrador"))
     } finally {
       setSaving(false)
     }
@@ -178,7 +185,7 @@ export default function CreatePropertyStep1Page() {
     setErrors(validationErrors)
 
     if (Object.keys(validationErrors).length > 0) {
-      setApiError('No pudimos validar la propiedad. Corrige los campos marcados y vuelve a intentar.')
+      setApiError(message("property:createpropertystep1page_no_pudimos_validar_la_propiedad_corrige_los_campos_marcados"))
       return
     }
 
@@ -189,7 +196,7 @@ export default function CreatePropertyStep1Page() {
       const propertyId = await save(false)
       navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId } })
     } catch (err) {
-      setApiError(err instanceof ApiError ? err.message : 'Error al crear la propiedad')
+      setApiError(err instanceof ApiError ? messageFromError(err) : message("property:createpropertystep1page_error_al_crear_la_propiedad"))
     } finally {
       setSaving(false)
     }
@@ -199,7 +206,7 @@ export default function CreatePropertyStep1Page() {
   const inputError = 'border-red-400 focus:border-red-500 focus:ring-red-100'
 
   if (loadingProperty) {
-    return <div className="flex items-center justify-center py-24 text-sm text-slate-400">Cargando propiedad...</div>
+    return <div className="flex items-center justify-center py-24 text-sm text-slate-400">{i18n.t("property:createpropertylocationpage_cargando_propiedad")}</div>
   }
 
   return (
@@ -218,7 +225,7 @@ export default function CreatePropertyStep1Page() {
           <div>
             <span>{apiError}</span>
             {errorCount > 0 && (
-              <span className="ml-2 font-semibold">Revisar {errorCount} campos</span>
+              <span className="ml-2 font-semibold">{i18n.t("dashboard:pendingreviewsection_revisar")}{' '}{errorCount}{' '}{i18n.t("property:createpropertystep1page_campos")}</span>
             )}
           </div>
         </div>
@@ -226,9 +233,9 @@ export default function CreatePropertyStep1Page() {
 
       <form onSubmit={(e) => { e.preventDefault(); void handleNext() }}>
         <fieldset disabled={saving || loadFailed} className="min-w-0 space-y-6">
-        <FormSection icon={FileText} title="Información general" description="Lo primero que verán los inquilinos.">
+        <FormSection icon={FileText} title={i18n.t("property:createpropertystep1page_informacion_general")} description={i18n.t("property:createpropertystep1page_lo_primero_que_veran_los_inquilinos")}>
         <div>
-          <label htmlFor="property-title" className="mb-1.5 block text-sm font-medium text-primary">Título</label>
+          <label htmlFor="property-title" className="mb-1.5 block text-sm font-medium text-primary">{i18n.t("property:propertyformlayout_titulo")}</label>
           <input
             id="property-title"
             aria-invalid={!!errors.title}
@@ -238,23 +245,23 @@ export default function CreatePropertyStep1Page() {
             className={`${inputBase} ${errors.title ? inputError : ''}`}
             value={form.title}
             onChange={(e) => handleChange('title', e.target.value)}
-            placeholder="Ej. Apartamento amueblado en Barrio Escalante"
+            placeholder={i18n.t("property:createpropertystep1page_ej_apartamento_amueblado_en_barrio_escalante")}
           />
           {errors.title && <span id="property-title-error" className="mt-1 block text-xs text-red-500">{errors.title}</span>}
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor="property-cost" className="mb-1.5 block text-sm font-medium text-primary">Precio / mes</label>
+            <label htmlFor="property-cost" className="mb-1.5 block text-sm font-medium text-primary">{i18n.t("property:createpropertystep1page_precio_mes")}</label>
             <div className="flex rounded-xl border border-slate-300 bg-white focus-within:ring-2 focus-within:ring-teal-700">
               <select
-                aria-label="Moneda"
+                aria-label={i18n.t("property:createpropertystep1page_moneda")}
                 className="min-h-12 max-w-24 shrink-0 rounded-l-xl border-r border-slate-200 px-3 text-sm"
                 value={form.typeOfCoin}
                 onChange={(e) => handleChange('typeOfCoin', e.target.value)}
               >
-                {CURRENCIES.map((currency) => (
-                  <option key={currency.code} value={currency.code}>{currency.code === 'CRC' ? '₡ CRC' : '$ USD'}</option>
+                {CURRENCIES().map((currency) => (
+                  <option key={currency.code} value={currency.code}>{currency.code === 'CRC' ? i18n.t("property:createpropertystep1page_crc") : i18n.t("property:createpropertystep1page_usd")}</option>
                 ))}
               </select>
               <input
@@ -273,7 +280,7 @@ export default function CreatePropertyStep1Page() {
             {errors.cost && <span id="property-cost-error" className="mt-1 block text-xs text-red-500">{errors.cost}</span>}
           </div>
           <div>
-            <label htmlFor="property-type" className="mb-1.5 block text-sm font-medium text-primary">Tipo de propiedad</label>
+            <label htmlFor="property-type" className="mb-1.5 block text-sm font-medium text-primary">{i18n.t("property:propertyformlayout_tipo_de_propiedad")}</label>
             <select
               id="property-type"
             aria-invalid={!!errors.typeOfPropertyId}
@@ -283,18 +290,18 @@ export default function CreatePropertyStep1Page() {
               onChange={(e) => handleChange('typeOfPropertyId', e.target.value ? Number(e.target.value) : null)}
               disabled={propertyTypes.isPending}
             >
-              <option value="">{propertyTypes.isPending ? 'Cargando tipos...' : 'Selecciona un tipo'}</option>
+              <option value="">{propertyTypes.isPending ? i18n.t("property:createpropertystep1page_cargando_tipos") : i18n.t("property:createpropertystep1page_selecciona_un_tipo")}</option>
               {propertyTypes.data?.map((type) => (
-                <option key={type.id} value={type.id}>{type.name}</option>
+                <option key={type.id} value={type.id}>{catalogText(type)}</option>
               ))}
             </select>
-            {propertyTypes.isError && <span className="mt-1 block text-xs text-red-500">No se pudieron cargar los tipos de propiedad.</span>}
+            {propertyTypes.isError && <span className="mt-1 block text-xs text-red-500">{i18n.t("explore:property.service_no_se_pudieron_cargar_los_tipos_de_propiedad")}</span>}
             {errors.typeOfPropertyId && <span id="property-type-error" className="mt-1 block text-xs text-red-500">{errors.typeOfPropertyId}</span>}
           </div>
         </div>
 
         <div>
-          <label htmlFor="property-description" className="mb-1.5 block text-sm font-medium text-primary">Descripción</label>
+          <label htmlFor="property-description" className="mb-1.5 block text-sm font-medium text-primary">{i18n.t("property:propertyformlayout_descripcion")}</label>
           <textarea
             id="property-description"
             aria-invalid={!!errors.description}
@@ -302,21 +309,21 @@ export default function CreatePropertyStep1Page() {
             className={`${inputBase} resize-y ${errors.description ? inputError : ''}`}
             value={form.description}
             onChange={(e) => handleChange('description', e.target.value)}
-            placeholder="Describe la propiedad..."
+            placeholder={i18n.t("property:createpropertystep1page_describe_la_propiedad")}
             rows={4}
           />
           {errors.description && <span id="property-description-error" className="mt-1 block text-xs text-red-500">{errors.description}</span>}
         </div>
 
         </FormSection>
-        <FormSection icon={Users} title="Capacidad" description="Cuántas personas pueden vivir cómodamente.">
+        <FormSection icon={Users} title={i18n.t("property:createpropertystep1page_capacidad")} description={i18n.t("property:createpropertystep1page_cuantas_personas_pueden_vivir_comodamente")}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Counter label="Habitaciones" value={form.rooms} onChange={(value) => handleChange('rooms', value)} />
-          <Counter label="Huéspedes" value={form.guest} onChange={(value) => handleChange('guest', value)} />
+          <Counter label={i18n.t("explore:explorepage_habitaciones")} value={form.rooms} onChange={(value) => handleChange('rooms', value)} />
+          <Counter label={i18n.t("property:createpropertystep1page_huespedes")} value={form.guest} onChange={(value) => handleChange('guest', value)} />
         </div>
 
         </FormSection>
-        <FormSection icon={Sparkles} title="Servicios" description="Selecciona todo lo que incluye el alquiler." aside={<span className="text-xs text-slate-500" aria-live="polite">{form.serviceIds.length} seleccionados</span>}>
+        <FormSection icon={Sparkles} title={i18n.t("dashboard:adminhomepage_servicios")} description={i18n.t("property:createpropertystep1page_selecciona_todo_lo_que_incluye_el_alquiler")} aside={<span className="text-xs text-slate-500" aria-live="polite">{form.serviceIds.length}{' '}{i18n.t("property:createpropertystep1page_seleccionados")}</span>}>
         <div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {services.data?.map((service) => {
@@ -334,13 +341,13 @@ export default function CreatePropertyStep1Page() {
                   onClick={() => toggleService(service.id)}
                 >
                   <ServiceIcon name={service.icono} size={18} />{selected && <Check size={16} className="absolute right-2 top-2" />}
-                  {service.name}
+                  {catalogText(service)}
                 </button>
               )
             })}
-            {services.isPending && <span className="text-sm text-slate-400">Cargando servicios...</span>}
-            {services.isError && <span className="text-sm text-red-500">No se pudieron cargar los servicios.</span>}
-            {services.data?.length === 0 && <span className="text-sm text-slate-400">No hay servicios disponibles</span>}
+            {services.isPending && <span className="text-sm text-slate-400">{i18n.t("landing:quickfilters_cargando_servicios")}</span>}
+            {services.isError && <span className="text-sm text-red-500">{i18n.t("property:createpropertystep1page_no_se_pudieron_cargar_los_servicios")}</span>}
+            {services.data?.length === 0 && <span className="text-sm text-slate-400">{i18n.t("property:createpropertystep1page_no_hay_servicios_disponibles")}</span>}
           </div>
           {errors.serviceIds && <span className="mt-2 block text-xs text-red-500">{errors.serviceIds}</span>}
         </div>

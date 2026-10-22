@@ -1,3 +1,7 @@
+import { message } from '../../../i18n/messages';
+import { useMessageState } from '../../../i18n/useMessageState';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { LoaderCircle, MessageSquareWarning } from 'lucide-react'
@@ -24,9 +28,10 @@ export default function NoteDialog({
   onConfirm,
   onCancel,
 }: NoteDialogProps) {
+  useTranslation();
   const dialog = useRef<HTMLDialogElement>(null)
   const [note, setNote] = useState('')
-  const [validation, setValidation] = useState('')
+  const [validation, setValidation] = useMessageState('')
 
   useEffect(() => {
     const element = dialog.current!
@@ -41,7 +46,7 @@ export default function NoteDialog({
 
   function submit() {
     if (!note.trim()) {
-      setValidation('Escribe una nota para el propietario.')
+      setValidation(message("dashboard:notedialog_escribe_una_nota_para_el_propietario"))
       return
     }
     setValidation('')
@@ -71,9 +76,7 @@ export default function NoteDialog({
           </div>
         </div>
 
-        <label htmlFor="note-dialog-text" className="mb-1.5 block text-sm font-medium text-primary">
-          Nota para el propietario
-        </label>
+        <label htmlFor="note-dialog-text" className="mb-1.5 block text-sm font-medium text-primary">{i18n.t("dashboard:notedialog_nota_para_el_propietario")}</label>
         <textarea
           id="note-dialog-text"
           rows={4}
@@ -98,9 +101,7 @@ export default function NoteDialog({
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:bg-slate-50"
             disabled={loading}
             onClick={onCancel}
-          >
-            Cancelar
-          </button>
+          >{i18n.t("comments:admincommentspage_cancelar")}</button>
           <button
             type="button"
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-dark disabled:opacity-60"

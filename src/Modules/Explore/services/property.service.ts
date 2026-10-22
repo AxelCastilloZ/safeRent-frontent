@@ -1,3 +1,5 @@
+import type { CatalogTranslations } from '../../../i18n/catalog';
+import { LocalizedError } from '../../../i18n/messages';
 import type { Property } from '../interfaces/property.interface'
 import { apiBase } from './api.service'
 
@@ -38,7 +40,7 @@ export async function getProperties(
     params.set('page', String(page))
     const response = await fetch(`${apiBase}/properties?${params}`, { signal })
     if (!response.ok)
-      throw new Error('No pudimos cargar las propiedades. Intenta nuevamente.')
+      throw new LocalizedError("explore:property.service_no_pudimos_cargar_las_propiedades_intenta_nuevamente")
     const payload: unknown = await response.json()
 
     if (Array.isArray(payload) && page === 1) return payload as Property[]
@@ -48,7 +50,7 @@ export async function getProperties(
       !('totalPages' in payload) || typeof payload.totalPages !== 'number' ||
       !Number.isSafeInteger(payload.totalPages) || payload.totalPages < 0 ||
       payload.totalPages > 1000
-    ) throw new Error('El servidor devolvió una respuesta inesperada.')
+    ) throw new LocalizedError("explore:api.service_el_servidor_devolvio_una_respuesta_inesperada")
 
     totalPages = payload.totalPages
     if ('priceContext' in payload && payload.priceContext && typeof payload.priceContext === 'object' && 'batchId' in payload.priceContext && (payload.priceContext.batchId === null || typeof payload.priceContext.batchId === 'number')) {
@@ -61,14 +63,16 @@ export async function getProperties(
 }
 
 export interface PropertyType {
+  catalogCode?: string | null
+  translations?: CatalogTranslations | null
   id: number
   name: string
 }
 
 export async function getPropertyTypes(signal: AbortSignal): Promise<PropertyType[]> {
   const response = await fetch(`${apiBase}/properties/types`, { signal })
-  if (!response.ok) throw new Error('No se pudieron cargar los tipos de propiedad.')
+  if (!response.ok) throw new LocalizedError("explore:property.service_no_se_pudieron_cargar_los_tipos_de_propiedad")
   const data: unknown = await response.json()
-  if (!Array.isArray(data)) throw new Error('El servidor devolvió una respuesta inesperada.')
+  if (!Array.isArray(data)) throw new LocalizedError("explore:api.service_el_servidor_devolvio_una_respuesta_inesperada")
   return data as PropertyType[]
 }

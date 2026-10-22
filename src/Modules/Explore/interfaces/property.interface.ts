@@ -1,4 +1,7 @@
+import type { CatalogTranslations } from '../../../i18n/catalog';
 export interface PropertyService {
+  catalogCode?: string | null
+  translations?: CatalogTranslations | null
   id: number
   name: string
   icono?: string | null
@@ -22,5 +25,5 @@ export interface Property extends ReservationState {
   longitude?: number | string | null
   services?: PropertyService[]
   files?: { path: string; mimeType: string }[]
-  typeOfProperty?: { name: string }
+  typeOfProperty?: { name: string; catalogCode?: string | null; translations?: CatalogTranslations | null }
 }

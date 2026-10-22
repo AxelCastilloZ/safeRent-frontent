@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next';
+import { useEffect, useRef, useState } from 'react'
 import Navbar from '../LandingPage/Components/Navbar'
 import Footer from '../LandingPage/Components/Footer'
 import { faqItems, searchFaq } from './data/faq'
@@ -9,9 +10,10 @@ import FaqSection from './Components/FaqSection'
 import SupportCta from './Components/SupportCta'
 
 export default function SupportPage() {
+  useTranslation();
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<SupportCategory | null>(null)
-  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(faqItems[0] ? [faqItems[0].id] : []))
+  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(faqItems()[0] ? [faqItems()[0].id] : []))
   // Elemento a enfocar con scroll suave después del próximo render, disparado
   // desde una sugerencia o una categoría. Un ref (no state) para el id porque
   // el efecto solo debe leerlo, nunca "resetearlo" con setState; el contador
@@ -22,13 +24,13 @@ export default function SupportPage() {
 
   // Filtrado 100% en el frontend: sin backend ni servicios HTTP, todo corre
   // sobre el array local `faqItems` (ver data/faq.ts).
-  const filteredFaq = useMemo(() => {
-    const byCategory = activeCategory ? faqItems.filter((item) => item.category === activeCategory) : faqItems
+  const filteredFaq = (() => {
+    const byCategory = activeCategory ? faqItems().filter((item) => item.category === activeCategory) : faqItems()
     return searchFaq(query, byCategory)
-  }, [query, activeCategory])
+  })()
 
   // Hasta 5 sugerencias en vivo mientras el usuario escribe.
-  const suggestions = useMemo(() => (query.trim() ? searchFaq(query).slice(0, 5) : []), [query])
+  const suggestions = (query.trim() ? searchFaq(query).slice(0, 5) : [])
 
   useEffect(() => {
     if (scrollRequestId === 0 || !scrollTargetRef.current) return

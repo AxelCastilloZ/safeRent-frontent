@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Search } from 'lucide-react'
-import { useId, useMemo, useState } from 'react'
+import { useId, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import { useAdminUsers } from '../../Users/hooks/useAdminUsers'
@@ -14,13 +16,14 @@ import RoleBadge from './RoleBadge'
  * Busca entre los usuarios que ya trae el panel (GET /users); al elegir uno se crea o se retoma la conversación.
  */
 export default function UserSearchPanel() {
+  useTranslation();
   const { user: me } = useAuth()
   const users = useAdminUsers()
   const startDirect = useStartDirectConversation()
   const [query, setQuery] = useState('')
   const inputId = useId()
 
-  const results = useMemo(() => searchMessageableUsers(users.data, query, me?.id), [users.data, query, me?.id])
+  const results = searchMessageableUsers(users.data, query, me?.id)
   const searching = query.trim().length > 0
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -30,11 +33,9 @@ export default function UserSearchPanel() {
   }
 
   return (
-    <section aria-label="Nueva conversación" className="border-b border-slate-200 px-5 py-3">
+    <section aria-label={i18n.t("messages:usersearchpanel_nueva_conversacion")} className="border-b border-slate-200 px-5 py-3">
       <form onSubmit={handleSubmit} role="search">
-        <label htmlFor={inputId} className="sr-only">
-          Buscar usuario para iniciar una conversación
-        </label>
+        <label htmlFor={inputId} className="sr-only">{i18n.t("messages:usersearchpanel_buscar_usuario_para_iniciar_una_conversacion")}</label>
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
           <input
@@ -46,37 +47,30 @@ export default function UserSearchPanel() {
               if (startDirect.isError) startDirect.reset()
             }}
             autoComplete="off"
-            placeholder="Buscar usuario por nombre, correo o rol…"
+            placeholder={i18n.t("messages:usersearchpanel_buscar_usuario_por_nombre_correo_o_rol")}
             className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none transition focus-visible:border-secondary focus-visible:ring-[3px] focus-visible:ring-secondary/30"
           />
         </div>
       </form>
 
       {users.isError && (
-        <p role="alert" className="mt-2 text-xs text-red-700">
-          No pudimos cargar los usuarios.{' '}
-          <button type="button" onClick={() => void users.refetch()} className="font-semibold underline">
-            Reintentar
-          </button>
+        <p role="alert" className="mt-2 text-xs text-red-700">{i18n.t("dashboard:recentuserssection_no_pudimos_cargar_los_usuarios")}{' '}
+          <button type="button" onClick={() => void users.refetch()} className="font-semibold underline">{i18n.t("comments:propertycomments_reintentar")}</button>
         </p>
       )}
       {startDirect.isError && (
         <p role="alert" className="mt-2 text-xs text-red-700">
-          {getApiErrorMessage(startDirect.error, 'No pudimos abrir la conversación. Intenta nuevamente.')}
+          {getApiErrorMessage(startDirect.error, i18n.t("messages:usersearchpanel_no_pudimos_abrir_la_conversacion_intenta_nuevamente"))}
         </p>
       )}
 
       {searching && !users.isError && (
         users.isPending ? (
-          <p role="status" className="mt-2 text-xs text-slate-500">
-            Cargando usuarios…
-          </p>
+          <p role="status" className="mt-2 text-xs text-slate-500">{i18n.t("dashboard:adminuserspage_cargando_usuarios")}</p>
         ) : results.length === 0 ? (
-          <p role="status" className="mt-2 text-xs text-slate-500">
-            No encontramos usuarios activos con esa búsqueda.
-          </p>
+          <p role="status" className="mt-2 text-xs text-slate-500">{i18n.t("messages:usersearchpanel_no_encontramos_usuarios_activos_con_esa_busqueda")}</p>
         ) : (
-          <ul aria-label="Resultados de la búsqueda" className="mt-2 max-h-64 space-y-1 overflow-y-auto">
+          <ul aria-label={i18n.t("messages:usersearchpanel_resultados_de_la_busqueda")} className="mt-2 max-h-64 space-y-1 overflow-y-auto">
             {results.map((user) => (
               <li key={user.id}>
                 <button

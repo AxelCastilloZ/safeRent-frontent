@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 import { useAuth } from '../../../Auth/hooks/authHooks';
 import ParticipantAvatar from '../../../Messages/Components/ParticipantAvatar';
@@ -21,10 +23,11 @@ interface RecentConversationsSectionProps {
 /** "Conversaciones recientes": primero las que tienen mensajes sin leer, luego las más nuevas. */
 export default function RecentConversationsSection({
   basePath = '/dashboard/messages',
-  title = 'Conversaciones recientes',
-  emptyDescription = 'Escríbele a un propietario desde la página de una propiedad y la conversación aparecerá aquí.',
-  emptyAction = { label: 'Explorar propiedades', to: '/explorar' },
+  title = i18n.t("dashboard:recentconversationssection_conversaciones_recientes"),
+  emptyDescription = i18n.t("dashboard:recentconversationssection_escribele_a_un_propietario_desde_la_pagina_de_una"),
+  emptyAction = { label: i18n.t("about:aboutcta_explorar_propiedades"), to: '/explorar' },
 }: RecentConversationsSectionProps = {}) {
+  useTranslation();
   const { user } = useAuth();
   const conversations = useConversations();
   // sort es estable: dentro de cada grupo se conserva el orden del backend (más nueva primero).
@@ -37,10 +40,10 @@ export default function RecentConversationsSection({
       {conversations.isPending ? (
         <SectionLoading />
       ) : conversations.isError ? (
-        <SectionError message="No pudimos cargar tus conversaciones." onRetry={() => void conversations.refetch()} />
+        <SectionError message={i18n.t("dashboard:recentconversationssection_no_pudimos_cargar_tus_conversaciones")} onRetry={() => void conversations.refetch()} />
       ) : recent.length === 0 ? (
         <SectionEmpty
-          title="Aún no tienes conversaciones"
+          title={i18n.t("dashboard:recentconversationssection_aun_no_tienes_conversaciones")}
           description={emptyDescription}
           actionLabel={emptyAction?.label}
           actionTo={emptyAction?.to}
@@ -55,7 +58,7 @@ export default function RecentConversationsSection({
                 <Link to={`${basePath}/${conversation.id}` as string} className="flex items-center gap-3 rounded-xl px-2 py-2.5 transition hover:bg-slate-50">
                   <ParticipantAvatar initials={other ? participantInitials(other) : '?'} />
                   <div className="min-w-0 flex-1">
-                    <p className={`truncate text-sm ${unread > 0 ? 'font-extrabold text-primary' : 'font-semibold'}`}>{other ? participantFullName(other) : 'Usuario'}</p>
+                    <p className={`truncate text-sm ${unread > 0 ? 'font-extrabold text-primary' : 'font-semibold'}`}>{other ? participantFullName(other) : i18n.t("dashboard:recentconversationssection_usuario")}</p>
                     <p className="truncate text-xs text-muted-ink">{user ? conversationContext(conversation, user.id) : (conversation.property?.title ?? '')}</p>
                   </div>
                   <span className="flex shrink-0 items-center gap-2 text-xs text-muted-ink">

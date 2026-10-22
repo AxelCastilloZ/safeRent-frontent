@@ -1,8 +1,11 @@
+import { currentLocale } from '../../../i18n/formatters';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { AlertCircle, Check, CheckCheck, RotateCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { Message, PendingMessage } from '../types/message'
 
-const timeFormat = new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' })
+const timeFormat = () => new Intl.DateTimeFormat(currentLocale(), { hour: '2-digit', minute: '2-digit' })
 
 interface MessageBubbleProps {
   message: Message
@@ -11,7 +14,8 @@ interface MessageBubbleProps {
 
 /** Mensaje ya confirmado por el servidor. Los propios muestran si la otra persona ya los leyó. */
 export function MessageBubble({ message, mine }: MessageBubbleProps) {
-  const time = timeFormat.format(new Date(message.createdAt))
+  useTranslation();
+  const time = timeFormat().format(new Date(message.createdAt))
   return (
     <Bubble
       mine={mine}
@@ -33,16 +37,13 @@ export function MessageBubble({ message, mine }: MessageBubbleProps) {
 
 /** ✓ Enviado / ✓✓ Leído (con texto, no solo el ícono, para lectores de pantalla). */
 function ReadStatus({ read }: { read: boolean }) {
+  useTranslation();
   return read ? (
     <span className="inline-flex items-center gap-1 font-semibold text-secondary">
-      <CheckCheck className="size-3.5" aria-hidden="true" />
-      Leído
-    </span>
+      <CheckCheck className="size-3.5" aria-hidden="true" />{i18n.t("messages:messagebubble_leido")}</span>
   ) : (
     <span className="inline-flex items-center gap-1">
-      <Check className="size-3.5" aria-hidden="true" />
-      Enviado
-    </span>
+      <Check className="size-3.5" aria-hidden="true" />{i18n.t("messages:messagebubble_enviado")}</span>
   )
 }
 
@@ -53,6 +54,7 @@ interface PendingBubbleProps {
 
 /** Mensaje propio que todavía no se confirmó: "Enviando…" o "No enviado · Reintentar". */
 export function PendingBubble({ pending, onRetry }: PendingBubbleProps) {
+  useTranslation();
   const failed = pending.status === 'failed'
   return (
     <Bubble
@@ -66,12 +68,10 @@ export function PendingBubble({ pending, onRetry }: PendingBubbleProps) {
             onClick={() => onRetry(pending.localId)}
             className="inline-flex items-center gap-1 font-semibold text-red-700 hover:underline"
           >
-            <AlertCircle className="size-3.5" aria-hidden="true" />
-            No enviado · Reintentar
-            <RotateCw className="size-3.5" aria-hidden="true" />
+            <AlertCircle className="size-3.5" aria-hidden="true" />{i18n.t("messages:messagebubble_no_enviado_reintentar")}<RotateCw className="size-3.5" aria-hidden="true" />
           </button>
         ) : (
-          'Enviando…'
+          i18n.t("messages:messagebubble_enviando")
         )
       }
     >
@@ -89,6 +89,7 @@ interface BubbleProps {
 }
 
 function Bubble({ mine, muted, failed, footer, children }: BubbleProps) {
+  useTranslation();
   const color = failed
     ? 'border border-red-200 bg-red-50 text-primary'
     : mine

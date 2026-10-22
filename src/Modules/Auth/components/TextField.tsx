@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { ChangeEvent, HTMLInputTypeAttribute } from 'react'
 
 type TextFieldProps = {
@@ -27,6 +28,7 @@ export function TextField({
   hint,
   className = '',
 }: TextFieldProps) {
+  const { t } = useTranslation()
   const hintId = hint ? `${id}-hint` : undefined
   const errorId = error ? `${id}-error` : undefined
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
@@ -57,7 +59,7 @@ export function TextField({
       )}
       {error && (
         <p id={errorId} className="text-xs leading-4 text-[#ba1a1a]">
-          {error}
+          {error.startsWith('validation:') ? t(error) : error}
         </p>
       )}
     </div>

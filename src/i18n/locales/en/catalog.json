@@ -1,0 +1,21 @@
+{
+  "service_wifi": "Wi-Fi",
+  "service_hot_water": "Hot water",
+  "service_parking": "Parking",
+  "service_laundry": "Laundry",
+  "service_air_conditioning": "Air conditioning",
+  "service_kitchen": "Kitchen",
+  "service_security": "Security",
+  "service_pool": "Swimming pool",
+  "type_house": "House",
+  "type_apartment": "Apartment",
+  "type_room": "Room",
+  "type_studio": "Studio",
+  "translations": "Catalog translations",
+  "translationsHint": "The main name and description are Spanish. Complete the other languages.",
+  "name": "Name",
+  "description": "Description",
+  "incomplete": "Complete the names and descriptions in the other three languages.",
+  "created": "Amenity “{{name}}” created. It is now available for properties.",
+  "updated": "Amenity “{{name}}” updated."
+}

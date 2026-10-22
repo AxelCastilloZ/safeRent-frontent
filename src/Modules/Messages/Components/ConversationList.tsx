@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Link, useParams } from '@tanstack/react-router'
 import { Building2, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../../Auth/hooks/authHooks'
@@ -19,6 +21,7 @@ import Skeleton from './Skeleton'
 
 /** Bandeja (wireframe 3a): todas las conversaciones del usuario, sea inquilino o arrendatario en cada una. */
 export default function ConversationList() {
+  useTranslation();
   const { user: currentUser } = useAuth()
   const { data: conversations, isPending, isError, refetch } = useConversations()
   const { conversationId } = useParams({ strict: false })
@@ -28,8 +31,8 @@ export default function ConversationList() {
   const canStartDirect = Boolean(currentUser?.roles.includes('ADMIN'))
 
   return (
-    <aside aria-label="Conversaciones" className="flex h-full flex-col border-r border-slate-200 bg-white">
-      <h1 className="border-b border-slate-200 px-5 py-4 text-lg font-bold">Mensajes</h1>
+    <aside aria-label={i18n.t("messages:conversationlist_conversaciones")} className="flex h-full flex-col border-r border-slate-200 bg-white">
+      <h1 className="border-b border-slate-200 px-5 py-4 text-lg font-bold">{i18n.t("dashboard:adminhomepage_mensajes")}</h1>
       {canStartDirect && <UserSearchPanel />}
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isPending ? (
@@ -46,22 +49,18 @@ export default function ConversationList() {
           </div>
         ) : isError ? (
           <div role="alert" className="space-y-2 p-5 text-sm">
-            <p className="text-red-700">No pudimos cargar tus conversaciones.</p>
-            <button type="button" onClick={() => void refetch()} className="font-semibold text-secondary hover:underline">
-              Reintentar
-            </button>
+            <p className="text-red-700">{i18n.t("dashboard:recentconversationssection_no_pudimos_cargar_tus_conversaciones")}</p>
+            <button type="button" onClick={() => void refetch()} className="font-semibold text-secondary hover:underline">{i18n.t("comments:propertycomments_reintentar")}</button>
           </div>
         ) : conversations.length === 0 ? (
           <div className="space-y-1 p-5 text-sm text-slate-500">
-            <p className="font-medium text-primary">Todavía no tienes conversaciones.</p>
+            <p className="font-medium text-primary">{i18n.t("messages:conversationlist_todavia_no_tienes_conversaciones")}</p>
             {canStartDirect ? (
-              <p>Busca un usuario arriba para iniciar una conversación.</p>
+              <p>{i18n.t("messages:conversationlist_busca_un_usuario_arriba_para_iniciar_una_conversacion")}</p>
             ) : (
               <>
-                <p>Entra a una propiedad y pulsa «Chatear con el propietario», o espera a que un interesado te escriba.</p>
-                <Link to="/explorar" className="inline-block pt-2 font-semibold text-secondary hover:underline">
-                  Explorar propiedades
-                </Link>
+                <p>{i18n.t("messages:conversationlist_entra_a_una_propiedad_y_pulsa_chatear_con_el")}</p>
+                <Link to="/explorar" className="inline-block pt-2 font-semibold text-secondary hover:underline">{i18n.t("about:aboutcta_explorar_propiedades")}</Link>
               </>
             )}
           </div>
@@ -81,7 +80,7 @@ export default function ConversationList() {
                     <ParticipantAvatar initials={other ? participantInitials(other) : '?'} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`truncate ${unread > 0 ? 'font-extrabold text-primary' : 'font-semibold'}`}>{other ? participantFullName(other) : 'Usuario'}</p>
+                        <p className={`truncate ${unread > 0 ? 'font-extrabold text-primary' : 'font-semibold'}`}>{other ? participantFullName(other) : i18n.t("dashboard:recentconversationssection_usuario")}</p>
                         {currentUser && <RoleBadge>{otherParticipantRole(conversation, currentUser.id)}</RoleBadge>}
                       </div>
                       <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
