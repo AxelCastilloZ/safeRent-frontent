@@ -59,7 +59,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
               activeOptions={{ exact: item.to === config.basePath }}
               className={`flex items-center gap-3 rounded-lg border-l-4 px-3 py-2.5 text-sm font-medium transition ${
                 active
-                  ? 'border-secondary bg-white/10 text-white'
+                  ? 'border-secondary-light bg-white/10 text-white'
                   : 'border-transparent text-white/70 hover:bg-white/5 hover:text-white'
               }`}
             >

@@ -68,9 +68,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #edf8f1;
-  color: #167246;
-  border: 1px solid #d6edde;
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #ccfbf1;
   padding: 12px 14px;
   border-radius: 10px;
   font-weight: 650;
@@ -86,7 +86,7 @@
   color: #64748b;
 }
 .sa-sidebar-note > svg {
-  color: #1c8854;
+  color: #0f766e;
   margin-bottom: 12px;
 }
 .sa-sidebar-note strong {
@@ -286,9 +286,9 @@
   border-color: #9eafbf;
 }
 .sa-icon-option.selected {
-  background: #edf9f1;
-  border-color: #39aa70;
-  color: #147546;
+  background: #f0fdfa;
+  border-color: #0d9488;
+  color: #0f766e;
 }
 .sa-icon-check {
   position: absolute;
@@ -356,8 +356,8 @@
 .sa-preview-icon {
   display: inline-flex;
   padding: 19px;
-  background: #effaf3;
-  color: #209557;
+  background: #f0fdfa;
+  color: #0f766e;
   border-radius: 18px;
   margin-bottom: 17px;
 }
@@ -379,10 +379,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid #d6e5dc;
+  border: 1px solid #ccfbf1;
   border-radius: 25px;
-  background: #f6fcf8;
-  color: #27714b;
+  background: #f0fdfa;
+  color: #0f766e;
   font-size: 11px;
   padding: 9px 13px;
   max-width: 100%;
@@ -402,7 +402,7 @@
 }
 .sa-tip svg {
   flex-shrink: 0;
-  color: #3a9f6c;
+  color: #0d9488;
   margin-top: 2px;
 }
 .sa-catalog {
@@ -483,9 +483,9 @@
   align-items: center;
   gap: 10px;
   padding: 14px 17px;
-  background: #edf9f1;
-  color: #157143;
-  border: 1px solid #ccead8;
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #ccfbf1;
   border-radius: 10px;
   margin-bottom: 22px;
   font-size: 13px;
@@ -505,11 +505,11 @@
 .services-admin a:focus-visible,
 .services-admin input:focus-visible,
 .services-admin textarea:focus-visible {
-  outline: 2px solid #22a267;
+  outline: 2px solid #0f766e;
   outline-offset: 3px;
 }
 .sa-search:focus-within {
-  outline: 2px solid #22a267;
+  outline: 2px solid #0f766e;
   outline-offset: 2px;
 }
 .sa-search input:focus-visible {
@@ -711,9 +711,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f0faf4;
+  background: #f0fdfa;
   border-radius: 9px;
-  color: #147546;
+  color: #0f766e;
   padding: 12px;
   margin-bottom: 12px;
   overflow-wrap: anywhere;

@@ -193,7 +193,7 @@
   display: inline-block;
   width: 7px;
   height: 7px;
-  background: #38d57d;
+  background: #14b8a6;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -357,8 +357,8 @@
   align-items: center;
 }
 .location-tag {
-  color: #16884d;
-  background: #ebfff2;
+  color: #0f766e;
+  background: #f0fdfa;
   padding: 4px 6px;
   border-radius: 4px;
 }

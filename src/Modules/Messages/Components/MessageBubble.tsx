@@ -34,7 +34,7 @@ export function MessageBubble({ message, mine }: MessageBubbleProps) {
 /** ✓ Enviado / ✓✓ Leído (con texto, no solo el ícono, para lectores de pantalla). */
 function ReadStatus({ read }: { read: boolean }) {
   return read ? (
-    <span className="inline-flex items-center gap-1 font-semibold text-secondary">
+    <span className="inline-flex items-center gap-1 font-semibold text-secondary-light">
       <CheckCheck className="size-3.5" aria-hidden="true" />
       Leído
     </span>

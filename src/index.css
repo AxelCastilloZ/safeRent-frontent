@@ -3,8 +3,10 @@
 @theme {
   --color-primary: #0a2540;
   --color-primary-dark: #081f35;
-  --color-secondary: #22c55e;
-  --color-secondary-dark: #15803d;
+  --color-secondary: #0f766e;
+  --color-secondary-dark: #115e59;
+  /* Teal claro: para texto y acentos sobre fondos azul oscuro, donde el teal base no tiene contraste. */
+  --color-secondary-light: #2dd4bf;
   --color-tertiary: #facc15;
   --color-neutral: #1e293b;
   --color-ink: #0a2540;
@@ -15,7 +17,7 @@
 
 :root {
   --color-primary: #0a2540;
-  --color-secondary: #22c55e;
+  --color-secondary: #0f766e;
   --color-tertiary: #facc15;
   --color-neutral: #1e293b;
 }
@@ -23,7 +25,7 @@
 @layer base {
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; min-width: 320px; background: #fff; color: var(--color-ink); }
+  body { margin: 0; min-width: 320px; background: var(--color-surface); color: var(--color-ink); }
   button, input, select { font: inherit; }
   button { cursor: pointer; }
 }
