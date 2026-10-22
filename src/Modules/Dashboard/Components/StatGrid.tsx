@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import type { ReactNode } from 'react';
 
 const COLUMNS = {
@@ -13,8 +15,9 @@ interface StatGridProps {
 
 /** Fila de cifras del inicio de cada panel. */
 export default function StatGrid({ columns, children }: StatGridProps) {
+  useTranslation();
   return (
-    <section aria-label="Resumen" className={`grid grid-cols-2 gap-3 sm:gap-4 max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 ${COLUMNS[columns]}`}>
+    <section aria-label={i18n.t("dashboard:statgrid_resumen")} className={`grid grid-cols-2 gap-3 sm:gap-4 max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 ${COLUMNS[columns]}`}>
       {children}
     </section>
   );

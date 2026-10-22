@@ -18,6 +18,7 @@ function load(file) {
     if (name.endsWith('/hooks/authQueries')) return { authUserQueryOptions: (value) => ({ queryKey: ['auth', value] }) }
     if (name.endsWith('/utils/sessionToken')) return { getStoredToken: () => token }
     if (name === 'lucide-react') return {}
+    if (!name.startsWith('.')) return require(name)
     return load(path.relative(path.resolve(__dirname, '..'), path.resolve(path.dirname(absolute), name + '.ts')))
   }
   vm.runInNewContext(source, { require: requireModule, module: result, exports: result.exports })

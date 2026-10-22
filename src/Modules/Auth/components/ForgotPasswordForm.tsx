@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useForm } from '@tanstack/react-form';
 import Alert from '@mui/material/Alert';
 import { useForgotPassword } from '../hooks/passwordRecoveryHooks';
@@ -8,6 +9,7 @@ import PasswordRecoveryLayout from './PasswordRecoveryLayout';
 import { recoveryButtonClass } from './passwordRecoveryStyles';
 
 export default function ForgotPasswordForm() {
+  const { t } = useTranslation();
   const recovery = useForgotPassword();
   const form = useForm({
     defaultValues: { identifier: '' },
@@ -17,22 +19,22 @@ export default function ForgotPasswordForm() {
     },
   });
   return (
-    <PasswordRecoveryLayout title="¿Olvidaste tu contraseña?" description="Indica tu cédula o correo electrónico. Enviaremos un enlace al correo asociado a tu cuenta.">
+    <PasswordRecoveryLayout title={t("auth:recoveryTitle")} description={t("auth:recoveryDescription")}>
       {recovery.isSuccess ? (
-        <Alert severity="success">Si los datos corresponden a una cuenta activa, recibirás un enlace para cambiar tu contraseña. Revisa también la carpeta de spam.</Alert>
+        <Alert severity="success">{t("auth:recoverySuccess")}</Alert>
       ) : (
         <form noValidate className="flex flex-col gap-5" onSubmit={(event) => {
           event.preventDefault();
           if (!form.state.isSubmitting) void form.handleSubmit();
         }}>
           <form.Field name="identifier">
-            {(field) => <TextField id="recovery-identifier" name={field.name} label="Cédula o correo electrónico"
+            {(field) => <TextField id="recovery-identifier" name={field.name} label={t("auth:identifier")}
               value={field.state.value} onChange={field.handleChange} onBlur={field.handleBlur} autoComplete="username"
               error={field.state.meta.isTouched && !field.state.meta.isValid ? field.state.meta.errors[0]?.message : undefined} />}
           </form.Field>
           {recovery.isError && <Alert severity={getAuthErrorSeverity(recovery.error)}>{getAuthErrorMessage(recovery.error)}</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
-            {(pending) => <button type="submit" className={recoveryButtonClass} disabled={pending} aria-busy={pending}>{pending ? 'Solicitando enlace…' : 'Enviar enlace de recuperación'}</button>}
+            {(pending) => <button type="submit" className={recoveryButtonClass} disabled={pending} aria-busy={pending}>{pending ? t("auth:requestingLink") : t("auth:sendLink")}</button>}
           </form.Subscribe>
         </form>
       )}

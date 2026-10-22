@@ -1,116 +1,117 @@
+import i18n from '../../../i18n/instance';
 import type { LegalSection } from '../types/legal'
 
-export const termsOfServiceSections: LegalSection[] = [
+export const termsOfServiceSections: () => LegalSection[] = () => ([
   {
     id: 'aceptacion-de-los-terminos',
-    title: '1. Aceptación de los términos',
+    title: i18n.t("legal:termsofservice_1_aceptacion_de_los_terminos"),
     paragraphs: [
-      'Al utilizar SafeRent aceptas estos Términos del Servicio. Este contenido es un borrador de trabajo del proyecto y podrá actualizarse conforme la plataforma evolucione.',
+      i18n.t("legal:termsofservice_al_utilizar_saferent_aceptas_estos_terminos_del_servicio_este"),
     ],
   },
   {
     id: 'descripcion-de-saferent',
-    title: '2. Descripción de SafeRent',
+    title: i18n.t("legal:termsofservice_2_descripcion_de_saferent"),
     paragraphs: [
-      'SafeRent es una plataforma tecnológica que conecta y facilita la interacción entre personas que buscan alquilar una vivienda y personas u organizaciones que ofrecen propiedades en alquiler. SafeRent no es propietaria, arrendadora ni administradora de las propiedades publicadas.',
+      i18n.t("legal:termsofservice_saferent_es_una_plataforma_tecnologica_que_conecta_y_facilita"),
     ],
   },
   {
     id: 'registro-y-cuentas',
-    title: '3. Registro y cuentas de usuario',
+    title: i18n.t("legal:termsofservice_3_registro_y_cuentas_de_usuario"),
     paragraphs: [
-      'Para acceder a ciertas funciones es necesario crear una cuenta con información veraz. Eres responsable de mantener la confidencialidad de tus credenciales de acceso.',
+      i18n.t("legal:termsofservice_para_acceder_a_ciertas_funciones_es_necesario_crear_una"),
     ],
   },
   {
     id: 'roles-de-usuario',
-    title: '4. Roles de usuario',
+    title: i18n.t("legal:termsofservice_4_roles_de_usuario"),
     paragraphs: [
-      'La plataforma contempla distintos roles, entre ellos inquilino, arrendatario y administrador, cada uno con funciones y permisos definidos dentro del sistema.',
+      i18n.t("legal:termsofservice_la_plataforma_contempla_distintos_roles_entre_ellos_inquilino_arrendatario"),
     ],
   },
   {
     id: 'publicacion-de-propiedades',
-    title: '5. Publicación de propiedades',
+    title: i18n.t("legal:termsofservice_5_publicacion_de_propiedades"),
     paragraphs: [
-      'Los arrendatarios pueden publicar propiedades incluyendo información como fotografías, precio, servicios y condiciones. La información publicada debe ser precisa y corresponder a la propiedad real.',
+      i18n.t("legal:termsofservice_los_arrendatarios_pueden_publicar_propiedades_incluyendo_informacion_como_fotografias"),
     ],
   },
   {
     id: 'responsabilidades-del-arrendador',
-    title: '6. Responsabilidades del arrendador',
+    title: i18n.t("legal:termsofservice_6_responsabilidades_del_arrendador"),
     paragraphs: [
-      'Quien publica una propiedad es responsable de la veracidad de la información compartida y de mantener actualizado el estado de disponibilidad de sus publicaciones.',
+      i18n.t("legal:termsofservice_quien_publica_una_propiedad_es_responsable_de_la_veracidad"),
     ],
   },
   {
     id: 'responsabilidades-del-inquilino',
-    title: '7. Responsabilidades del inquilino',
+    title: i18n.t("legal:termsofservice_7_responsabilidades_del_inquilino"),
     paragraphs: [
-      'Quien busca una vivienda es responsable de utilizar la información disponible en la plataforma de forma razonable y de comunicarse de buena fe con los arrendadores.',
+      i18n.t("legal:termsofservice_quien_busca_una_vivienda_es_responsable_de_utilizar_la"),
     ],
   },
   {
     id: 'comunicacion-entre-usuarios',
-    title: '8. Comunicación entre usuarios',
+    title: i18n.t("legal:termsofservice_8_comunicacion_entre_usuarios"),
     paragraphs: [
-      'SafeRent facilita un canal de mensajería interno para que los usuarios se comuniquen. El uso de este canal debe respetar un trato adecuado entre las partes.',
+      i18n.t("legal:termsofservice_saferent_facilita_un_canal_de_mensajeria_interno_para_que"),
     ],
   },
   {
     id: 'contenido-y-resenas',
-    title: '9. Contenido y reseñas',
+    title: i18n.t("legal:termsofservice_9_contenido_y_resenas"),
     paragraphs: [
-      'Las reseñas buscan reflejar experiencias reales de los usuarios. SafeRent podrá revisar contenido reportado que resulte ofensivo, falso o que infrinja estos términos.',
+      i18n.t("legal:termsofservice_las_resenas_buscan_reflejar_experiencias_reales_de_los_usuarios"),
     ],
   },
   {
     id: 'conductas-prohibidas',
-    title: '10. Conductas prohibidas',
+    title: i18n.t("legal:termsofservice_10_conductas_prohibidas"),
     paragraphs: [
-      'No está permitido publicar información falsa, utilizar la plataforma con fines fraudulentos, ni compartir contenido ofensivo, discriminatorio o que vulnere los derechos de terceros.',
+      i18n.t("legal:termsofservice_no_esta_permitido_publicar_informacion_falsa_utilizar_la_plataforma"),
     ],
   },
   {
     id: 'reportes-y-moderacion',
-    title: '11. Reportes y moderación',
+    title: i18n.t("legal:termsofservice_11_reportes_y_moderacion"),
     paragraphs: [
-      'Los usuarios pueden reportar publicaciones o comportamientos que consideren inapropiados. El equipo de SafeRent podrá revisar dichos reportes conforme a sus procesos internos.',
+      i18n.t("legal:termsofservice_los_usuarios_pueden_reportar_publicaciones_o_comportamientos_que_consideren"),
     ],
   },
   {
     id: 'suspension-o-eliminacion',
-    title: '12. Suspensión o eliminación de cuentas',
+    title: i18n.t("legal:termsofservice_12_suspension_o_eliminacion_de_cuentas"),
     paragraphs: [
-      'SafeRent podrá suspender o eliminar cuentas que incumplan estos términos, priorizando la seguridad y la confianza dentro de la comunidad.',
+      i18n.t("legal:termsofservice_saferent_podra_suspender_o_eliminar_cuentas_que_incumplan_estos"),
     ],
   },
   {
     id: 'limitaciones-del-servicio',
-    title: '13. Limitaciones del servicio',
+    title: i18n.t("legal:termsofservice_13_limitaciones_del_servicio"),
     paragraphs: [
-      'SafeRent actúa como intermediario tecnológico y no garantiza la disponibilidad, exactitud absoluta ni el resultado de los procesos de alquiler realizados entre los usuarios.',
+      i18n.t("legal:termsofservice_saferent_actua_como_intermediario_tecnologico_y_no_garantiza_la"),
     ],
   },
   {
     id: 'propiedad-intelectual',
-    title: '14. Propiedad intelectual',
+    title: i18n.t("legal:termsofservice_14_propiedad_intelectual"),
     paragraphs: [
-      'El nombre, la marca y los elementos visuales de SafeRent son propiedad del proyecto. El contenido publicado por los usuarios permanece bajo su responsabilidad.',
+      i18n.t("legal:termsofservice_el_nombre_la_marca_y_los_elementos_visuales_de"),
     ],
   },
   {
     id: 'cambios-en-los-terminos',
-    title: '15. Cambios en los términos',
+    title: i18n.t("legal:termsofservice_15_cambios_en_los_terminos"),
     paragraphs: [
-      'Estos términos podrán actualizarse conforme el proyecto evolucione. Buscaremos comunicar los cambios relevantes dentro de la plataforma.',
+      i18n.t("legal:termsofservice_estos_terminos_podran_actualizarse_conforme_el_proyecto_evolucione_buscaremos"),
     ],
   },
   {
     id: 'contacto',
-    title: '16. Contacto',
+    title: i18n.t("legal:termsofservice_16_contacto"),
     paragraphs: [
-      'Para consultas relacionadas con estos Términos del Servicio, puedes contactarnos a través de los canales disponibles en la sección de Soporte.',
+      i18n.t("legal:termsofservice_para_consultas_relacionadas_con_estos_terminos_del_servicio_puedes"),
     ],
   },
-]
+])

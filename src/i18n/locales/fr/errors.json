@@ -1,0 +1,19 @@
+{
+  "unavailable": "Impossible de terminer la demande. Veuillez réessayer.",
+  "network": "Impossible de se connecter au serveur. Veuillez réessayer.",
+  "userUnavailable": "Utilisateur indisponible.",
+  "emailRegistered": "Cette adresse e-mail est déjà enregistrée.",
+  "emailPassword": "Saisissez votre mot de passe actuel pour modifier votre adresse e-mail.",
+  "currentPassword": "Le mot de passe actuel est incorrect.",
+  "passwordDifferent": "Le nouveau mot de passe doit être différent du mot de passe actuel.",
+  "attempts": "Trop de tentatives. Réessayez dans 15 minutes.",
+  "country": "Pays ou territoire non pris en charge.",
+  "currency": "Devise non prise en charge.",
+  "credentials": "Identifiants incorrects.",
+  "identityRegistered": "Le numéro d’identité ou l’adresse e-mail est déjà enregistré.",
+  "invalidLink": "Le lien est invalide ou a expiré. Demandez-en un nouveau.",
+  "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+  "invalidFields": "Vérifiez les données du formulaire.",
+  "pageError": "Impossible de charger cette page",
+  "pageNotFound": "Page introuvable"
+}

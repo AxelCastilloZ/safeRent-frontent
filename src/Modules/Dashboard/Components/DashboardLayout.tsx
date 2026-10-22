@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { isPropertySubmissionPath } from '../../Auth/routes/guards';
 import { useAuth } from '../../Auth/hooks/authHooks';
 import { roleHome } from '../../Auth/utils/roleHome';
@@ -16,6 +17,7 @@ import DashboardSidebar from './DashboardSidebar';
  * El área (cliente, propietario, admin) sale de la URL.
  */
 export default function DashboardLayout() {
+  const { t } = useTranslation();
   const { hasSession } = useDashboardUser();
   const { user } = useAuth();
   const { pathname } = useLocation();
@@ -60,13 +62,13 @@ export default function DashboardLayout() {
 
         {drawerOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <button type="button" aria-label="Cerrar menú del panel" onClick={closeDrawer} className="absolute inset-0 bg-slate-900/50" />
+            <button type="button" aria-label={t("navigation:closePanel")} onClick={closeDrawer} className="absolute inset-0 bg-slate-900/50" />
             <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] shadow-2xl">
               <DashboardSidebar area={area} onNavigate={closeDrawer} />
               <button
                 type="button"
                 onClick={closeDrawer}
-                aria-label="Cerrar menú del panel"
+                aria-label={t("navigation:closePanel")}
                 className="absolute right-3 top-4 rounded-lg p-1.5 text-white/80 hover:bg-white/10 hover:text-white"
               >
                 <X size={20} />

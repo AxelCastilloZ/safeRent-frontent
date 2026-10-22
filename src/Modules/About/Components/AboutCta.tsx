@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { ArrowRight, Search } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import Reveal from '../../LandingPage/Components/Reveal'
 
 export default function AboutCta() {
+  useTranslation();
   return (
     <section className="relative overflow-hidden bg-primary px-4 py-16 sm:px-6">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -14,16 +17,12 @@ export default function AboutCta() {
         <span className="mx-auto grid size-12 place-items-center rounded-xl bg-white/15">
           <Search size={24} aria-hidden="true" />
         </span>
-        <h2 className="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">Encuentra tu próximo hogar</h2>
-        <p className="mx-auto mt-4 max-w-xl leading-7 text-white/80">
-          Explora propiedades verificadas, con información real de servicios y de la comunidad, antes de tomar tu decisión.
-        </p>
+        <h2 className="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">{i18n.t("about:aboutcta_encuentra_tu_proximo_hogar")}</h2>
+        <p className="mx-auto mt-4 max-w-xl leading-7 text-white/80">{i18n.t("about:aboutcta_explora_propiedades_verificadas_con_informacion_real_de_servicios_y")}</p>
         <Link
           to="/explorar"
           className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3.5 text-sm font-bold text-white shadow-sm shadow-black/10 transition hover:-translate-y-0.5 hover:bg-secondary-dark hover:shadow-md"
-        >
-          Explorar propiedades
-          <ArrowRight size={17} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+        >{i18n.t("about:aboutcta_explorar_propiedades")}<ArrowRight size={17} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
         </Link>
       </Reveal>
     </section>

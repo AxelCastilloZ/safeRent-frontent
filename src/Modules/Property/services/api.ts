@@ -1,7 +1,11 @@
+import i18n from '../../../i18n/instance';
+import { apiMessage, resolveMessage } from '../../../i18n/messages';
+
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 function authHeaders(): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  headers['Accept-Language'] = i18n.resolvedLanguage ?? 'es';
   const token = localStorage.getItem('token')
   if (token) headers['Authorization'] = `Bearer ${token}`
   return headers
@@ -23,6 +27,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 async function requestFormData<T>(path: string, formData: FormData): Promise<T> {
   const headers: Record<string, string> = {}
+  headers['Accept-Language'] = i18n.resolvedLanguage ?? 'es';
   const token = localStorage.getItem('token')
   if (token) headers['Authorization'] = `Bearer ${token}`
   const res = await fetch(`${API_BASE}${path}`, {
@@ -48,6 +53,7 @@ export class ApiError extends Error {
     this.name = 'ApiError'
     this.status = status
     this.body = body
+    Object.defineProperty(this, 'message', { configurable: true, get: () => resolveMessage(apiMessage(this.body)) });
   }
 }
 

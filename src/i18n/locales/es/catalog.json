@@ -1,0 +1,22 @@
+{
+  "service_wifi": "WiFi",
+  "service_hot_water": "Agua caliente",
+  "service_parking": "Estacionamiento",
+  "service_laundry": "Lavandería",
+  "service_air_conditioning": "Aire acondicionado",
+  "service_kitchen": "Cocina",
+  "service_security": "Seguridad",
+  "service_pool": "Piscina",
+  "type_house": "Casa",
+  "type_apartment": "Apartamento",
+  "type_room": "Habitación",
+  "type_studio": "Estudio",
+  "translations": "Traducciones del catálogo",
+  "translationsHint": "El nombre y la descripción principales corresponden al español. Completa los otros idiomas.",
+  "name": "Nombre",
+  "description": "Descripción",
+  "incomplete": "Completa los nombres y las descripciones en los otros tres idiomas.",
+  "created": "Servicio «{{name}}» creado. Ya está disponible para las propiedades.",
+  "updated": "Servicio «{{name}}» actualizado.",
+  "creating": "Creando…"
+}

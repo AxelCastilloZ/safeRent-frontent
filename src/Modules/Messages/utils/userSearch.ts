@@ -14,7 +14,7 @@ function normalize(text: string): string {
 
 /** Nombre del rol tal como se muestra (Inquilino, Propietario…); si no se conoce, el nombre del backend. */
 export function userRoleLabels(user: AdminUser): string[] {
-  return user.roles.filter((role) => role.isActive).map((role) => ROLE_LABELS[role.name as AppRole] ?? role.name)
+  return user.roles.filter((role) => role.isActive).map((role) => ROLE_LABELS()[role.name as AppRole] ?? role.name)
 }
 
 /**

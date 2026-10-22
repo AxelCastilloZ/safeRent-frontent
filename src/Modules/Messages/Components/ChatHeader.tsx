@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import ReservePropertyButton from '../../Reservations/Components/ReservePropertyButton'
 import ReservedChip from '../../Reservations/Components/ReservedChip'
 import { Link } from '@tanstack/react-router'
@@ -17,12 +19,13 @@ interface ChatHeaderProps {
 
 /** Cabecera del chat (wireframe 1f/3b): quién es, su rol en esta conversación, la propiedad y las salidas. */
 export default function ChatHeader({ conversation, currentUserId }: ChatHeaderProps) {
+  useTranslation();
   const basePath = useMessagesBasePath()
   const other = conversation && currentUserId !== undefined ? otherParticipant(conversation, currentUserId) : undefined
 
   return (
     <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
-      <Link to={basePath} aria-label="Volver a mis mensajes" className={`${buttonStyles.ghostIcon} md:hidden`}>
+      <Link to={basePath} aria-label={i18n.t("messages:chatheader_volver_a_mis_mensajes")} className={`${buttonStyles.ghostIcon} md:hidden`}>
         <ArrowLeft aria-hidden="true" />
       </Link>
 
@@ -47,7 +50,7 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
               <div className="mt-1.5">
                 <ReservedChip
                   highlight={conversation.property.reservedTenantId === currentUserId}
-                  label={conversation.property.reservedTenantId === currentUserId ? 'Reservada a tu nombre' : 'Reservada por otra persona'}
+                  label={conversation.property.reservedTenantId === currentUserId ? i18n.t("reservations:reservedForYou") : i18n.t("reservations:reservedByOther")}
                 />
               </div>
             )}
@@ -59,13 +62,13 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
               <Link
                 to="/property_detail/$propertyId"
                 params={{ propertyId: String(conversation.property.id) }}
-                aria-label="Ver propiedad"
+                aria-label={i18n.t("dashboard:savedpropertiespage_ver_propiedad")}
                 className={buttonStyles.outline}
               >
                 {/* Con sidebar + bandeja + chat el ancho es justo: solo icono hasta pantallas muy anchas.
                     No hay "Salir del chat": la bandeja siempre está a la vista (en mobile, la flecha de volver). */}
                 <ExternalLink aria-hidden="true" className="2xl:hidden" />
-                <span className="hidden 2xl:inline">Ver propiedad</span>
+                <span className="hidden 2xl:inline">{i18n.t("dashboard:savedpropertiespage_ver_propiedad")}</span>
               </Link>
             </>
           )}

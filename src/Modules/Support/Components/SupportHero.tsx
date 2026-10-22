@@ -1,3 +1,6 @@
+import { categoryLabel } from '../categoryLabel';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Search } from 'lucide-react'
 import { useState } from 'react'
 import Reveal from '../../LandingPage/Components/Reveal'
@@ -11,6 +14,7 @@ type SupportHeroProps = {
 }
 
 export default function SupportHero({ query, onQueryChange, suggestions, onSelectSuggestion }: SupportHeroProps) {
+  useTranslation();
   const [isFocused, setIsFocused] = useState(false)
   const showDropdown = isFocused && query.trim().length > 0
 
@@ -31,10 +35,10 @@ export default function SupportHero({ query, onQueryChange, suggestions, onSelec
 
       <div className="relative mx-auto max-w-2xl text-center">
         <Reveal>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl lg:text-5xl">¿Cómo podemos ayudarte?</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl lg:text-5xl">{i18n.t("support:supporthero_como_podemos_ayudarte")}</h1>
         </Reveal>
         <Reveal delay={80}>
-          <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral/80 sm:text-lg">Encuentra respuestas rápidas sobre SafeRent.</p>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral/80 sm:text-lg">{i18n.t("support:supporthero_encuentra_respuestas_rapidas_sobre_saferent")}</p>
         </Reveal>
         <Reveal delay={160}>
           {/* Sin `relative`: ya no hace falta como contexto de posicionamiento
@@ -43,7 +47,7 @@ export default function SupportHero({ query, onQueryChange, suggestions, onSelec
           <div className="mt-8">
             <label className="relative flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-lg shadow-slate-200/70 transition focus-within:bg-slate-50">
               <Search size={20} className="shrink-0 text-neutral/60" aria-hidden="true" />
-              <span className="sr-only">Buscar en el centro de ayuda</span>
+              <span className="sr-only">{i18n.t("support:supporthero_buscar_en_el_centro_de_ayuda_d9d737")}</span>
               <input
                 value={query}
                 onChange={(event) => onQueryChange(event.target.value)}
@@ -52,7 +56,7 @@ export default function SupportHero({ query, onQueryChange, suggestions, onSelec
                 onKeyDown={(event) => {
                   if (event.key === 'Escape') setIsFocused(false)
                 }}
-                placeholder="Buscar en el centro de ayuda…"
+                placeholder={i18n.t("support:supporthero_buscar_en_el_centro_de_ayuda_343f48")}
                 className="w-full bg-transparent px-3 text-sm text-neutral outline-none placeholder:text-slate-400"
               />
             </label>
@@ -64,11 +68,11 @@ export default function SupportHero({ query, onQueryChange, suggestions, onSelec
               <div
                 id="support-suggestions"
                 role="region"
-                aria-label="Sugerencias de búsqueda"
+                aria-label={i18n.t("support:supporthero_sugerencias_de_busqueda")}
                 className="mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-lg shadow-slate-200/70"
               >
                 {suggestions.length === 0 ? (
-                  <p className="px-5 py-4 text-center text-sm text-neutral/70">No encontramos resultados para tu búsqueda.</p>
+                  <p className="px-5 py-4 text-center text-sm text-neutral/70">{i18n.t("support:faqsection_no_encontramos_resultados_para_tu_busqueda")}</p>
                 ) : (
                   <ul>
                     {suggestions.map((item) => (
@@ -82,7 +86,7 @@ export default function SupportHero({ query, onQueryChange, suggestions, onSelec
                           className="flex w-full flex-col items-start gap-0.5 border-b border-slate-100 px-5 py-3 text-left transition-colors last:border-b-0 hover:bg-slate-50"
                         >
                           <span className="text-sm font-semibold text-ink">{item.question}</span>
-                          <span className="text-xs text-neutral/60">{item.category}</span>
+                          <span className="text-xs text-neutral/60">{categoryLabel(item.category)}</span>
                         </button>
                       </li>
                     ))}

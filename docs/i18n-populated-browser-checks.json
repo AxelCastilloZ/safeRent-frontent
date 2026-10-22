@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-22",
+  "viewportChecks": [
+    {
+      "language": "en",
+      "overflow": false,
+      "screen": "CLIENT reservations populated",
+      "title": "My reservations | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "screen": "CLIENT reservations populated",
+      "title": "Minhas reservas | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "screen": "CLIENT reservations populated",
+      "title": "Mis reservaciones | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "screen": "CLIENT reservations populated",
+      "title": "Mes réservations | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "screen": "OWNER properties five states",
+      "width": 390
+    },
+    {
+      "language": "en",
+      "overflow": false,
+      "screen": "OWNER properties five states",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "screen": "OWNER properties five states",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "screen": "OWNER properties five states",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "screen": "OWNER properties five states",
+      "width": 390
+    },
+    {
+      "language": "en",
+      "overflow": false,
+      "screen": "ADMIN comments populated",
+      "title": "Comments | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "overflow": false,
+      "screen": "ADMIN comments populated",
+      "title": "Comentários | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "overflow": false,
+      "screen": "ADMIN comments populated",
+      "title": "Comentarios | SafeRent",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "overflow": false,
+      "screen": "ADMIN comments populated",
+      "title": "Commentaires | SafeRent",
+      "width": 390
+    }
+  ],
+  "conversationFrench": {
+    "populated": true,
+    "overflow": false
+  },
+  "moderationFrench": {
+    "emptyReasonBlocked": true,
+    "hidden": true,
+    "restored": true
+  },
+  "networkFailureFrench": {
+    "localized": true,
+    "reasonPreserved": true
+  },
+  "limitations": [
+    "Responsive browser checks; no physical iOS/Android device used",
+    "Not an exhaustive visual check of every permutation of business data"
+  ]
+}

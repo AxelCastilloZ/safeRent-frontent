@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+import i18n from '../../../i18n/instance'
 import ConfirmDialog from '../../Dashboard/Components/ConfirmDialog'
 
 interface UnsavedChangesDialogProps {
@@ -9,13 +11,14 @@ interface UnsavedChangesDialogProps {
 
 /** "¿Salir sin guardar?": aparece cuando se intenta salir del formulario con cambios pendientes. */
 export default function UnsavedChangesDialog({ blocked, onLeave, onStay }: UnsavedChangesDialogProps) {
+  useTranslation()
   if (!blocked) return null
   return (
     <ConfirmDialog
-      title="¿Salir sin guardar?"
-      description="Tienes cambios que todavía no se han guardado. Si sales ahora, se perderán."
-      confirmLabel="Salir sin guardar"
-      cancelLabel="Seguir editando"
+      title={i18n.t("property:leaveUnsavedTitle")}
+      description={i18n.t("property:leaveUnsavedDescription")}
+      confirmLabel={i18n.t("property:leaveUnsaved")}
+      cancelLabel={i18n.t("property:keepEditing")}
       danger
       onConfirm={onLeave}
       onCancel={onStay}

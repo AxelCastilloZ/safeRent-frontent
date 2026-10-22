@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Send } from 'lucide-react'
 import { useState } from 'react'
 import type { SubmitEvent } from 'react'
@@ -13,6 +15,7 @@ interface MessageComposerProps {
 
 /** Caja de texto del chat: Enter envía; no deja enviar mensajes vacíos. */
 export default function MessageComposer({ onSend, disabled }: MessageComposerProps) {
+  useTranslation();
   const [text, setText] = useState('')
   const trimmed = text.trim()
 
@@ -30,14 +33,14 @@ export default function MessageComposer({ onSend, disabled }: MessageComposerPro
         value={text}
         onChange={(event) => setText(event.target.value)}
         maxLength={MAX_LENGTH}
-        placeholder="Escribe un mensaje…"
-        aria-label="Mensaje"
+        placeholder={i18n.t("messages:messagecomposer_escribe_un_mensaje")}
+        aria-label={i18n.t("messages:messagecomposer_mensaje")}
         autoComplete="off"
         className="h-9 min-w-0 flex-1 rounded-md border border-slate-200 bg-white px-3 text-sm outline-none transition focus-visible:border-secondary focus-visible:ring-[3px] focus-visible:ring-secondary/30"
       />
       <button type="submit" disabled={!trimmed || disabled} className={buttonStyles.primary}>
         <Send aria-hidden="true" />
-        <span className="max-sm:sr-only">Enviar</span>
+        <span className="max-sm:sr-only">{i18n.t("messages:messagecomposer_enviar")}</span>
       </button>
     </form>
   )

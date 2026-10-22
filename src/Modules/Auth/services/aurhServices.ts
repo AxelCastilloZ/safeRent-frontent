@@ -1,3 +1,4 @@
+import { errorMessage } from '../../../i18n/messages';
 import axios from 'axios';
 import apiAxios from '../../../api/apiConfig';
 import type { AuthUser, AuthResponse, LoginRequest, RegisterRequest, RegisterResponse } from '../types/auth';
@@ -25,13 +26,5 @@ export async function Register(payload: RegisterRequest): Promise<RegisterRespon
 }
 
 export function getAuthErrorMessage(error: unknown): string {
-  if (axios.isAxiosError(error)) {
-    const message: unknown = error.response?.data?.message;
-    if (typeof message === 'string') return message;
-    if (Array.isArray(message) && message.every((item) => typeof item === 'string')) {
-      return message.join(' ');
-    }
-    if (!error.response) return 'Unable to connect to the server. Please try again.';
-  }
-  return 'Something went wrong. Please try again.';
+  return errorMessage(error);
 }

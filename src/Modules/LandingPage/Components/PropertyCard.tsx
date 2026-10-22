@@ -1,3 +1,6 @@
+import { catalogText } from '../../../i18n/catalog';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { BedDouble, Building2, MapPin, Users } from 'lucide-react'
 import { useState } from 'react'
 import ServiceIcon from '../../Services/components/ServiceIcon'
@@ -8,6 +11,7 @@ import PriceDetails from '../../Explore/PriceDetails'
 type PropertyCardProps = { property: Property }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  useTranslation();
   const image = photoUrl(property)
   const [failedImage, setFailedImage] = useState<string>()
   return (
@@ -18,17 +22,17 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           alt={property.title}
           className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           loading="lazy" onError={() => setFailedImage(image)}
-        /> : <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400"><Building2 size={40} aria-hidden="true" /><span className="text-sm">Sin fotografía</span></div>}
+        /> : <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400"><Building2 size={40} aria-hidden="true" /><span className="text-sm">{i18n.t("explore:explorepage_sin_fotografia")}</span></div>}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
 
         <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-secondary-dark shadow-sm backdrop-blur-sm">
           <span className="size-1.5 rounded-full bg-secondary" />
-          {property.reservedTenantId ? 'Reservada' : 'Disponible'}
+          {property.reservedTenantId ? i18n.t("dashboard:recentsavedsection_reservada") : i18n.t("explore:explorepage_disponible")}
         </span>
 
         <p className="absolute bottom-3 right-3 rounded-xl bg-white/95 px-3 py-1.5 text-right shadow-sm backdrop-blur-sm">
           <span className="text-base font-extrabold text-primary">{priceLabel(property)}</span>
-          <span className="block text-[10px] font-semibold uppercase leading-tight tracking-wide text-neutral/60">por mes</span>
+          <span className="block text-[10px] font-semibold uppercase leading-tight tracking-wide text-neutral/60">{i18n.t("landing:propertycard_por_mes")}</span>
         </p>
       </div>
 
@@ -43,14 +47,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <div className="mt-4 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5">
           <BedDouble size={19} className="shrink-0 text-primary" aria-hidden="true" />
-          <span className="text-sm text-neutral/65">{property.rooms} habitaciones</span>
+          <span className="text-sm text-neutral/65">{property.rooms}{' '}{i18n.t('common:room', { count: property.rooms })}</span>
           <Users size={19} className="shrink-0 text-primary" aria-hidden="true" />
-          <span className="text-sm text-neutral/65">{property.guest} huéspedes</span>
+          <span className="text-sm text-neutral/65">{property.guest}{' '}{i18n.t('common:person', { count: property.guest })}</span>
         </div>
 
         <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">
           {property.services?.map((service) => (
-            <span key={service.id} title={service.name} aria-label={service.name}
+            <span key={service.id} title={catalogText(service)} aria-label={catalogText(service)}
               className="grid size-8 place-items-center rounded-lg bg-slate-100 text-neutral/70 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
               <ServiceIcon name={service.icono} size={16} />
             </span>
@@ -59,9 +63,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <a href={`/property_detail/${property.id}`}
           className="mt-auto inline-flex w-full items-center justify-center rounded-xl border border-slate-200 py-2.5 text-sm font-bold text-secondary-dark transition-colors hover:border-secondary hover:bg-secondary/5"
-        >
-          Ver detalles
-        </a>
+        >{i18n.t("dashboard:reservedpropertysection_ver_detalles")}</a>
       </div>
     </article>
   )

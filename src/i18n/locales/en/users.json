@@ -1,0 +1,10 @@
+{
+  "managerolesmodal_no_se_pudo_actualizar_el_rol": "Unable to update the role.",
+  "managerolesmodal_roles_de": "Roles for",
+  "managerolesmodal_agrega_o_quita_roles_de_esta_cuenta": "Add or remove roles for this account.",
+  "managerolesmodal_cerrar": "Close",
+  "managerolesmodal_cargando_roles": "Loading roles…",
+  "managerolesmodal_no_se_pudieron_cargar_los_roles": "Unable to load roles.",
+  "managerolesmodal_el_usuario_debe_conservar_al_menos_un_rol": "The user must retain at least one role.",
+  "managerolesmodal_agregar": "Add"
+}

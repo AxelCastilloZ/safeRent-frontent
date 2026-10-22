@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { useDiscoverProperties } from '../../hooks/useDiscoverProperties';
 import HomeSection from '../HomeSection';
 import PropertyThumbCard from '../PropertyThumbCard';
@@ -5,16 +7,17 @@ import { SectionEmpty, SectionError, SectionLoading } from './SectionStates';
 
 /** "Descubre": las propiedades activas más recientes, en una fila que se desplaza. */
 export default function DiscoverSection() {
+  useTranslation();
   const discover = useDiscoverProperties();
 
   return (
-    <HomeSection title="Descubre" to="/explorar" linkLabel="Explorar todas">
+    <HomeSection title={i18n.t("dashboard:discoversection_descubre")} to="/explorar" linkLabel={i18n.t("dashboard:exploreAll")}>
       {discover.isPending ? (
         <SectionLoading shape="cards" />
       ) : discover.isError ? (
-        <SectionError message="No pudimos cargar las propiedades." onRetry={() => void discover.refetch()} />
+        <SectionError message={i18n.t("dashboard:discoversection_no_pudimos_cargar_las_propiedades")} onRetry={() => void discover.refetch()} />
       ) : discover.data.length === 0 ? (
-        <SectionEmpty title="No hay propiedades nuevas por ahora" description="Vuelve pronto o explora todo el catálogo." actionLabel="Explorar propiedades" actionTo="/explorar" />
+        <SectionEmpty title={i18n.t("dashboard:discoversection_no_hay_propiedades_nuevas_por_ahora")} description={i18n.t("dashboard:discoversection_vuelve_pronto_o_explora_todo_el_catalogo")} actionLabel={i18n.t("dashboard:exploreProperties")} actionTo="/explorar" />
       ) : (
         <ul className="-mx-1 flex snap-x gap-4 overflow-x-auto px-1 pb-2">
           {discover.data.map((property) => (

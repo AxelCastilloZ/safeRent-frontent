@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useForm } from '@tanstack/react-form';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import Alert from '@mui/material/Alert';
@@ -10,6 +11,7 @@ import PasswordRecoveryLayout from './PasswordRecoveryLayout';
 import { recoveryButtonClass } from './passwordRecoveryStyles';
 
 export default function ResetPasswordForm() {
+  const { t } = useTranslation();
   const { token } = useSearch({ from: '/reset-password' });
   const reset = useResetPassword();
   const navigate = useNavigate();
@@ -35,9 +37,9 @@ export default function ResetPasswordForm() {
     },
   });
   return (
-    <PasswordRecoveryLayout title="Cambia tu contraseña" description="Crea una contraseña segura y confírmala para recuperar el acceso a tu cuenta.">
-      {!token ? <Alert severity="warning">El enlace no contiene un token válido. Solicita un nuevo enlace de recuperación.</Alert> : reset.isSuccess ? (
-        <Alert severity="success">Contraseña actualizada correctamente. Te llevaremos al login para iniciar sesión.</Alert>
+    <PasswordRecoveryLayout title={t("auth:resetTitle")} description={t("auth:resetDescription")}>
+      {!token ? <Alert severity="warning">{t("auth:invalidLink")}</Alert> : reset.isSuccess ? (
+        <Alert severity="success">{t("auth:resetSuccess")}</Alert>
       ) : (
         <form noValidate className="flex flex-col gap-5" onSubmit={(event) => {
           event.preventDefault();
@@ -45,19 +47,19 @@ export default function ResetPasswordForm() {
         }}>
           {(['password', 'confirmPassword'] as const).map((name) => (
             <form.Field key={name} name={name}>
-              {(field) => <TextField id={`reset-${name}`} name={field.name} label={name === 'password' ? 'Nueva contraseña' : 'Confirmar contraseña'}
+              {(field) => <TextField id={`reset-${name}`} name={field.name} label={name === 'password' ? t("settings:newPassword") : t("auth:confirm")}
                 type="password" autoComplete="new-password" value={field.state.value} onChange={field.handleChange} onBlur={field.handleBlur}
-                hint={name === 'password' ? 'De 8 a 72 caracteres, con mayúscula, minúscula, número y símbolo. Máximo 72 bytes UTF-8.' : undefined}
+                hint={name === 'password' ? t("settings:passwordHint") : undefined}
                 error={field.state.meta.isTouched && !field.state.meta.isValid ? field.state.meta.errors[0]?.message : undefined} />}
             </form.Field>
           ))}
           {reset.isError && <Alert severity={getAuthErrorSeverity(reset.error)}>{getAuthErrorMessage(reset.error)}</Alert>}
           <form.Subscribe selector={(state) => state.isSubmitting}>
-            {(pending) => <button type="submit" className={recoveryButtonClass} disabled={pending} aria-busy={pending}>{pending ? 'Actualizando contraseña…' : 'Guardar nueva contraseña'}</button>}
+            {(pending) => <button type="submit" className={recoveryButtonClass} disabled={pending} aria-busy={pending}>{pending ? t("auth:updatingPassword") : t("auth:savePassword")}</button>}
           </form.Subscribe>
         </form>
       )}
-      {!reset.isSuccess && <Link to="/forgot-password" className="text-center text-sm text-[#0a2540] underline">Solicitar un nuevo enlace</Link>}
+      {!reset.isSuccess && <Link to="/forgot-password" className="text-center text-sm text-[#0a2540] underline">{t("auth:newLink")}</Link>}
     </PasswordRecoveryLayout>
   );
 }

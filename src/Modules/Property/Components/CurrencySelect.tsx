@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+import i18n from '../../../i18n/instance'
 import { useProfileCurrencyOptions } from '../../Auth/hooks/profileHooks'
 import { currencySymbol } from '../../Explore/utils/money'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from './Select'
@@ -25,6 +27,7 @@ function currencyLabel(code: string) {
  * las demás cuando se pulsa. Las monedas disponibles son las mismas que el sistema habilita para los precios.
  */
 export default function CurrencySelect({ id, value, profileCurrency, onChange }: CurrencySelectProps) {
+  useTranslation()
   const options = useProfileCurrencyOptions()
   const names = new Map((options.data?.currencies ?? []).map((currency) => [currency.code, currency.name]))
   const codes = [...new Set([value, profileCurrency, ...COMMON, ...names.keys()])]
@@ -39,19 +42,19 @@ export default function CurrencySelect({ id, value, profileCurrency, onChange }:
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} aria-label="Moneda" variant="inline">
+      <SelectTrigger id={id} aria-label={i18n.t("property:createpropertystep1page_moneda")} variant="inline">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Más usadas</SelectLabel>
+          <SelectLabel>{i18n.t("property:commonCurrencies")}</SelectLabel>
           {first.map(item)}
         </SelectGroup>
         {rest.length > 0 && (
           <>
             <SelectSeparator />
             <SelectGroup>
-              <SelectLabel>Todas las monedas</SelectLabel>
+              <SelectLabel>{i18n.t("property:allCurrencies")}</SelectLabel>
               {rest.map(item)}
             </SelectGroup>
           </>

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../../i18n/instance';
 import { useQueryClient } from '@tanstack/react-query';
 import { savedPropertyKeys, useSavedProperties } from '../../../SavedProperties/hooks/savedPropertyHooks';
 import HomeSection from '../HomeSection';
@@ -8,21 +10,22 @@ const SHOWN = 3;
 
 /** "Guardadas recientemente": las 3 más nuevas de GET /saved-properties. */
 export default function RecentSavedSection() {
+  useTranslation();
   const saved = useSavedProperties();
   const queryClient = useQueryClient();
   const recent = saved.data?.slice(0, SHOWN) ?? [];
 
   return (
-    <HomeSection title="Guardadas recientemente" to="/dashboard/saved" linkLabel="Ver todas">
+    <HomeSection title={i18n.t("dashboard:recentsavedsection_guardadas_recientemente")} to="/dashboard/saved" linkLabel={i18n.t("dashboard:viewAll")}>
       {saved.isPending ? (
         <SectionLoading shape="cards" />
       ) : saved.isError ? (
-        <SectionError message="No pudimos cargar tus guardadas." onRetry={() => void queryClient.invalidateQueries({ queryKey: savedPropertyKeys.all })} />
+        <SectionError message={i18n.t("dashboard:recentsavedsection_no_pudimos_cargar_tus_guardadas")} onRetry={() => void queryClient.invalidateQueries({ queryKey: savedPropertyKeys.all })} />
       ) : recent.length === 0 ? (
         <SectionEmpty
-          title="Todavía no guardaste propiedades"
-          description="Pulsa «Guardar» en las que te interesen para compararlas con calma."
-          actionLabel="Explorar propiedades"
+          title={i18n.t("dashboard:recentsavedsection_todavia_no_guardaste_propiedades")}
+          description={i18n.t("dashboard:recentsavedsection_pulsa_guardar_en_las_que_te_interesen_para_compararlas")}
+          actionLabel={i18n.t("dashboard:exploreProperties")}
           actionTo="/explorar"
         />
       ) : (
@@ -33,7 +36,7 @@ export default function RecentSavedSection() {
               <PropertyThumbCard
                 property={property}
                 unavailable={!property.available}
-                badge={property.available ? (property.reserved ? 'Reservada' : undefined) : 'No disponible'}
+                badge={property.available ? (property.reserved ? i18n.t("dashboard:recentsavedsection_reservada") : undefined) : i18n.t("dashboard:recentsavedsection_no_disponible")}
                 className="w-full"
               />
             </li>

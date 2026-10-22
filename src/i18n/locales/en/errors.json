@@ -1,0 +1,19 @@
+{
+  "unavailable": "Unable to complete the request. Please try again.",
+  "network": "Unable to connect to the server. Please try again.",
+  "userUnavailable": "User unavailable.",
+  "emailRegistered": "This email is already registered.",
+  "emailPassword": "Enter your correct current password to change your email.",
+  "currentPassword": "The current password is incorrect.",
+  "passwordDifferent": "The new password must differ from the current password.",
+  "attempts": "Too many attempts. Try again in 15 minutes.",
+  "country": "Unsupported country or territory.",
+  "currency": "Unsupported currency.",
+  "credentials": "Incorrect credentials.",
+  "identityRegistered": "The ID number or email is already registered.",
+  "invalidLink": "The link is invalid or has expired. Request a new one.",
+  "sessionExpired": "Your session has expired. Please sign in again.",
+  "invalidFields": "Check the form details.",
+  "pageError": "Unable to load this page",
+  "pageNotFound": "Page not found"
+}

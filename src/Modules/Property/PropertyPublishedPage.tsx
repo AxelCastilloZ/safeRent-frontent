@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/instance';
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { CheckCircle, Clock } from 'lucide-react'
@@ -9,15 +11,16 @@ import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import { priceLabel } from '../Explore/utils/property.utils'
 import PriceDetails from '../Explore/PriceDetails'
 
-const COPY: Record<Property['status'], { icon: typeof CheckCircle; title: string; description: string }> = {
-  DRAFT: { icon: Clock, title: 'Propiedad guardada', description: 'Todavía no se ha enviado a revisión.' },
-  PENDING: { icon: Clock, title: 'Enviada a revisión', description: 'Un administrador va a verificar los datos antes de activarla.' },
-  ACTIVE: { icon: CheckCircle, title: 'Propiedad activa', description: 'Ya está disponible para reservas.' },
-  CHANGES_REQUESTED: { icon: Clock, title: 'Requiere cambios', description: 'El administrador pidió corregir algo antes de aprobarla.' },
-  INACTIVE: { icon: Clock, title: 'Propiedad inactiva', description: 'No está disponible para reservas.' },
-}
+const COPY: () => Record<Property['status'], { icon: typeof CheckCircle; title: string; description: string }> = () => ({
+  DRAFT: { icon: Clock, title: i18n.t("property:propertypublishedpage_propiedad_guardada"), description: i18n.t("property:propertypublishedpage_todavia_no_se_ha_enviado_a_revision") },
+  PENDING: { icon: Clock, title: i18n.t("property:propertypublishedpage_enviada_a_revision"), description: i18n.t("property:propertypublishedpage_un_administrador_va_a_verificar_los_datos_antes_de") },
+  ACTIVE: { icon: CheckCircle, title: i18n.t("property:propertypublishedpage_propiedad_activa"), description: i18n.t("property:propertypublishedpage_ya_esta_disponible_para_reservas") },
+  CHANGES_REQUESTED: { icon: Clock, title: i18n.t("property:statusbadge_requiere_cambios"), description: i18n.t("property:propertypublishedpage_el_administrador_pidio_corregir_algo_antes_de_aprobarla") },
+  INACTIVE: { icon: Clock, title: i18n.t("property:propertypublishedpage_propiedad_inactiva"), description: i18n.t("property:propertypublishedpage_no_esta_disponible_para_reservas") },
+})
 
 export default function PropertyPublishedPage() {
+  useTranslation();
   const { currency, ready } = useDisplayCurrency()
   const { propertyId } = useParams({ strict: false }) as { propertyId: string }
   const navigate = useNavigate()
@@ -30,7 +33,7 @@ export default function PropertyPublishedPage() {
     return () => { current = false }
   }, [propertyId, currency, ready])
 
-  const copy = property ? COPY[property.status] : COPY.PENDING
+  const copy = property ? COPY()[property.status] : COPY().PENDING
   const Icon = copy.icon
 
   return (
@@ -47,8 +50,7 @@ export default function PropertyPublishedPage() {
           <div className="flex-1 text-left">
             <div className="text-sm font-bold text-primary">{property.title}</div>
             <div className="mt-0.5 text-xs text-slate-400">
-              {property.address} · {priceLabel(property)} / mes
-            </div>
+              {property.address} · {priceLabel(property)}{' '}{i18n.t('common:perMonth')}{' '}</div>
             <PriceDetails price={property.displayPrice} />
           </div>
           <StatusBadge variant={statusBadgeVariant(property.status)} />
@@ -60,16 +62,12 @@ export default function PropertyPublishedPage() {
           type="button"
           className="rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark"
           onClick={() => property && navigate({ to: `/dashboard/owner/properties/detail/${property.id}` })}
-        >
-          Ver detalle
-        </button>
+        >{i18n.t("property:propertypublishedpage_ver_detalle")}</button>
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"
           onClick={() => navigate({ to: '/dashboard/owner/properties' })}
-        >
-          Mis propiedades
-        </button>
+        >{i18n.t("dashboard:ownerhomepage_mis_propiedades")}</button>
       </div>
     </div>
   )

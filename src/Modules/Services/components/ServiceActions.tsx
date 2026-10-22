@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { useEffect, useRef, useState } from 'react'
 import { MoreHorizontal, Pencil } from 'lucide-react'
 export default function ServiceActions({
@@ -7,6 +9,7 @@ export default function ServiceActions({
   name: string
   onEdit: () => void
 }) {
+  useTranslation();
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
@@ -40,7 +43,7 @@ export default function ServiceActions({
         ref={trigger}
         type="button"
         className="sa-more-button"
-        aria-label={'Opciones de ' + name}
+        aria-label={i18n.t("services:serviceactions_opciones_de") + name}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
@@ -57,9 +60,7 @@ export default function ServiceActions({
               onEdit()
             }}
           >
-            <Pencil size={15} />
-            Editar servicio
-          </button>
+            <Pencil size={15} />{i18n.t("services:editservicemodal_editar_servicio")}</button>
         </div>
       )}
     </div>

@@ -1,0 +1,10 @@
+{
+  "managerolesmodal_no_se_pudo_actualizar_el_rol": "Não foi possível atualizar a função.",
+  "managerolesmodal_roles_de": "Funções de",
+  "managerolesmodal_agrega_o_quita_roles_de_esta_cuenta": "Adicione ou remova funções desta conta.",
+  "managerolesmodal_cerrar": "Fechar",
+  "managerolesmodal_cargando_roles": "Carregando funções…",
+  "managerolesmodal_no_se_pudieron_cargar_los_roles": "Não foi possível carregar as funções.",
+  "managerolesmodal_el_usuario_debe_conservar_al_menos_un_rol": "O usuário deve manter pelo menos uma função.",
+  "managerolesmodal_agregar": "Adicionar"
+}

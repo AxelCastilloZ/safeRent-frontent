@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
 import { ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -12,7 +14,8 @@ interface HomeSectionProps {
 }
 
 /** Bloque del inicio del panel: título, enlace a la pantalla completa y contenido. */
-export default function HomeSection({ title, to, linkLabel = 'Ver todo', children, className = '' }: HomeSectionProps) {
+export default function HomeSection({ title, to, linkLabel = i18n.t("dashboard:homesection_ver_todo"), children, className = '' }: HomeSectionProps) {
+  useTranslation();
   return (
     <section aria-label={title} className={`min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
       <div className="mb-4 flex items-center justify-between gap-3">

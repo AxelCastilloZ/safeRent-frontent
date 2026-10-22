@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-22",
+  "checks": [
+    {
+      "errorCount": 3,
+      "language": "en",
+      "overflow": false,
+      "screen": "publication step 1",
+      "titlePreserved": true,
+      "width": 390
+    },
+    {
+      "errorCount": 3,
+      "language": "pt",
+      "overflow": false,
+      "screen": "publication step 1",
+      "titlePreserved": true,
+      "width": 390
+    },
+    {
+      "errorCount": 3,
+      "language": "es",
+      "overflow": false,
+      "screen": "publication step 1",
+      "titlePreserved": true,
+      "width": 390
+    },
+    {
+      "errorCount": 3,
+      "language": "fr",
+      "overflow": false,
+      "screen": "publication step 1",
+      "titlePreserved": true,
+      "width": 390
+    },
+    {
+      "language": "en",
+      "mapTooltip": "JavaScript library for interactive maps",
+      "overflow": false,
+      "screen": "publication step 2",
+      "validation": "Enter the address and select the location on the map.",
+      "width": 390
+    },
+    {
+      "language": "pt",
+      "mapTooltip": "Biblioteca JavaScript para mapas interativos",
+      "overflow": false,
+      "screen": "publication step 2",
+      "validation": "Informe o endereço e selecione a localização no mapa.",
+      "width": 390
+    },
+    {
+      "language": "es",
+      "mapTooltip": "Biblioteca JavaScript para mapas interactivos",
+      "overflow": false,
+      "screen": "publication step 2",
+      "validation": "Escribe la dirección y selecciona la ubicación en el mapa.",
+      "width": 390
+    },
+    {
+      "language": "fr",
+      "mapTooltip": "Bibliothèque JavaScript de cartes interactives",
+      "overflow": false,
+      "screen": "publication step 2",
+      "validation": "Saisissez l’adresse et sélectionnez l’emplacement sur la carte.",
+      "width": 390
+    }
+  ],
+  "draftCreatedThroughUI": true,
+  "stepBackReloadPreservedFields": true,
+  "singularSelectionFrench": true,
+  "limitations": [
+    "No browser file upload, geolocation permission or external address-provider request was performed",
+    "Physical devices remain untested"
+  ]
+}
