@@ -1,0 +1,12 @@
+.property-flow { color: #0a2540; background: #f8fafc; }
+.property-flow .property-section { border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px #0a254008; }
+.property-flow .property-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; font-size: 13px; font-weight: 600; transition: background .15s; }
+.property-flow .property-button:hover { background: #f1f5f9; }
+.property-flow .property-primary { border-color: #0a2540; background: #0a2540; color: white; }
+.property-flow .property-primary:hover { background: #081f35; }
+.property-flow button:disabled { cursor: not-allowed; opacity: .5; }
+.property-flow :is(button, input, textarea, select, summary, a):focus-visible { outline: 2px solid #0f766e; outline-offset: 3px; }
+.property-flow .property-input { width: 100%; min-height: 48px; border: 1px solid #cbd5e1; border-radius: 10px; background: white; padding: 10px 14px; font-size: 14px; color: #0a2540; }
+.property-flow .property-input::placeholder { color: #64748b; }
+.property-flow .property-input[aria-invalid=true] { border-color: #b91c1c; }
+.property-flow .property-actions { box-shadow: 0 -6px 24px -16px #0a254030; padding-bottom: env(safe-area-inset-bottom); }

@@ -29,6 +29,12 @@ export async function createConversation(payload: CreateConversationRequest): Pr
   return response.data
 }
 
+/** Solo administradores: inicia (o retoma) una conversación directa con un usuario, sin propiedad. */
+export async function createDirectConversation(userId: number): Promise<Conversation> {
+  const response = await apiAxios.post<Conversation>(`${BASE}/direct`, { userId })
+  return response.data
+}
+
 export async function sendMessage(conversationId: number, payload: SendMessageRequest): Promise<Message> {
   const response = await apiAxios.post<Message>(`${BASE}/${conversationId}/messages`, payload)
   return response.data

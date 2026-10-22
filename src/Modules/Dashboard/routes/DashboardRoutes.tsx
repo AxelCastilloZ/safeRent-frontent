@@ -1,4 +1,4 @@
-import { createRoute, lazyRouteComponent, Outlet } from '@tanstack/react-router';
+import { createRoute, lazyRouteComponent, Outlet, useLocation } from '@tanstack/react-router';
 import { requireDashboard, requireRole } from '../../Auth/routes/guards';
 import { rootRoute } from '../../../routes/rootRoute';
 import MessagesLayout from '../../Messages/Components/MessagesLayout';
@@ -67,16 +67,17 @@ const ownerPropertiesRoute = createRoute({
   path: 'properties',
   component: lazyRouteComponent(() => import('../pages/owner/OwnerPropertiesPage')),
 });
-// Asistente para crear / editar una propiedad. La ruta sin path solo le da el mismo contenedor
-// que al resto de pantallas del panel.
+// El asistente tiene su propio ancho y barra sticky; las pantallas de detalle
+// conservan el contenedor estándar del panel.
 const ownerPropertyEditorRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   id: 'property-editor',
-  component: () => (
-    <PageContainer>
-      <Outlet />
-    </PageContainer>
-  ),
+  component: function PropertyEditorContainer() {
+    const { pathname } = useLocation();
+    const path = pathname.replace(/\/$/, '');
+    const isForm = path.endsWith('/properties/new') || path.endsWith('/properties/new/location');
+    return isForm ? <Outlet /> : <PageContainer><Outlet /></PageContainer>;
+  },
 });
 const ownerPropertyNewRoute = createRoute({
   getParentRoute: () => ownerPropertyEditorRoute,
@@ -93,14 +94,6 @@ const ownerPropertyNewLocationRoute = createRoute({
     propertyId: optionalPropertyId(search.propertyId),
   }),
   component: lazyRouteComponent(() => import('../../Property/CreatePropertyLocationPage')),
-});
-const ownerPropertyNewMediaRoute = createRoute({
-  getParentRoute: () => ownerPropertyEditorRoute,
-  path: 'properties/new/media',
-  validateSearch: (search: Record<string, unknown>): { propertyId?: number } => ({
-    propertyId: optionalPropertyId(search.propertyId),
-  }),
-  component: lazyRouteComponent(() => import('../../Property/CreatePropertyStep2Page')),
 });
 const ownerPropertyDetailRoute = createRoute({
   getParentRoute: () => ownerPropertyEditorRoute,
@@ -186,7 +179,6 @@ export const dashboardRoute = DashboardRoute.addChildren([
     ownerPropertyEditorRoute.addChildren([
       ownerPropertyNewRoute,
       ownerPropertyNewLocationRoute,
-      ownerPropertyNewMediaRoute,
       ownerPropertyDetailRoute,
       ownerPropertyPublishedRoute,
     ]),

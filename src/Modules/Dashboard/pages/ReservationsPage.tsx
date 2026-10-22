@@ -5,6 +5,7 @@ import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import { useTenantProperties } from '../hooks/useTenantProperties';
 import { priceLabel } from '../../Explore/utils/property.utils';
+import PriceDetails from '../../Explore/PriceDetails';
 
 export default function ReservationsPage() {
   const properties = useTenantProperties();
@@ -23,6 +24,7 @@ export default function ReservationsPage() {
               <h2 className="text-lg font-bold text-primary">{property.title}</h2>
               <p className="text-sm text-muted-ink">{property.address}</p>
               <p className="font-semibold">{priceLabel(property)} / mes</p>
+              <PriceDetails price={property.displayPrice} />
               <p className="text-sm">Propietario: {property.owner.name}</p>
               {property.reservedAt && <p className="text-sm text-muted-ink">Reservada el {new Date(property.reservedAt).toLocaleDateString('es-CR')}</p>}
               {property.status === 'ACTIVE' && <a href={`/property_detail/${property.id}`} className="mt-auto font-bold text-secondary hover:underline">Ver detalles</a>}

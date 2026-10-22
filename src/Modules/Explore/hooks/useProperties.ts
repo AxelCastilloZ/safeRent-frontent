@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react'
 import type { Property } from '../interfaces/property.interface'
 import { getProperties, type PropertyFilters } from '../services/property.service'
+import { useDisplayCurrency } from '../../Auth/hooks/useDisplayCurrency'
 
 export function useProperties(filters: PropertyFilters, attempt: number) {
+  const { currency, ready } = useDisplayCurrency()
   const [result, setResult] = useState<{
     key: string
     properties: Property[]
     error: string
   } | null>(null)
 
-  const requestKey = `${attempt}:${JSON.stringify(filters)}`
+  const serializedFilters = JSON.stringify({ ...filters, displayCurrency: currency })
+  const requestKey = `${ready}:${attempt}:${serializedFilters}`
 
   useEffect(() => {
+    if (!ready) return
     const controller = new AbortController()
-    const refresh = () => { void getProperties(controller.signal, filters)
+    const refresh = () => { void getProperties(controller.signal, JSON.parse(serializedFilters) as PropertyFilters)
       .then((properties) => {
         if (!controller.signal.aborted) setResult({ key: requestKey, properties, error: '' })
       })
@@ -37,7 +41,7 @@ export function useProperties(filters: PropertyFilters, attempt: number) {
       window.removeEventListener('focus', refresh)
       document.removeEventListener('visibilitychange', onVisible)
     }
-  }, [requestKey])
+  }, [requestKey, ready, serializedFilters])
 
   return {
     properties:

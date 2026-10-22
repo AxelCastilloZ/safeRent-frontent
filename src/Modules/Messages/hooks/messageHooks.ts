@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import {
   createConversation,
+  createDirectConversation,
   getConversation,
   getConversations,
   getMessages,
@@ -10,6 +11,7 @@ import {
   sendMessage,
 } from '../services/messageServices'
 import type { Conversation, SendMessageRequest } from '../types/message'
+import { useMessagesBasePath } from './useMessagesBasePath'
 
 const MESSAGES_POLL_MS = 4000
 // La bandeja cambia poco: basta para que un arrendatario vea una consulta nueva sin recargar.
@@ -85,6 +87,23 @@ export function useMarkConversationRead() {
         queryClient.invalidateQueries({ queryKey: conversationKeys.list(user?.id) }),
         queryClient.invalidateQueries({ queryKey: conversationKeys.messages(conversationId) }),
       ]),
+  })
+}
+
+/**
+ * Administrador: inicia (o retoma) una conversación directa con un usuario y abre el chat dentro
+ * de su propia área del panel (la ruta base la entrega el contexto de Mensajes).
+ */
+export function useStartDirectConversation() {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+  const basePath = useMessagesBasePath()
+  return useMutation({
+    mutationFn: createDirectConversation,
+    onSuccess: async (conversation) => {
+      await queryClient.invalidateQueries({ queryKey: conversationKeys.all })
+      router.history.push(`${basePath}/${conversation.id}`)
+    },
   })
 }
 

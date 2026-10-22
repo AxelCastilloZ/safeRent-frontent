@@ -3,6 +3,8 @@ export interface ConversationParticipant {
   name: string
   surname1: string
   surname2?: string | null
+  /** Roles activos de la persona (la bandeja y el chat los traen; sirven para rotular conversaciones directas). */
+  roles?: string[]
 }
 
 import type { ReservationState } from '../../Reservations/models/reservation'
@@ -20,7 +22,8 @@ export interface Conversation {
   /** Mensajes de la otra persona que aún no abriste. Solo viene en la bandeja (GET /conversations/user/:id). */
   unreadCount?: number
   participants: ConversationParticipant[]
-  property: ConversationProperty
+  /** null = conversación directa (administrador ↔ usuario), sin propiedad de por medio. */
+  property: ConversationProperty | null
 }
 
 export interface Message {

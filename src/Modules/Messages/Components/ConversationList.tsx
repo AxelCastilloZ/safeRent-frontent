@@ -1,9 +1,10 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { Building2 } from 'lucide-react'
+import { Building2, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import { useConversations } from '../hooks/messageHooks'
 import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
 import {
+  conversationContext,
   otherParticipant,
   otherParticipantRole,
   participantFullName,
@@ -13,6 +14,7 @@ import {
 import ParticipantAvatar from './ParticipantAvatar'
 import RoleBadge from './RoleBadge'
 import UnreadBadge from './UnreadBadge'
+import UserSearchPanel from './UserSearchPanel'
 import Skeleton from './Skeleton'
 
 /** Bandeja (wireframe 3a): todas las conversaciones del usuario, sea inquilino o arrendatario en cada una. */
@@ -22,10 +24,13 @@ export default function ConversationList() {
   const { conversationId } = useParams({ strict: false })
   const basePath = useMessagesBasePath()
   const activeId = conversationId ? Number(conversationId) : null
+  // Solo el administrador inicia conversaciones (directas, con cualquier usuario activo).
+  const canStartDirect = Boolean(currentUser?.roles.includes('ADMIN'))
 
   return (
     <aside aria-label="Conversaciones" className="flex h-full flex-col border-r border-slate-200 bg-white">
       <h1 className="border-b border-slate-200 px-5 py-4 text-lg font-bold">Mensajes</h1>
+      {canStartDirect && <UserSearchPanel />}
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isPending ? (
           <div className="space-y-4 p-5" aria-busy="true">
@@ -49,10 +54,16 @@ export default function ConversationList() {
         ) : conversations.length === 0 ? (
           <div className="space-y-1 p-5 text-sm text-slate-500">
             <p className="font-medium text-primary">Todavía no tienes conversaciones.</p>
-            <p>Entra a una propiedad y pulsa «Chatear con el propietario», o espera a que un interesado te escriba.</p>
-            <Link to="/explorar" className="inline-block pt-2 font-semibold text-secondary hover:underline">
-              Explorar propiedades
-            </Link>
+            {canStartDirect ? (
+              <p>Busca un usuario arriba para iniciar una conversación.</p>
+            ) : (
+              <>
+                <p>Entra a una propiedad y pulsa «Chatear con el propietario», o espera a que un interesado te escriba.</p>
+                <Link to="/explorar" className="inline-block pt-2 font-semibold text-secondary hover:underline">
+                  Explorar propiedades
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <ul>
@@ -75,8 +86,14 @@ export default function ConversationList() {
                       </div>
                       <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
                         <p className="flex min-w-0 items-center gap-1">
-                          <Building2 className="size-3.5 shrink-0" aria-hidden="true" />
-                          <span className="truncate">{conversation.property.title}</span>
+                          {conversation.property ? (
+                            <Building2 className="size-3.5 shrink-0" aria-hidden="true" />
+                          ) : (
+                            <ShieldCheck className="size-3.5 shrink-0" aria-hidden="true" />
+                          )}
+                          <span className="truncate">
+                            {currentUser ? conversationContext(conversation, currentUser.id) : (conversation.property?.title ?? '')}
+                          </span>
                         </p>
                         <span className="flex shrink-0 items-center gap-2">
                           <UnreadBadge count={unread} />

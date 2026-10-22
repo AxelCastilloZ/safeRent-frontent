@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { ShieldCheck, UserCheck, UserX } from 'lucide-react';
+import { Mail, ShieldCheck, UserCheck, UserX } from 'lucide-react';
 import { ROLE_LABELS } from '../../../Auth/utils/roles';
 import type { AppRole } from '../../../Auth/types/roles';
+import { useStartDirectConversation } from '../../../Messages/hooks/messageHooks';
+import { getApiErrorMessage } from '../../../Messages/utils/errors';
 import ManageRolesModal from '../../../Users/Components/ManageRolesModal';
 import { useAdminUsers, useSetUserActive } from '../../../Users/hooks/useAdminUsers';
 import type { AdminUser } from '../../../Users/types/user';
@@ -9,6 +11,7 @@ import EmptyPanel from '../../Components/EmptyPanel';
 import FilterTabs from '../../Components/FilterTabs';
 import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
+import { useDashboardUser } from '../../hooks/useDashboardUser';
 import { Users as UsersIcon } from 'lucide-react';
 
 const filters = [
@@ -45,6 +48,8 @@ export default function AdminUsersPage() {
 
   const users = useAdminUsers();
   const setActive = useSetUserActive();
+  const startDirect = useStartDirectConversation();
+  const { userId: currentUserId } = useDashboardUser();
 
   const visible = (users.data ?? []).filter((user) => {
     switch (filter) {
@@ -67,6 +72,24 @@ export default function AdminUsersPage() {
       await setActive.mutateAsync({ id: user.id, isActive: !user.isActive });
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'No se pudo actualizar la cuenta.');
+    }
+  }
+
+  /** Por qué no se puede escribir a esta cuenta (o undefined si sí se puede). */
+  function messageBlockedReason(user: AdminUser): string | undefined {
+    if (user.id === currentUserId) return 'No puedes escribirte a ti mismo';
+    if (hasRole(user, 'ADMIN')) return 'No se puede escribir a otro administrador';
+    if (!user.isActive) return 'No se puede escribir a una cuenta suspendida';
+    return undefined;
+  }
+
+  async function sendMessage(user: AdminUser) {
+    setActionError('');
+    try {
+      // Crea (o retoma) la conversación directa y abre el chat en /dashboard/admin/messages/:id.
+      await startDirect.mutateAsync(user.id);
+    } catch (err) {
+      setActionError(getApiErrorMessage(err, 'No se pudo abrir la conversación.'));
     }
   }
 
@@ -132,6 +155,16 @@ export default function AdminUsersPage() {
                   <td className="px-4 py-3 text-muted-ink">{formatDate(user.createdAt)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        title={messageBlockedReason(user) ?? 'Enviar mensaje'}
+                        aria-label={`Enviar mensaje a ${user.name}`}
+                        disabled={Boolean(messageBlockedReason(user)) || startDirect.isPending}
+                        className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-primary disabled:opacity-40"
+                        onClick={() => void sendMessage(user)}
+                      >
+                        <Mail size={17} />
+                      </button>
                       <button
                         type="button"
                         title="Gestionar roles"

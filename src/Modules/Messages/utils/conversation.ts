@@ -1,3 +1,4 @@
+import { getPrimaryRole, ROLE_LABELS } from '../../Auth/utils/roles'
 import type { Conversation, ConversationParticipant } from '../types/message'
 
 export function participantFullName(participant: ConversationParticipant): string {
@@ -13,14 +14,32 @@ export function otherParticipant(conversation: Conversation, currentUserId: numb
   return conversation.participants.find((participant) => participant.id !== currentUserId)
 }
 
-/** El rol no es del usuario sino de la conversación: dueño de ESA propiedad o no. */
-export function isPropertyOwner(conversation: Conversation, currentUserId: number): boolean {
-  return conversation.property.owner.id === currentUserId
+/** Conversación directa (administrador ↔ usuario): no gira en torno a una propiedad. */
+export function isDirectConversation(conversation: Conversation): boolean {
+  return conversation.property === null
 }
 
-/** Etiqueta del interlocutor: si yo soy el dueño, el otro es "Inquilino"; si no, es el "Arrendatario". */
-export function otherParticipantRole(conversation: Conversation, currentUserId: number): 'Inquilino' | 'Arrendatario' {
-  return isPropertyOwner(conversation, currentUserId) ? 'Inquilino' : 'Arrendatario'
+/** El rol no es del usuario sino de la conversación: dueño de ESA propiedad o no. */
+export function isPropertyOwner(conversation: Conversation, currentUserId: number): boolean {
+  return conversation.property?.owner.id === currentUserId
+}
+
+/**
+ * Etiqueta del interlocutor. En una conversación por propiedad: si yo soy el dueño, el otro es "Inquilino";
+ * si no, es el "Arrendatario". En una directa no hay propiedad: se rotula por su rol en la plataforma.
+ */
+export function otherParticipantRole(conversation: Conversation, currentUserId: number): string {
+  if (!isDirectConversation(conversation)) return isPropertyOwner(conversation, currentUserId) ? 'Inquilino' : 'Arrendatario'
+
+  const role = getPrimaryRole(otherParticipant(conversation, currentUserId)?.roles ?? [])
+  return role ? ROLE_LABELS[role] : 'Usuario'
+}
+
+/** Segunda línea de la bandeja y del chat: la propiedad, o quién escribe si es una conversación directa. */
+export function conversationContext(conversation: Conversation, currentUserId: number): string {
+  if (conversation.property) return conversation.property.title
+  const isAdmin = otherParticipant(conversation, currentUserId)?.roles?.includes('ADMIN')
+  return isAdmin ? 'Mensaje del administrador' : 'Conversación directa'
 }
 
 /** Fecha corta para la bandeja: "hoy", "ayer" o "12 oct". */

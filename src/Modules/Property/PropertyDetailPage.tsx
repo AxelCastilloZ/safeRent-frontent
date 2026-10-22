@@ -1,46 +1,40 @@
 import ReservationLabel from '../Reservations/Components/ReservationLabel'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { AlertTriangle, CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
-import type { Property } from './types/property'
 import { statusBadgeVariant } from './utils/propertyStatus'
-import Stepper from './Components/Stepper'
-import { PROPERTY_STEPS } from './constants/propertySteps'
+import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
+import { priceLabel } from '../Explore/utils/property.utils'
+import PriceDetails from '../Explore/PriceDetails'
+import { useSessionToken } from '../Auth/services/authSession'
 
 export default function PropertyDetailPage() {
+  const { currency, ready } = useDisplayCurrency()
+  const token = useSessionToken()
   const { propertyId } = useParams({ strict: false }) as { propertyId: string }
   const navigate = useNavigate()
-  const [property, setProperty] = useState<Property | null>(null)
-  const [loading, setLoading] = useState(true)
+  const propertyQuery = useQuery({
+    queryKey: ['owner-property', propertyId, currency, token],
+    queryFn: () => propertyService.getById(Number(propertyId), currency),
+    enabled: ready && Boolean(token) && Number.isInteger(Number(propertyId)) && Number(propertyId) > 0,
+    retry: false,
+  })
+  const property = propertyQuery.data
+  const loading = propertyQuery.isPending
+  const loadError = propertyQuery.isError ? 'No se pudo cargar la propiedad' : null
   const [error, setError] = useState<string | null>(null)
   const [publishing, setPublishing] = useState(false)
-
-  useEffect(() => {
-    if (!propertyId) return
-    loadProperty(Number(propertyId))
-  }, [propertyId])
-
-  async function loadProperty(propertyId: number) {
-    try {
-      setLoading(true)
-      const data = await propertyService.getById(propertyId)
-      setProperty(data)
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No se pudo cargar la propiedad')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   async function handlePublish() {
     if (!property) return
     setPublishing(true)
     try {
       await propertyService.publish(property.id)
-      await loadProperty(property.id)
+      await propertyQuery.refetch()
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Error al publicar')
     } finally {
@@ -52,10 +46,10 @@ export default function PropertyDetailPage() {
     return <div className="flex items-center justify-center py-24 text-sm text-slate-400">Cargando propiedad...</div>
   }
 
-  if (error || !property) {
+  if (error || loadError || !property) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <p className="text-sm text-red-600">{error ?? 'Propiedad no encontrada'}</p>
+        <p className="text-sm text-red-600">{error ?? loadError ?? 'Propiedad no encontrada'}</p>
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-primary transition hover:bg-slate-50"
@@ -72,14 +66,12 @@ export default function PropertyDetailPage() {
   const hasServices = (property.services?.length ?? 0) > 0
   const hasLocation = typeof property.latitude === 'number' && typeof property.longitude === 'number' && Number.isFinite(property.latitude) && Number.isFinite(property.longitude)
   const canSubmit = hasData && hasImages && hasServices && hasLocation
-  const isDraft = property.status === 'DRAFT'
   const canPublish = canSubmit && (property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE')
 
   const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
     <div className="mx-auto max-w-3xl">
-      {isDraft && <div className="mb-6"><Stepper steps={PROPERTY_STEPS} currentStep={4} /></div>}
       {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
         Confirma la ubicación en el mapa para publicar.
         <button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>Completar ubicación</button>
@@ -146,7 +138,7 @@ export default function PropertyDetailPage() {
             <DollarSign size={16} className="mt-0.5 shrink-0 text-slate-400" />
             <div>
               <span className="block text-xs font-medium text-slate-400">Precio / mes</span>
-              <span className="text-sm text-primary">{property.cost ? `${property.cost} ${property.typeOfCoin || ''}`.trim() : '—'}</span>
+              <div className="text-sm text-primary">{priceLabel(property)}<PriceDetails price={property.displayPrice} /></div>
             </div>
           </div>
           <div className="flex items-start gap-2">

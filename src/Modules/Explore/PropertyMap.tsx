@@ -63,8 +63,8 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
         icon: L.divIcon({
           className: 'price-marker',
           html: label,
-          iconSize: [112, 38],
-          iconAnchor: [56, 38],
+          iconSize: [174, 38],
+          iconAnchor: [87, 38],
         }),
         title: `${property.title}: ${priceLabel(property)}`,
         keyboard: true,

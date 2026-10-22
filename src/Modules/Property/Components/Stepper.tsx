@@ -1,3 +1,5 @@
+import { Check } from 'lucide-react'
+
 type StepperProps = {
   steps: string[]
   currentStep: number
@@ -12,18 +14,18 @@ export default function Stepper({ steps, currentStep }: StepperProps) {
         const isCompleted = stepNum < currentStep
 
         return (
-          <div key={label} className="flex items-center gap-1.5">
-            {i > 0 && <div className={`h-px w-6 ${isCompleted ? 'bg-secondary' : 'bg-slate-200'}`} />}
+          <div key={label} className="flex items-center gap-1.5" aria-current={isActive ? "step" : undefined}>
+            {i > 0 && <div className={`h-px w-6 ${isCompleted ? 'bg-teal-700' : 'bg-slate-200'}`} />}
             <span
               className={`grid size-7 place-items-center rounded-full text-xs font-bold ${
                 isActive
                   ? 'bg-primary text-white'
                   : isCompleted
-                    ? 'bg-secondary text-white'
+                    ? 'bg-teal-700 text-white'
                     : 'bg-slate-100 text-slate-400'
               }`}
             >
-              {stepNum}
+              {isCompleted ? <Check size={14} aria-hidden /> : stepNum}
             </span>
             <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-slate-400'}`}>
               {label}

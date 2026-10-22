@@ -5,6 +5,9 @@ import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { statusBadgeVariant } from './utils/propertyStatus'
 import type { Property } from './types/property'
+import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
+import { priceLabel } from '../Explore/utils/property.utils'
+import PriceDetails from '../Explore/PriceDetails'
 
 const COPY: Record<Property['status'], { icon: typeof CheckCircle; title: string; description: string }> = {
   DRAFT: { icon: Clock, title: 'Propiedad guardada', description: 'Todavía no se ha enviado a revisión.' },
@@ -15,14 +18,17 @@ const COPY: Record<Property['status'], { icon: typeof CheckCircle; title: string
 }
 
 export default function PropertyPublishedPage() {
+  const { currency, ready } = useDisplayCurrency()
   const { propertyId } = useParams({ strict: false }) as { propertyId: string }
   const navigate = useNavigate()
   const [property, setProperty] = useState<Property | null>(null)
 
   useEffect(() => {
-    if (!propertyId) return
-    propertyService.getById(Number(propertyId)).then(setProperty).catch(() => {})
-  }, [propertyId])
+    if (!propertyId || !ready) return
+    let current = true
+    propertyService.getById(Number(propertyId), currency).then(value => { if (current) setProperty(value) }).catch(() => {})
+    return () => { current = false }
+  }, [propertyId, currency, ready])
 
   const copy = property ? COPY[property.status] : COPY.PENDING
   const Icon = copy.icon
@@ -41,8 +47,9 @@ export default function PropertyPublishedPage() {
           <div className="flex-1 text-left">
             <div className="text-sm font-bold text-primary">{property.title}</div>
             <div className="mt-0.5 text-xs text-slate-400">
-              {property.address} · ${property.cost}/{property.typeOfCoin === 'CRC' ? 'mes' : property.typeOfCoin}
+              {property.address} · {priceLabel(property)} / mes
             </div>
+            <PriceDetails price={property.displayPrice} />
           </div>
           <StatusBadge variant={statusBadgeVariant(property.status)} />
         </div>

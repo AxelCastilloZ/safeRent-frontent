@@ -1,7 +1,7 @@
 import PropertyComments from '../Comments/Components/PropertyComments'
 import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, BedDouble, Heart, MapPin, MessageCircle, Share2, Users } from 'lucide-react'
 import Navbar from '../LandingPage/Components/Navbar'
 import Footer from '../LandingPage/Components/Footer'
@@ -12,19 +12,26 @@ import { priceLabel } from '../Explore/utils/property.utils'
 import { useAuth } from '../Auth/hooks/authHooks'
 import { useStartConversation } from '../Messages/hooks/messageHooks'
 import { consumePendingChatProperty, setPendingChatProperty } from '../Messages/utils/pendingChat'
+import PriceDetails from '../Explore/PriceDetails'
+import { useSavedPropertyIds, useToggleSavedProperty } from '../SavedProperties/hooks/savedPropertyHooks'
+import { consumePendingSaveProperty, setPendingSaveProperty } from '../SavedProperties/utils/pendingSave'
 
 export default function PublicPropertyPage() {
   const { propertyId } = useParams({ strict: false })
   const id = Number(propertyId)
   const query = usePublicProperty(id)
   const [notice, setNotice] = useState('')
-  const [saved, setSaved] = useState(() => {
-    try { return localStorage.getItem(`saved-property-${id}`) === 'true' } catch { return false }
-  })
   const property = query.data
   const navigate = useNavigate()
   const { user: currentUser, hasSession } = useAuth()
   const startConversation = useStartConversation()
+  const savedIds = useSavedPropertyIds()
+  const savedMutation = useToggleSavedProperty()
+  const saved = property !== undefined && Boolean(savedIds.data?.includes(property.id))
+  // Es la propiedad de quien tiene la sesión: no puede chatear ni guardarla (el backend también lo rechaza).
+  const isOwnProperty = Boolean(property && currentUser && currentUser.id === property.owner.id)
+  // Solo el inquilino guarda propiedades. Sin sesión (o mientras se verifica) el botón se muestra.
+  const canShowSave = property !== undefined && !isOwnProperty && (!currentUser || currentUser.roles.includes('CLIENT'))
 
   function contactOwner() {
     if (!property) return
@@ -42,10 +49,6 @@ export default function PublicPropertyPage() {
       setNotice('Necesitas el rol de inquilino para contactar al propietario.');
       return;
     }
-    if (currentUser.id === property.owner.id) {
-      setNotice('Esta propiedad es tuya: no puedes chatear contigo mismo.')
-      return
-    }
     startConversation.mutate({ participantIds: [currentUser.id, property.owner.id], propertyId: property.id })
   }
 
@@ -59,12 +62,41 @@ export default function PublicPropertyPage() {
     if (consumePendingChatProperty() !== loadedPropertyId || currentUserId === ownerId) return
     startConversationMutate({ participantIds: [currentUserId, ownerId], propertyId: loadedPropertyId })
   }, [loadedPropertyId, ownerId, currentUserId, startConversationMutate])
+
+  function updateSaved(propertyId: number, save: boolean) {
+    savedMutation.mutate({ propertyId, save }, {
+      onSuccess: () => setNotice(save ? 'Propiedad guardada en tu cuenta.' : 'Propiedad eliminada de tus guardadas.'),
+      onError: () => setNotice('No pudimos actualizar tus guardadas. Intenta de nuevo.'),
+    })
+  }
+
+  // Al volver del login con la intención de guardar pendiente, se guarda sola.
+  const { mutate: saveMutate } = savedMutation
+  useEffect(() => {
+    if (loadedPropertyId === undefined || ownerId === undefined || currentUserId === undefined) return
+    if (consumePendingSaveProperty() !== loadedPropertyId || currentUserId === ownerId) return
+    saveMutate(
+      { propertyId: loadedPropertyId, save: true },
+      {
+        onSuccess: () => setNotice('Propiedad guardada en tu cuenta.'),
+        onError: () => setNotice('No pudimos guardar la propiedad. Intenta de nuevo.'),
+      },
+    )
+  }, [loadedPropertyId, ownerId, currentUserId, saveMutate])
+
   function toggleSaved() {
-    try {
-      localStorage.setItem(`saved-property-${id}`, String(!saved))
-      setSaved(!saved)
-      setNotice(!saved ? 'Propiedad guardada en este dispositivo.' : 'Propiedad eliminada de tus guardados.')
-    } catch { setNotice('No se pudo guardar la propiedad en este dispositivo.') }
+    if (!property) return
+    if (!hasSession) {
+      // Sin sesión: se recuerda la intención y se guarda al volver del login.
+      setPendingSaveProperty(property.id)
+      void navigate({ to: '/login', search: { next: `/property_detail/${property.id}` } })
+      return
+    }
+    if (!currentUser) {
+      setNotice('Estamos verificando tu sesión. Intenta de nuevo en un momento.')
+      return
+    }
+    updateSaved(property.id, !saved)
   }
   async function share() {
     try {
@@ -80,7 +112,7 @@ export default function PublicPropertyPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <a href="/#properties" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral hover:text-secondary"><ArrowLeft size={18} />Volver a resultados</a>
         {property && <div className="flex gap-2">
-          <button type="button" onClick={toggleSaved} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? 'Guardada' : 'Guardar'}</button>
+          {canShowSave && <button type="button" onClick={toggleSaved} disabled={savedMutation.isPending} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary disabled:opacity-60"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? 'Guardada' : 'Guardar'}</button>}
           <button type="button" onClick={() => void share()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Share2 size={16} />Compartir</button>
         </div>}
       </div>
@@ -106,9 +138,17 @@ export default function PublicPropertyPage() {
           <aside aria-label="Precio y contacto" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
             <p><span className="text-3xl font-extrabold">{priceLabel(property)}</span><span className="text-sm text-neutral/70"> / mes</span></p>
             <ReservationLabel property={property} />
-            <p className="mt-2 text-xs text-neutral/60">Precio en {property.typeOfCoin || 'CRC'}</p>
+            <PriceDetails price={property.displayPrice} />
             <div className="my-6 border-y border-slate-100 py-4"><p className="text-xs uppercase tracking-wide text-neutral/60">Publicado por</p><p className="mt-1 font-bold">{property.owner.name}</p></div>
+            {isOwnProperty ? (
+              <div role="status" className="rounded-xl bg-slate-50 p-4 text-sm text-neutral">
+                <p className="font-bold text-primary">Esta propiedad es tuya</p>
+                <p className="mt-1 text-neutral/75">Los interesados te escribirán y verás sus mensajes en tu panel.</p>
+                <Link to="/dashboard/owner/properties" className="mt-2 inline-block font-bold text-secondary hover:underline">Ir a mis propiedades</Link>
+              </div>
+            ) : (
             <button type="button" onClick={contactOwner} disabled={startConversation.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"><MessageCircle size={20} aria-hidden="true" />{startConversation.isPending ? 'Abriendo chat…' : 'Chatear con el propietario'}</button>
+            )}
           </aside>
         </div>
       </>}

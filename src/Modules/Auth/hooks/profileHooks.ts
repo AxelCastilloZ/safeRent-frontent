@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProfile, updateProfile, changePassword } from '../services/profileServices';
+import { getProfile, updateProfile, changePassword, getProfileCurrencyOptions } from '../services/profileServices';
 import { useSessionToken } from '../services/authSession';
 export function useProfile() {
   const token = useSessionToken();
   return useQuery({ queryKey: ['auth', 'profile', token], enabled: Boolean(token), queryFn: getProfile, retry: false });
+}
+export function useProfileCurrencyOptions() {
+  const token = useSessionToken();
+  return useQuery({ queryKey: ['auth', 'profile-options', token], enabled: Boolean(token), queryFn: getProfileCurrencyOptions, staleTime: Infinity, retry: false });
 }
 export function useUpdateProfile() {
   const qc = useQueryClient();
