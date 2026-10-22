@@ -50,7 +50,7 @@ export default function AttentionSection() {
               </li>
             ))}
           </ul>
-          {pending.length > SHOWN && <p className="mt-3 text-xs text-muted-ink">{i18n.t("dashboard:pendingreviewsection_y")}{' '}{pending.length - SHOWN}{' '}{i18n.t("dashboard:attentionsection_mas_en_mis_propiedades")}</p>}
+          {pending.length > SHOWN && <p className="mt-3 text-xs text-muted-ink">{i18n.t('dashboard:moreProperties', { count: pending.length - SHOWN })}</p>}
         </>
       )}
     </HomeSection>

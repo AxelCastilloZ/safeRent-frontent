@@ -176,5 +176,8 @@
   "publishentrypage_crea_tu_propiedad": "Create your property",
   "publishentrypage_completa_los_datos_y_envia_tu_propiedad_a_revision": "Complete the details and submit your property for review. Once approved, you will receive the owner role. If you are not signed in, we will ask you to sign in before continuing.",
   "publishentrypage_crear_propiedad": "Create property",
-  "publishentrypage_crear_cuenta": "Create account"
+  "publishentrypage_crear_cuenta": "Create account",
+  "selectedServices_one": "{{count}} selected",
+  "selectedServices_other": "{{count}} selected",
+  "selectedServices_many": "{{count}} selected"
 }

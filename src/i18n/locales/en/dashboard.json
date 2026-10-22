@@ -195,5 +195,11 @@
   "myProperties": "My properties",
   "publishProperty": "Publish a property",
   "adminConversationHelp": "Start a direct conversation with a user from the user list.",
-  "ownerConversationHelp": "When someone contacts you from one of your properties, the conversation will appear here."
+  "ownerConversationHelp": "When someone contacts you from one of your properties, the conversation will appear here.",
+  "morePending_one": "and {{count}} more waiting",
+  "morePending_other": "and {{count}} more waiting",
+  "morePending_many": "and {{count}} more waiting",
+  "moreProperties_one": "and {{count}} more in My properties",
+  "moreProperties_other": "and {{count}} more in My properties",
+  "moreProperties_many": "and {{count}} more in My properties"
 }

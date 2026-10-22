@@ -323,7 +323,7 @@ export default function CreatePropertyStep1Page() {
         </div>
 
         </FormSection>
-        <FormSection icon={Sparkles} title={i18n.t("dashboard:adminhomepage_servicios")} description={i18n.t("property:createpropertystep1page_selecciona_todo_lo_que_incluye_el_alquiler")} aside={<span className="text-xs text-slate-500" aria-live="polite">{form.serviceIds.length}{' '}{i18n.t("property:createpropertystep1page_seleccionados")}</span>}>
+        <FormSection icon={Sparkles} title={i18n.t("dashboard:adminhomepage_servicios")} description={i18n.t("property:createpropertystep1page_selecciona_todo_lo_que_incluye_el_alquiler")} aside={<span className="text-xs text-slate-500" aria-live="polite">{i18n.t('property:selectedServices', { count: form.serviceIds.length })}</span>}>
         <div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {services.data?.map((service) => {

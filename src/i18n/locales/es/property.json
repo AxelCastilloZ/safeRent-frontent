@@ -176,5 +176,8 @@
   "publishentrypage_crea_tu_propiedad": "Crea tu propiedad",
   "publishentrypage_completa_los_datos_y_envia_tu_propiedad_a_revision": "Completa los datos y envía tu propiedad a revisión. Al aprobarla, recibirás el rol de propietario. Si todavía no has iniciado sesión, te pediremos hacerlo antes de continuar.",
   "publishentrypage_crear_propiedad": "Crear propiedad",
-  "publishentrypage_crear_cuenta": "Crear cuenta"
+  "publishentrypage_crear_cuenta": "Crear cuenta",
+  "selectedServices_one": "{{count}} seleccionado",
+  "selectedServices_other": "{{count}} seleccionados",
+  "selectedServices_many": "{{count}} seleccionados"
 }

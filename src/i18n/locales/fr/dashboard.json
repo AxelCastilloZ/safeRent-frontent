@@ -195,5 +195,11 @@
   "myProperties": "Mes biens",
   "publishProperty": "Publier un bien",
   "adminConversationHelp": "Démarrez une conversation directe avec un utilisateur depuis la liste des utilisateurs.",
-  "ownerConversationHelp": "Lorsqu’une personne vous contactera depuis l’un de vos biens, la conversation apparaîtra ici."
+  "ownerConversationHelp": "Lorsqu’une personne vous contactera depuis l’un de vos biens, la conversation apparaîtra ici.",
+  "morePending_one": "et {{count}} autre bien en attente",
+  "morePending_other": "et {{count}} autres biens en attente",
+  "morePending_many": "et {{count}} autres biens en attente",
+  "moreProperties_one": "et {{count}} autre bien dans Mes biens",
+  "moreProperties_other": "et {{count}} autres biens dans Mes biens",
+  "moreProperties_many": "et {{count}} autres biens dans Mes biens"
 }

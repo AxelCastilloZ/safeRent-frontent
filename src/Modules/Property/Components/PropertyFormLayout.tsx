@@ -2,6 +2,7 @@ import { catalogText } from '../../../i18n/catalog';
 import { currentLocale } from '../../../i18n/formatters';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
+import LanguageSelector from '../../../i18n/LanguageSelector';
 import type { ReactNode } from 'react'
 import { ArrowLeft, ArrowRight, BedDouble, Building2, CheckCircle2, ChevronRight, Circle, MapPin, Save, ShieldCheck, Users, type LucideIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
@@ -77,6 +78,7 @@ export function PropertyFormLayout({ step, editing, preview, children, actions }
   const title = editing ? i18n.t("property:propertyformlayout_editar_propiedad") : i18n.t("property:propertyformlayout_nueva_propiedad")
   return <div className="property-flow flex min-h-full flex-col">
     <div className="mx-auto w-full max-w-[1160px] flex-1 px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+      <div className="mb-4 flex justify-end"><LanguageSelector /></div>
       <header className="flex flex-col justify-between gap-5 xl:flex-row xl:items-end">
         <div><nav aria-label={i18n.t("property:propertyformlayout_ruta")} className="mb-2 flex items-center gap-1 text-sm text-slate-500"><Link to="/dashboard/owner/properties" className="hover:text-primary">{i18n.t("property:propertyformlayout_mis_publicaciones")}</Link><ChevronRight size={14} /><span>{title}</span></nav>
           <h1 className="text-2xl font-bold tracking-tight sm:text-[28px]">{title}</h1><p className="mt-1 text-sm text-slate-600">{step === 1 ? i18n.t("property:propertyformlayout_cuentanos_que_hace_especial_a_tu_propiedad") : i18n.t("property:propertyformlayout_ubica_tu_propiedad_y_muestra_sus_mejores_espacios")}</p>

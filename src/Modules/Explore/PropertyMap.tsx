@@ -100,6 +100,7 @@ export default function PropertyMap({ properties, selected, onSelect }: Props) {
 
   useEffect(() => {
     const container = map.current?.getContainer();
+    container?.querySelector('.leaflet-control-attribution a[href*="leafletjs.com"]')?.setAttribute('title', i18n.t('common:mapLibrary'));
     for (const [selector, key] of [['.leaflet-control-zoom-in', 'common:zoomIn'], ['.leaflet-control-zoom-out', 'common:zoomOut']]) {
       const button = container?.querySelector(selector);
       button?.setAttribute('title', i18n.t(key));

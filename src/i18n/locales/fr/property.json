@@ -176,5 +176,8 @@
   "publishentrypage_crea_tu_propiedad": "Créez votre bien",
   "publishentrypage_completa_los_datos_y_envia_tu_propiedad_a_revision": "Remplissez les informations et soumettez votre bien à vérification. Après approbation, vous recevrez le rôle de propriétaire. Si vous n’êtes pas connecté, nous vous demanderons de vous connecter avant de continuer.",
   "publishentrypage_crear_propiedad": "Créer un bien",
-  "publishentrypage_crear_cuenta": "Créer un compte"
+  "publishentrypage_crear_cuenta": "Créer un compte",
+  "selectedServices_one": "{{count}} sélectionné",
+  "selectedServices_other": "{{count}} sélectionnés",
+  "selectedServices_many": "{{count}} sélectionnés"
 }

@@ -195,5 +195,11 @@
   "myProperties": "Mis propiedades",
   "publishProperty": "Publicar propiedad",
   "adminConversationHelp": "Inicia una conversación directa con un usuario desde la lista de usuarios.",
-  "ownerConversationHelp": "Cuando un interesado te escriba desde una de tus propiedades, la conversación aparecerá aquí."
+  "ownerConversationHelp": "Cuando un interesado te escriba desde una de tus propiedades, la conversación aparecerá aquí.",
+  "morePending_one": "y {{count}} más en espera",
+  "morePending_other": "y {{count}} más en espera",
+  "morePending_many": "y {{count}} más en espera",
+  "moreProperties_one": "y {{count}} más en Mis propiedades",
+  "moreProperties_other": "y {{count}} más en Mis propiedades",
+  "moreProperties_many": "y {{count}} más en Mis propiedades"
 }

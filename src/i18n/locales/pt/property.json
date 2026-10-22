@@ -176,5 +176,8 @@
   "publishentrypage_crea_tu_propiedad": "Cadastre seu imóvel",
   "publishentrypage_completa_los_datos_y_envia_tu_propiedad_a_revision": "Preencha os dados e envie seu imóvel à revisão. Após a aprovação, você receberá a função de proprietário. Se ainda não entrou na conta, pediremos que entre antes de continuar.",
   "publishentrypage_crear_propiedad": "Cadastrar imóvel",
-  "publishentrypage_crear_cuenta": "Criar conta"
+  "publishentrypage_crear_cuenta": "Criar conta",
+  "selectedServices_one": "{{count}} selecionado",
+  "selectedServices_other": "{{count}} selecionados",
+  "selectedServices_many": "{{count}} selecionados"
 }

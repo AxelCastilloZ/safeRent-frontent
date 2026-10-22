@@ -3,7 +3,7 @@
 ## Estado — 22 de octubre de 2026
 
 Se integró JSON + i18next + react-i18next + Intl nativo en los módulos de la aplicación.
-Hay 23 namespaces y 1.187 claves por idioma: español (es-CR), inglés (en-US), francés (fr-FR) y portugués de Brasil (pt-BR).
+Hay 23 namespaces y 1.197 claves por idioma: español (es-CR), inglés (en-US), francés (fr-FR) y portugués de Brasil (pt-BR).
 Los recursos están en src/i18n/locales/{es,en,fr,pt}/{modulo}.json. Los correos tienen sus propios cuatro JSON en el backend.
 
 | Área del trabajo pendiente original | Implementación incorporada |
@@ -81,41 +81,55 @@ La cola cifra identificador e idioma de solicitud. El worker prioriza la prefere
 Los trabajos anteriores que solo cifraban el identificador siguen siendo compatibles.
 El enlace lleva lang, y la duración distingue singular/plural. Los tests simulan el transporte; no se enviaron correos reales en esta entrega.
 
-## Controles y resultados
+## Controles y resultados — 22 de octubre de 2026
 
-- pnpm i18n:check: igualdad de claves y variables en los cuatro idiomas, valores no vacíos, etiquetas de Trans, referencias, parámetros requeridos, plurales, respaldo y detección.
-- El mismo control incluye la auditoría AST de JSX, atributos, configuraciones y expresiones. Resultado actual: cero candidatos de texto visible incrustado.
-- La auditoría clasifica identificadores, valores técnicos, aliases, marcas y símbolos. Cero candidatos no demuestra por sí solo que una integración externa o una nueva entrada de catálogo esté traducida.
-- Los tests también comprueban errores almacenados al alternar idioma, códigos de catálogo independientes del nombre, traducciones personalizadas, fechas sin desplazamiento y precios grandes exactos en los cuatro locales.
-- pnpm build ejecuta el control antes de TypeScript/Vite. TypeScript, Vite y ESLint del frontend pasan. El backend compila y empaqueta los cuatro JSON de correo.
-- El control de rutas por rol verifica CLIENT, OWNER, ADMIN, cuentas con varios roles y redirección por pérdida de sesión.
-- Las 15 suites relevantes del backend aprobaron 169 pruebas, incluidos los contratos de búsqueda y catálogo corregidos.
-- La suite global final aprobó 34/49 suites: 381 pruebas aprobadas y 24 fallidas; otras dos suites no ejecutan casos por Jest/ESM. El detalle y los comandos están en [el informe del backend](../../safeRent-backend/docs/i18n-verification.md). La suite global no se declara aprobada.
-- Revisión en navegador: cambios de idioma, conservación de formularios/errores (primera etapa), búsqueda traducida de FAQ en francés y política completa con fecha localizada en portugués. Hay capturas en esta carpeta.
+- i18n:check: 23 namespaces, 1197 claves por idioma y 1282 referencias verificadas. Igualdad de claves/variables, valores no vacíos, etiquetas, parámetros, plurales, respaldo, detección, errores almacenados, catálogos, fechas e importes exactos.
+- Auditoría AST: cero candidatos de texto incrustado. Incluye atributos personalizados como linkLabel/emptyDescription; sigue siendo una heurística, acompañada por pruebas de integración y navegador.
+- TypeScript, ESLint y build del frontend aprobados. El backend compila y empaqueta los cuatro JSON de correo. Rutas por rol y siete controles monetarios aprobados.
+- **Suite global: 49/49 suites y 411/411 pruebas aprobadas, sin omisiones.** Los fixtures de repositorios/dependencias y las expectativas de estados/publicación quedaron actualizados. Los tests de login incluyen contraseña incorrecta, cuentas inactivas/ausentes y claims de sesión. El contrato público de detalles se conserva; contactar al propietario y acceder a datos privados siguen protegidos.
+- **216 solicitudes HTTP aprobadas contra PostgreSQL**, 54 por idioma, con JWT/guards reales: perfil, permisos, borrador/envío/cambios/aprobación, conversación idempotente, remitente, lectura, adjuntos privados y MIME, reserva/liberación, guardados, comentario único/moderación y conversaciones directas. No se enviaron mensajes a cuentas reales ni correos.
+- Los detalles, comandos y resúmenes están en [el informe del backend](../../safeRent-backend/docs/i18n-verification.md), i18n-jest-checks.json e i18n-flow-checks.json.
 
-## Verificación previa a publicación — 22 de octubre de 2026
+## Revisión en navegador
 
-Completado en esta base y checkout:
+Las comprobaciones usan cuentas y contenido ficticios dentro de una transacción PostgreSQL, con recuperación/correo y sincronización de monedas deshabilitados. No sustituyen dispositivos físicos.
 
-- Migraciones versionadas aplicadas y registradas, prueba up/down/repetición en tablas temporales y comprobación posterior sin pendientes.
-- Persistencia PostgreSQL de preferencias para CLIENT, OWNER y ADMIN en los cuatro idiomas, sin cambiar identidad o roles. Catálogo JSON creado, editado y leído. Datos de prueba revertidos.
-- Navegador con cuentas temporales, autenticación y guards reales: ajustes de los tres roles × cuatro idiomas a 390 px, sin desbordamiento horizontal. Se verificó recarga del perfil del inquilino.
-- Paneles iniciales de los tres roles y estado vacío de reservas en francés. Las entradas del catálogo existente se presentan traducidas por código.
-- Formulario administrativo: validación, conservación de campos al cambiar entre los cuatro idiomas, creación, edición francesa, recarga y presentación portuguesa del registro temporal. Revisión a 390 y 1440 px en cuatro idiomas; revisión adicional a 320 px en francés.
-- La revisión encontró 15 textos en propiedades personalizadas como linkLabel y emptyDescription. Se tradujeron y el auditor ahora cubre estos atributos. También se corrigieron plurales de habitaciones/personas.
-- Se habilitó el botón de creación que estaba comentado, se incorporó un selector de idioma al catálogo y se hicieron visibles/legibles los campos de traducción en móvil. Se corrigió el mínimo global del body que provocaba desbordamiento a 320 px.
-- Se corrigió el título de navegador del catálogo y el comando productivo del backend para usar su salida compilada real.
+| Escenario | Idiomas | Ancho | Resultado |
+| --- | --- | --- | --- |
+| Ajustes CLIENT/OWNER/ADMIN | es/en/fr/pt | 390 px | Cambio de idioma y preferencia; sin desbordamiento |
+| Catálogo administrativo y formulario de traducciones | es/en/fr/pt | 390 y 1440 px | Campos conservados; creación/edición/recarga; sin desbordamiento |
+| Catálogo, revisión adicional | fr | 320 px | Desbordamiento del mínimo global corregido |
+| Reserva poblada del inquilino | es/en/fr/pt | 390 px | Datos, fechas, precio y acciones traducidos |
+| Propiedades del propietario: DRAFT/PENDING/CHANGES_REQUESTED/ACTIVE/INACTIVE | es/en/fr/pt | 390 px | Estados y acciones; sin desbordamiento |
+| Comentarios administrativos poblados | es/en/fr/pt | 390 px | Estados, filtros y etiquetas; sin desbordamiento |
+| Conversación poblada y confirmación de quitar reserva | fr | 390 px | Contenido de usuario conservado; acciones traducidas |
+| Ocultar/restaurar comentario ficticio | fr | 390 px | Motivo obligatorio, ocultación y restauración correctas |
+| Backend detenido durante moderación | fr | 390 px | Error de conexión traducido; motivo escrito conservado |
+| Publicación, pasos 1 y 2 | es/en/fr/pt | 390 px | Campos/errores conservados al cambiar idioma; sin desbordamiento |
+| Guardar borrador, avanzar y volver | fr | 390 px | Título/descripción/precio/tipo/servicios recuperados desde PostgreSQL |
 
-La evidencia de navegador está en i18n-browser-checks.json y la captura i18n-catalog-mobile-pt.png. El servidor QA usa una transacción PostgreSQL y sustituye los workers de recuperación/correo y sincronización de monedas. No envía mensajes ni correos. Al finalizar se verificaron **cero cuentas y cero catálogos temporales persistidos**.
+En esta revisión se añadió el selector de idioma al formulario de publicación para alternar sin abandonarlo. Se corrigieron los plurales del contador de servicios y los resúmenes de propiedades adicionales, los títulos del navegador de comentarios/usuarios/reportes y el tooltip de atribución Leaflet en ambos mapas. Las marcas y atribuciones se conservaron.
 
-### Pendiente para autorizar publicación
+Evidencias: i18n-browser-checks.json, i18n-populated-browser-checks.json, i18n-publication-browser-checks.json y capturas en esta carpeta. La búsqueda de FAQ francesa y la política portuguesa ya se habían revisado en la etapa anterior. La revisión no incluye toda combinación posible de datos, permisos del navegador o fallos de proveedores externos.
 
-1. Resolver las 15 suites globales pendientes (24 casos fallidos y dos suites con error de carga ESM); ver el informe del backend. No se consideran aprobadas.
-2. Completar la matriz exhaustiva de estados de negocio: propiedades con datos y moderación, reservas, adjuntos, conversaciones, formularios de publicación y errores de red en cada rol/idioma. Las comprobaciones descritas arriba son pruebas de humo concretas; no equivalen a recorrer todos los estados.
-3. Revisar en dispositivos móviles físicos. Los tamaños de navegador comprobados verifican diseño adaptable y no emulan teclado táctil, Safari/iOS ni Android real.
-4. Revisión editorial del grupo, especialmente francés/portugués y el borrador legal. Se conservó su estructura y fecha; esta comprobación técnica no sustituye su aprobación editorial.
-5. Si producción utiliza otra base/servidor, ejecutar allí las migraciones y el mismo control de persistencia; desplegar backend antes del frontend y comprobar el enrutamiento /api.
+## Esquema de la base configurada
 
-El build mantiene un aviso de tamaño del chunk principal: aproximadamente 1,24 MB minificado / 370 kB gzip. La carga diferida por idioma puede evaluarse como mejora de rendimiento; el aviso no se ocultó.
+Se detectó una diferencia posterior a la aplicación original: el historial conservaba las dos migraciones, pero sus cinco columnas habían desaparecido. Se reparó explícitamente con check-i18n-db.cjs --repair y volvió a pasar la persistencia. El comprobador ahora contrasta columnas reales e historial.
 
-**Estado: verificación técnica ampliada, publicación todavía pendiente.**
+La causa concreta no se identificó; es compatible con sincronización desde código anterior. **Detener instancias antiguas que compartan la base y usar DB_SYNCHRONIZE=false en producción.** No basta con consultar la tabla migrations.
+
+Al terminar se comprobaron cero cuentas, propiedades y mensajes ficticios persistidos; también se revirtió el borrador creado desde navegador y se verificó que las cinco columnas seguían presentes. No quedaron archivos PNG temporales de QA. El servidor de vista previa dispone de cierre ordenado con stop/Enter, drenaje de solicitudes y límite de 15 minutos.
+
+## Pendiente para autorizar publicación
+
+- [x] Resolver las pruebas globales fallidas y repetir la suite completa.
+- [x] Verificar esquema y persistencia real, incluyendo detección de diferencias respecto del historial.
+- [x] Recorrer los flujos principales por HTTP en los cuatro idiomas con los tres roles.
+- [x] Revisar paneles poblados, moderación, formularios de publicación, validación y error de red en navegador según la matriz anterior.
+- [ ] **Revisión editorial del grupo:** terminología es/en/fr/pt y texto legal. Conservar el significado y confirmar la fecha/versión del borrador. Esta entrega técnica no registra aprobación editorial.
+- [ ] **Dispositivos físicos:** Safari/iOS y Chrome/Android, cuatro idiomas, teclado, desplazamiento, menús, formularios largos, modales, selección de imágenes y permisos de ubicación. No hay dispositivos físicos conectados a esta verificación.
+- [ ] **Destino efectivo de producción:** detener versiones antiguas, configurar DB_SYNCHRONIZE=false, ejecutar migraciones y check-i18n-db.cjs, desplegar backend antes del frontend y comprobar HTTPS, enrutamiento /api y los flujos desde el dominio público. El entorno configurado aquí no certifica otro servidor/base.
+
+El build conserva un aviso de tamaño del chunk principal (aproximadamente 1,24 MB minificado / 370 kB gzip). La carga diferida por idioma sigue siendo una posible mejora de rendimiento.
+
+**Estado: suite global y matriz técnica documentada aprobadas; publicación pendiente de revisión editorial, dispositivos físicos y comprobación del destino.**

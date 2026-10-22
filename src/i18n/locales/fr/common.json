@@ -29,5 +29,6 @@
   "availableCount_many": "{{count}} biens disponibles",
   "room_one": "chambre",
   "room_other": "chambres",
-  "room_many": "chambres"
+  "room_many": "chambres",
+  "mapLibrary": "Bibliothèque JavaScript de cartes interactives"
 }

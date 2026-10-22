@@ -38,7 +38,7 @@ export default function PendingReviewSection() {
             ))}
           </ul>
           {(review.data?.total ?? 0) > next.length && (
-            <p className="mt-2 text-xs text-muted-ink">{i18n.t("dashboard:pendingreviewsection_y")}{' '}{(review.data?.total ?? 0) - next.length}{' '}{i18n.t("dashboard:pendingreviewsection_mas_en_espera")}</p>
+            <p className="mt-2 text-xs text-muted-ink">{i18n.t('dashboard:morePending', { count: (review.data?.total ?? 0) - next.length })}</p>
           )}
         </>
       )}

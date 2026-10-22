@@ -29,5 +29,6 @@
   "availableCount_many": "{{count}} imóveis disponíveis",
   "room_one": "quarto",
   "room_other": "quartos",
-  "room_many": "quartos"
+  "room_many": "quartos",
+  "mapLibrary": "Biblioteca JavaScript para mapas interativos"
 }
