@@ -4,10 +4,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { errorMessage } from '../../../i18n/messages'
-import { useAuth } from '../../Auth/hooks/authHooks'
-import { useStartConversation } from '../../Messages/hooks/messageHooks'
 import ReservedChip from '../../Reservations/Components/ReservedChip'
-import { useAcceptVisit, useConfirmVisit, useReserveFromVisit } from '../hooks/visitHooks'
+import { useAcceptVisit, useConfirmVisit, useOpenVisitConversation, useReserveFromVisit } from '../hooks/visitHooks'
 import type { Visit } from '../types/visit'
 import { formatShortDateTime, formatVisitDateTime, zoneLabel } from '../utils/format'
 import { isUpcomingVisit } from '../utils/groupVisits'
@@ -35,11 +33,11 @@ function Spinner({ busy }: { busy: boolean }) {
 /** Tarjeta de una cita, con las acciones que le tocan a quien la ve (propietario o inquilino). */
 export default function VisitCard({ visit, role, position, total }: VisitCardProps) {
   useTranslation()
-  const { user } = useAuth()
   const confirm = useConfirmVisit()
   const accept = useAcceptVisit()
   const reserve = useReserveFromVisit()
-  const startConversation = useStartConversation()
+  // El chat vive en el área de cada rol: el propietario en su panel y el inquilino en el suyo.
+  const startConversation = useOpenVisitConversation(role === 'owner' ? '/dashboard/owner/messages' : '/dashboard/messages')
   const [dialog, setDialog] = useState<'propose' | 'cancel' | null>(null)
 
   const status = visit.status
@@ -100,8 +98,10 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
       )}
       {status === 'CANCELLED' && (
         <p className="mt-2 text-xs text-muted-ink">
-          {visit.cancelledBy === 'TENANT' ? i18n.t('visits:cancelledByTenant') : i18n.t('visits:cancelledByOwner')}
-          {visit.cancelReason && ` · ${i18n.t('visits:cancelReasonShown', { reason: visit.cancelReason })}`}
+          {visit.cancelledBy === 'SYSTEM'
+            ? i18n.t('visits:cancelledBySystem')
+            : visit.cancelledBy === 'TENANT' ? i18n.t('visits:cancelledByTenant') : i18n.t('visits:cancelledByOwner')}
+          {visit.cancelledBy !== 'SYSTEM' && visit.cancelReason && ` · ${i18n.t('visits:cancelReasonShown', { reason: visit.cancelReason })}`}
         </p>
       )}
       {status === 'EXPIRED' && <p className="mt-2 text-xs text-muted-ink">{i18n.t('visits:expiredNote')}</p>}
@@ -130,13 +130,8 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
                 </button>
               )
           )}
-          {role === 'tenant' && status === 'CONFIRMED' && user && (
-            <button
-              type="button"
-              className={outline}
-              disabled={startConversation.isPending}
-              onClick={() => startConversation.mutate({ participantIds: [user.id, visit.owner.id], propertyId: visit.property.id })}
-            >
+          {status === 'CONFIRMED' && (
+            <button type="button" className={outline} disabled={startConversation.isPending} onClick={() => startConversation.mutate(visit.id)}>
               <MessageCircle size={14} aria-hidden="true" />{i18n.t('visits:write')}<Spinner busy={startConversation.isPending} />
             </button>
           )}

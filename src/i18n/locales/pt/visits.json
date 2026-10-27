@@ -108,5 +108,11 @@
   "waitingOwner": "Aguardando o proprietário",
   "waitingTenant": "Aguardando o inquilino",
   "pendingBadge_one": "{{count}} visita aguardando resposta",
-  "pendingBadge_other": "{{count}} visitas aguardando resposta"
+  "pendingBadge_other": "{{count}} visitas aguardando resposta",
+  "autoConfirmLabel": "Confirmar as visitas automaticamente",
+  "autoConfirmHint": "As visitas solicitadas pelos interessados ficarão confirmadas na hora, sem que você precise responder. Só são oferecidos os seus horários livres.",
+  "autoConfirmNote": "Este proprietário confirma as visitas na hora: a sua ficará confirmada assim que você pedir.",
+  "requestConfirmedTitle": "Visita confirmada",
+  "requestConfirmedDescription": "Sua visita está confirmada. Enviamos os detalhes por e-mail e você pode cancelá-la em Minhas visitas se não puder comparecer.",
+  "cancelledBySystem": "Cancelada: o imóvel foi reservado para outra pessoa"
 }

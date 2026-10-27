@@ -108,5 +108,11 @@
   "waitingOwner": "En attente du propriétaire",
   "waitingTenant": "En attente du locataire",
   "pendingBadge_one": "{{count}} visite à répondre",
-  "pendingBadge_other": "{{count}} visites à répondre"
+  "pendingBadge_other": "{{count}} visites à répondre",
+  "autoConfirmLabel": "Confirmer les visites automatiquement",
+  "autoConfirmHint": "Les visites demandées par les personnes intéressées seront confirmées instantanément, sans que vous ayez à répondre. Seuls vos créneaux libres sont proposés.",
+  "autoConfirmNote": "Ce propriétaire confirme les visites instantanément : la vôtre sera confirmée dès que vous la demanderez.",
+  "requestConfirmedTitle": "Visite confirmée",
+  "requestConfirmedDescription": "Votre visite est confirmée. Nous vous avons envoyé les détails par e-mail et vous pouvez l’annuler depuis Mes visites si vous ne pouvez pas venir.",
+  "cancelledBySystem": "Annulée : le bien a été réservé pour une autre personne"
 }

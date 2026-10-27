@@ -108,5 +108,11 @@
   "waitingOwner": "Esperando al propietario",
   "waitingTenant": "Esperando al inquilino",
   "pendingBadge_one": "{{count}} cita por responder",
-  "pendingBadge_other": "{{count}} citas por responder"
+  "pendingBadge_other": "{{count}} citas por responder",
+  "autoConfirmLabel": "Confirmar las citas automáticamente",
+  "autoConfirmHint": "Las citas que pidan los interesados quedarán confirmadas al instante, sin que tengas que responder. Solo se ofrecen los horarios que tengas libres.",
+  "autoConfirmNote": "Este propietario confirma las citas al instante: la tuya quedará confirmada apenas la pidas.",
+  "requestConfirmedTitle": "Cita confirmada",
+  "requestConfirmedDescription": "Tu cita quedó confirmada. Te enviamos los detalles por correo y puedes cancelarla desde Mis citas si no puedes asistir.",
+  "cancelledBySystem": "Cancelada: la propiedad fue reservada para otra persona"
 }

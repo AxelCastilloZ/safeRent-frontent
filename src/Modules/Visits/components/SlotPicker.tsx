@@ -16,10 +16,12 @@ interface SlotPickerProps {
   onChange: (slot: Slot | null, timezone?: string) => void
   /** Horario que no se puede volver a elegir (el actual, al proponer otro). */
   excludeStart?: string
+  /** Avisa debajo del calendario si el propietario confirma las citas al instante. */
+  showAutoConfirm?: boolean
 }
 
 /** Calendario + horas libres de una propiedad. Elige el primer día con horarios para que pedir una cita sea rápido. */
-export default function SlotPicker({ propertyId, value, onChange, excludeStart }: SlotPickerProps) {
+export default function SlotPicker({ propertyId, value, onChange, excludeStart, showAutoConfirm = false }: SlotPickerProps) {
   useTranslation()
   const [today] = useState(() => new Date())
   const lastDay = useMemo(() => addDays(today, CALENDAR_DAYS), [today])
@@ -107,6 +109,9 @@ export default function SlotPicker({ propertyId, value, onChange, excludeStart }
         )}
       </div>
       <p className="text-xs text-muted-ink sm:col-span-2">{i18n.t('visits:timeZoneNote', { zone: zoneLabel(query.data.timezone) })}</p>
+      {showAutoConfirm && query.data.autoConfirm && (
+        <p role="note" className="rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-800 sm:col-span-2">{i18n.t('visits:autoConfirmNote')}</p>
+      )}
     </div>
   )
 }

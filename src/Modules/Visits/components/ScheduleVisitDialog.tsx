@@ -24,12 +24,14 @@ export default function ScheduleVisitDialog({ propertyId, onClose }: ScheduleVis
   const [note, setNote] = useState('')
 
   if (request.isSuccess) {
+    // Con la confirmación automática la cita ya queda confirmada: no hay nada que esperar.
+    const confirmed = request.data.status === 'CONFIRMED'
     return (
-      <VisitDialog title={i18n.t('visits:requestSentTitle')} onClose={onClose}>
+      <VisitDialog title={i18n.t(confirmed ? 'visits:requestConfirmedTitle' : 'visits:requestSentTitle')} onClose={onClose}>
         <div className="flex flex-col items-center gap-3 py-4 text-center">
           <span className="grid size-14 place-items-center rounded-full bg-green-50 text-green-700"><CheckCircle2 size={30} aria-hidden="true" /></span>
           <p className="font-bold text-primary">{formatVisitDateTime(request.data.scheduledAt, request.data.timezone)}</p>
-          <p className="max-w-sm text-sm text-muted-ink">{i18n.t('visits:requestSentDescription', { hours: HOLD_HOURS })}</p>
+          <p className="max-w-sm text-sm text-muted-ink">{confirmed ? i18n.t('visits:requestConfirmedDescription') : i18n.t('visits:requestSentDescription', { hours: HOLD_HOURS })}</p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             <Link to="/dashboard/visits" className="rounded-xl bg-secondary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-secondary-dark">{i18n.t('visits:viewMyVisits')}</Link>
             <button type="button" onClick={onClose} className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-primary transition hover:border-secondary">{i18n.t('visits:close')}</button>
@@ -41,7 +43,7 @@ export default function ScheduleVisitDialog({ propertyId, onClose }: ScheduleVis
 
   return (
     <VisitDialog title={i18n.t('visits:scheduleTitle')} description={i18n.t('visits:scheduleHint')} onClose={onClose}>
-      <SlotPicker propertyId={propertyId} value={picked?.slot.start ?? null} onChange={(slot, timezone) => { request.reset(); setPicked(slot && timezone ? { slot, timezone } : null) }} />
+      <SlotPicker propertyId={propertyId} showAutoConfirm value={picked?.slot.start ?? null} onChange={(slot, timezone) => { request.reset(); setPicked(slot && timezone ? { slot, timezone } : null) }} />
 
       {picked && (
         <div className="mt-5 space-y-3 border-t border-slate-100 pt-4">

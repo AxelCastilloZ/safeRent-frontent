@@ -1,8 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import { useAuth } from '../../Auth/hooks/authHooks'
+import { conversationKeys } from '../../Messages/hooks/messageHooks'
 import {
   acceptVisit, cancelVisit, confirmVisit, getAvailability, getMyVisits, getReceivedVisits, getSlots, getVisitSummary, proposeVisit,
-  requestVisit, reserveFromVisit, setAvailability,
+  openVisitConversation, requestVisit, reserveFromVisit, setAvailability,
 } from '../services/visit.service'
 import type { AvailabilityRule, RequestVisitPayload } from '../types/visit'
 
@@ -108,7 +110,23 @@ export function useAvailability(propertyId: number | undefined) {
 export function useSetAvailability(propertyId: number | undefined) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (payload: { timezone: string; rules: AvailabilityRule[] }) => setAvailability(propertyId!, payload),
+    mutationFn: (payload: { timezone: string; rules: AvailabilityRule[]; autoConfirm: boolean }) => setAvailability(propertyId!, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: visitKeys.all }),
+  })
+}
+
+/**
+ * "Escribir" en una cita confirmada: abre (o retoma) el chat y entra a él. Sirve para el inquilino y para el propietario;
+ * `messagesPath` es dónde vive Mensajes en el área de cada uno.
+ */
+export function useOpenVisitConversation(messagesPath: string) {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+  return useMutation({
+    mutationFn: (visitId: number) => openVisitConversation(visitId),
+    onSuccess: async (conversation) => {
+      await queryClient.invalidateQueries({ queryKey: conversationKeys.all })
+      router.history.push(`${messagesPath}/${conversation.id}`)
+    },
   })
 }

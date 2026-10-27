@@ -108,5 +108,11 @@
   "waitingOwner": "Waiting for the owner",
   "waitingTenant": "Waiting for the tenant",
   "pendingBadge_one": "{{count}} visit awaiting a reply",
-  "pendingBadge_other": "{{count}} visits awaiting a reply"
+  "pendingBadge_other": "{{count}} visits awaiting a reply",
+  "autoConfirmLabel": "Confirm visits automatically",
+  "autoConfirmHint": "Visits requested by interested people will be confirmed instantly, without you having to reply. Only your free times are offered.",
+  "autoConfirmNote": "This owner confirms visits instantly: yours will be confirmed as soon as you request it.",
+  "requestConfirmedTitle": "Visit confirmed",
+  "requestConfirmedDescription": "Your visit is confirmed. We emailed you the details, and you can cancel it from My visits if you cannot attend.",
+  "cancelledBySystem": "Cancelled: the property was reserved for someone else"
 }

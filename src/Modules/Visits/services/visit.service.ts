@@ -50,8 +50,14 @@ export async function getAvailability(propertyId: number, signal?: AbortSignal):
   return response.data
 }
 
-export async function setAvailability(propertyId: number, payload: { timezone: string; rules: AvailabilityRule[] }): Promise<Availability> {
+export async function setAvailability(propertyId: number, payload: { timezone: string; rules: AvailabilityRule[]; autoConfirm: boolean }): Promise<Availability> {
   const response = await apiAxios.put<Availability>(`${BASE}/properties/${propertyId}/availability`, payload)
+  return response.data
+}
+
+/** Abre (o retoma) el chat de una cita confirmada. Lo puede hacer el inquilino o el propietario. Devuelve el id de la conversación. */
+export async function openVisitConversation(visitId: number): Promise<{ id: number }> {
+  const response = await apiAxios.post<{ id: number }>(`/conversations/visit/${visitId}`)
   return response.data
 }
 

@@ -12,7 +12,8 @@ export interface Visit {
   timezone: string
   note: string | null
   cancelReason: string | null
-  cancelledBy: 'TENANT' | 'OWNER' | null
+  /** 'SYSTEM' cuando la cita se canceló sola (por ejemplo, la propiedad se reservó para otra persona). */
+  cancelledBy: 'TENANT' | 'OWNER' | 'SYSTEM' | null
   /** Cuándo se solicitó: define quién fue primero. */
   createdAt: string
   expiresAt: string | null
@@ -42,6 +43,8 @@ export interface SlotsResponse {
   timezone: string
   slotMinutes: number
   propertyReserved: boolean
+  /** El propietario confirma las citas al instante. */
+  autoConfirm: boolean
   slots: Slot[]
 }
 
@@ -57,6 +60,8 @@ export interface Availability {
   rules: AvailabilityRule[]
   /** true mientras el propietario no haya guardado nada y se use el horario por defecto. */
   isDefault: boolean
+  /** Las citas que se pidan quedan confirmadas sin que el propietario responda. */
+  autoConfirm: boolean
   slotMinutes: number
 }
 

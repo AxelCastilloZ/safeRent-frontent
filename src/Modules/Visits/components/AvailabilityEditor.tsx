@@ -51,6 +51,7 @@ function AvailabilityForm({ propertyId, availability }: { propertyId: number; av
   const save = useSetAvailability(propertyId)
   const [timezone, setTimezone] = useState(availability.timezone)
   const [rows, setRows] = useState(() => rowsFrom(availability.rules))
+  const [autoConfirm, setAutoConfirm] = useState(availability.autoConfirm)
   const [invalid, setInvalid] = useState(false)
 
   const change = (weekday: number, patch: Partial<DayRow>) => {
@@ -62,7 +63,7 @@ function AvailabilityForm({ propertyId, availability }: { propertyId: number; av
   function submit() {
     const rules = WEEK_ORDER.filter((weekday) => rows[weekday].enabled).map((weekday) => ({ weekday, start: rows[weekday].start, end: rows[weekday].end }))
     if (rules.some((rule) => rule.start >= rule.end)) { setInvalid(true); return }
-    save.mutate({ timezone, rules })
+    save.mutate({ timezone, rules, autoConfirm })
   }
 
   const zones = ZONES.includes(timezone) ? ZONES : [timezone, ...ZONES]
@@ -77,6 +78,14 @@ function AvailabilityForm({ propertyId, availability }: { propertyId: number; av
           <SelectContent>{zones.map((zone) => <SelectItem key={zone} value={zone}>{zoneLabel(zone)}</SelectItem>)}</SelectContent>
         </Select>
       </div>
+
+      <label className="flex max-w-2xl items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <input type="checkbox" checked={autoConfirm} onChange={(event) => { save.reset(); setAutoConfirm(event.target.checked) }} className="mt-0.5 size-4 accent-[#0f766e]" />
+        <span>
+          <span className="block text-sm font-bold text-primary">{i18n.t('visits:autoConfirmLabel')}</span>
+          <span className="mt-0.5 block text-xs text-muted-ink">{i18n.t('visits:autoConfirmHint')}</span>
+        </span>
+      </label>
 
       <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white">
         {WEEK_ORDER.map((weekday) => {
