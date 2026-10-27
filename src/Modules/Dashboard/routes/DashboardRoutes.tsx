@@ -144,6 +144,11 @@ const adminPropertiesRoute = createRoute({
   path: 'properties',
   component: lazyRouteComponent(() => import('../pages/admin/AdminPropertiesPage')),
 });
+const adminServicesRoute = createRoute({
+  getParentRoute: () => adminAreaRoute,
+  path: 'services',
+  component: lazyRouteComponent(() => import('../../Services/pages/ServicesAdminPage')),
+});
 const adminCommentsRoute = createRoute({
   getParentRoute: () => adminAreaRoute,
   path: 'comments',
@@ -202,6 +207,7 @@ export const dashboardRoute = DashboardRoute.addChildren([
     adminPropertiesRoute,
     adminUsersRoute,
     adminCommentsRoute,
+    adminServicesRoute,
     adminReportsRoute,
     adminSettingsRoute,
     adminMessagesRoute.addChildren([adminMessagesIndexRoute, adminConversationRoute]),

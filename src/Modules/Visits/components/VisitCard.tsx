@@ -51,7 +51,7 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
   const tenantName = visit.tenant.name
 
   return (
-    <article className={`rounded-2xl border bg-white p-5 shadow-sm ${status === 'PENDING' && role === 'owner' ? 'border-amber-200' : 'border-slate-200'}`}>
+    <article className={`min-w-0 rounded-2xl border bg-white p-5 shadow-sm [overflow-wrap:anywhere] ${status === 'PENDING' && role === 'owner' ? 'border-amber-200' : 'border-slate-200'}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           {visit.property.status === 'ACTIVE' ? (
@@ -79,7 +79,7 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
           <span>{i18n.t('visits:requestedOn', { date: formatShortDateTime(visit.createdAt) })}</span>
         </p>
       )}
-      {visit.note && <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-neutral">{i18n.t('visits:messageLabel', { note: visit.note })}</p>}
+      {visit.note && <p className="mt-2 max-w-full whitespace-pre-wrap rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-neutral [overflow-wrap:anywhere]">{i18n.t('visits:messageLabel', { note: visit.note })}</p>}
 
       {status === 'COUNTER_PROPOSED' && visit.previousScheduledAt && (
         <p className="mt-2 text-xs text-muted-ink">

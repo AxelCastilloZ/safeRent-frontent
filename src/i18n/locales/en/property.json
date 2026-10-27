@@ -191,5 +191,7 @@
   "differentProfileCurrency": "Different from your profile currency ({{currency}}).",
   "ownPropertyTitle": "This is your property",
   "ownPropertyMessages": "Interested tenants will contact you and their messages will appear in your dashboard.",
-  "goToMyProperties": "Go to my properties"
+  "goToMyProperties": "Go to my properties",
+  "ownerPreview": "Private preview: this is how tenants see your property. Saving and scheduling actions are available to visitors once published.",
+  "ownerPreviewTitle": "Property preview"
 }

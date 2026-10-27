@@ -50,5 +50,6 @@
   "currentPassword": "Senha atual",
   "newPassword": "Nova senha",
   "confirmPassword": "Confirmar nova senha",
-  "passwordHint": "De 8 a 72 caracteres, com maiúscula, minúscula, número e símbolo. Máximo de 72 bytes UTF-8."
+  "passwordHint": "De 8 a 72 caracteres, com maiúscula, minúscula, número e símbolo. Máximo de 72 bytes UTF-8.",
+  "currencySaveError": "Não foi possível salvar a moeda. Tente novamente."
 }

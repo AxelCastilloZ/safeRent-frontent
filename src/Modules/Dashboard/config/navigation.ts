@@ -71,6 +71,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/admin', label: 'navigation:summary', Icon: LayoutDashboard },
       { to: '/dashboard/admin/properties', label: 'navigation:allProperties', Icon: Building2 },
       { to: '/dashboard/admin/comments', label: 'navigation:comments', Icon: MessageSquare },
+      { to: '/dashboard/admin/services', label: 'dashboard:adminhomepage_servicios', Icon: Building2 },
       { to: '/dashboard/admin/users', label: 'navigation:users', Icon: Users },
       // Icono distinto de "Comentarios" (MessageSquare) para no confundirlos.
       { to: '/dashboard/admin/messages', label: 'navigation:messages', Icon: Mail },

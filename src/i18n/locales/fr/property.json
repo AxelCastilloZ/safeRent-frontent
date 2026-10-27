@@ -191,5 +191,7 @@
   "differentProfileCurrency": "Différente de la devise de votre profil ({{currency}}).",
   "ownPropertyTitle": "Ce bien vous appartient",
   "ownPropertyMessages": "Les locataires intéressés vous contacteront et leurs messages apparaîtront dans votre tableau de bord.",
-  "goToMyProperties": "Voir mes biens"
+  "goToMyProperties": "Voir mes biens",
+  "ownerPreview": "Aperçu privé : présentation du logement aux locataires. Les visiteurs pourront enregistrer le logement et planifier une visite après sa publication.",
+  "ownerPreviewTitle": "Aperçu du logement"
 }

@@ -1,3 +1,4 @@
+import Navbar from '../LandingPage/Components/Navbar';
 import { catalogText } from '../../i18n/catalog';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n/instance';
@@ -6,7 +7,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BedDouble,
   Building2,
-  ChevronRight,
   LocateFixed,
   MapPin,
   Search,
@@ -23,6 +23,7 @@ import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
 import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import PriceDetails from './PriceDetails'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select'
 
 const EMPTY_PROPERTIES: Property[] = []
 
@@ -123,19 +124,7 @@ export default function ExplorePage() {
 
   return (
     <div className="explore-page">
-      <header className="explore-header">
-        <a className="explore-brand" href="/" aria-label={i18n.t("explore:explorepage_saferent_inicio")}>
-          <img src="/LogoSafeRentAzul.png" alt="" />
-          SafeRent
-        </a>
-        <nav aria-label={i18n.t("explore:explorepage_navegacion_principal")}>
-          <a href="/explorar" aria-current="page">{i18n.t("explore:explorepage_explorar")}</a>
-          <a href="/#how-it-works">{i18n.t("explore:explorepage_como_funciona")}</a>
-          <a href="/#owner-cta">{i18n.t("explore:explorepage_para_propietarios")}</a>
-        </nav>
-        <a className="back-home" href="/">{i18n.t("explore:explorepage_ir_al_inicio")}{' '}<ChevronRight size={16} />
-        </a>
-      </header>
+      <Navbar />
       <main className="explore-layout" data-mobile-view={mobileView}>
         <section className="explore-results" aria-label={i18n.t("about:aboutcta_explorar_propiedades")}>
           <div className="explore-search">
@@ -167,32 +156,29 @@ export default function ExplorePage() {
               >
                 <SlidersHorizontal size={16} />{i18n.t("explore:explorepage_filtros")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
-              <select
-                aria-label={i18n.t("explore:explorepage_moneda_de_publicacion")}
-                value={currency}
-                onChange={(e) => { setKnownCurrencies(currencies); setCurrency(e.target.value) }}
-              >
-                <option value="">{i18n.t("explore:explorepage_cualquier_moneda_publicada")}</option>
-                {currencies.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              <select aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} value={sort} onChange={event => setSort(event.target.value as typeof sort)}>
-                <option value="newest">{i18n.t("explore:explorepage_mas_recientes")}</option><option value="price_asc">{i18n.t("explore:explorepage_menor_precio")}</option><option value="price_desc">{i18n.t("explore:explorepage_mayor_precio")}</option>
-              </select>
-              <select
-                aria-label={i18n.t("explore:explorepage_habitaciones_minimas")}
-                value={rooms}
-                onChange={(e) => setRooms(e.target.value)}
-              >
-                <option value="">{i18n.t("explore:explorepage_habitaciones")}</option>
-                <option value="1">{i18n.t("explore:explorepage_1_habitaciones")}</option>
-                <option value="2">{i18n.t("explore:explorepage_2_habitaciones")}</option>
-                <option value="3">{i18n.t("explore:explorepage_3_habitaciones")}</option>
-                <option value="4">{i18n.t("explore:explorepage_4_habitaciones")}</option>
-              </select>
+              <Select value={currency || 'all'} onValueChange={value => { setKnownCurrencies(currencies); setCurrency(value === 'all' ? '' : value) }}>
+                <SelectTrigger aria-label={i18n.t("explore:explorepage_moneda_de_publicacion")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{i18n.t("explore:explorepage_cualquier_moneda_publicada")}</SelectItem>
+                  {currencies.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={sort} onValueChange={value => setSort(value as typeof sort)}>
+                <SelectTrigger aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">{i18n.t("explore:explorepage_mas_recientes")}</SelectItem><SelectItem value="price_asc">{i18n.t("explore:explorepage_menor_precio")}</SelectItem><SelectItem value="price_desc">{i18n.t("explore:explorepage_mayor_precio")}</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={rooms || 'all'} onValueChange={value => setRooms(value === 'all' ? '' : value)}>
+                <SelectTrigger aria-label={i18n.t("explore:explorepage_habitaciones_minimas")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{i18n.t("explore:explorepage_habitaciones")}</SelectItem>
+                  <SelectItem value="1">{i18n.t("explore:explorepage_1_habitaciones")}</SelectItem>
+                  <SelectItem value="2">{i18n.t("explore:explorepage_2_habitaciones")}</SelectItem>
+                  <SelectItem value="3">{i18n.t("explore:explorepage_3_habitaciones")}</SelectItem>
+                  <SelectItem value="4">{i18n.t("explore:explorepage_4_habitaciones")}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             {filtersOpen && (
               <div id="explore-filters" className="expanded-filters">

@@ -77,7 +77,7 @@ export default function UserMenu({ onAction }: { onAction?: () => void }) {
       {open && (
         <div
           id="user-menu-panel"
-          className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-3 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-1.5 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-1.5 text-primary shadow-lg"
         >
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
             <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white" aria-hidden="true">

@@ -31,5 +31,9 @@
   "admincommentspage_ocultar_comentario": "Masquer le commentaire",
   "admincommentspage_cancelar": "Annuler",
   "admincommentspage_guardando": "Enregistrement…",
-  "admincommentspage_restaurar_comentario": "Rétablir le commentaire"
+  "admincommentspage_restaurar_comentario": "Rétablir le commentaire",
+  "noRatings": "Aucune évaluation pour le moment.",
+  "ratingSummary": "{{average}} / 5 · {{count}} évaluations",
+  "ratingValue": "{{count}} étoiles sur 5",
+  "yourRating": "Votre évaluation"
 }

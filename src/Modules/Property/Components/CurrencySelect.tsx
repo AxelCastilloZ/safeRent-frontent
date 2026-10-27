@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { useProfileCurrencyOptions } from '../../Auth/hooks/profileHooks'
 import { currencySymbol } from '../../Explore/utils/money'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from './Select'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '../../../components/ui/Select'
 
 // Las más comunes para publicar un alquiler; el resto de las monedas habilitadas van en "Todas".
 const COMMON = ['CRC', 'USD', 'EUR']

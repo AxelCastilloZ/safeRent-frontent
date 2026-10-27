@@ -50,5 +50,6 @@
   "currentPassword": "Mot de passe actuel",
   "newPassword": "Nouveau mot de passe",
   "confirmPassword": "Confirmer le nouveau mot de passe",
-  "passwordHint": "De 8 à 72 caractères, avec une majuscule, une minuscule, un chiffre et un symbole. Maximum 72 octets UTF-8."
+  "passwordHint": "De 8 à 72 caractères, avec une majuscule, une minuscule, un chiffre et un symbole. Maximum 72 octets UTF-8.",
+  "currencySaveError": "Impossible d’enregistrer la devise. Réessayez."
 }

@@ -43,7 +43,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
   return (
     <div className="flex h-full w-full flex-col bg-primary text-white">
       <Link to="/" onClick={onNavigate} className="flex items-center gap-2 px-5 py-5" aria-label={t("navigation:brandHome")}>
-        <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg bg-white object-contain p-0.5" />
+        <img src="/LogoSafeRentAzul.png" alt="" className="size-9 object-contain" />
         <span className="text-xl font-bold tracking-tight">SafeRent</span>
       </Link>
 

@@ -86,8 +86,9 @@ export default function ScheduleVisitDialog({ propertyId, ownerId, onClose }: Sc
               maxLength={500}
               rows={2}
               placeholder={i18n.t('visits:notePlaceholder')}
-              className="mt-1 w-full resize-y rounded-xl border border-slate-300 px-3 py-2 text-sm text-primary"
+              className="mt-1 max-h-48 min-h-24 w-full min-w-0 resize-y rounded-xl border border-slate-300 px-3 py-2 text-sm leading-relaxed text-primary [overflow-wrap:anywhere]"
             />
+            <span className="mt-1 block text-right text-xs text-muted-ink">{note.length}/500</span>
           </label>
         </div>
       )}

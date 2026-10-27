@@ -8,6 +8,7 @@ import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
 import { useOutbox } from '../hooks/useOutbox'
 import { buttonStyles } from './buttonStyles'
 import ChatHeader from './ChatHeader'
+import ConversationVisitCard from './ConversationVisitCard'
 import ConnectionBanner from './ConnectionBanner'
 import MessageComposer from './MessageComposer'
 import MessageList from './MessageList'
@@ -39,6 +40,7 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
   return (
     <div className="flex h-full min-h-0 flex-col">
       <ChatHeader conversation={conversation.data} currentUserId={currentUser?.id} />
+      <ConversationVisitCard conversation={conversation.data} />
       <ConnectionBanner />
       <MessageList
         messages={messages.data}

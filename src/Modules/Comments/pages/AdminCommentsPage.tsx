@@ -8,6 +8,7 @@ import PageContainer from '../../Dashboard/Components/PageContainer'
 import PageHeader from '../../Dashboard/Components/PageHeader'
 import { useAdminComments, useModerateComment } from '../hooks/useAdminComments'
 import type { AdminPropertyComment } from '../models/comment'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select'
 
 export default function AdminCommentsPage() {
   useTranslation();
@@ -32,10 +33,12 @@ export default function AdminCommentsPage() {
     <div className="mb-5 flex flex-wrap gap-3">
       <input aria-label={i18n.t("comments:admincommentspage_buscar_comentarios")} value={search} onChange={(event) => setSearch(event.target.value)}
         placeholder={i18n.t("comments:admincommentspage_buscar_por_propiedad_autor_o_comentario")} className="min-w-60 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm" />
-      <select aria-label={i18n.t("comments:admincommentspage_estado_del_comentario")} value={filter} onChange={(event) => setFilter(event.target.value)}
-        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm">
-        <option value="all">{i18n.t("comments:admincommentspage_todos")}</option><option value="visible">{i18n.t("comments:admincommentspage_visibles")}</option><option value="hidden">{i18n.t("comments:admincommentspage_ocultos")}</option>
-      </select>
+      <Select value={filter} onValueChange={setFilter}>
+        <SelectTrigger aria-label={i18n.t("comments:admincommentspage_estado_del_comentario")} className="w-full sm:w-auto"><SelectValue /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{i18n.t("comments:admincommentspage_todos")}</SelectItem><SelectItem value="visible">{i18n.t("comments:admincommentspage_visibles")}</SelectItem><SelectItem value="hidden">{i18n.t("comments:admincommentspage_ocultos")}</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
     {comments.isPending && <p role="status">{i18n.t("comments:propertycomments_cargando_comentarios")}</p>}
     {comments.isError && <p role="alert" className="text-red-700">{i18n.t("comments:admincommentspage_no_pudimos_cargar_los_comentarios")}<button type="button" onClick={() => void comments.refetch()} className="ml-2 underline">{i18n.t("comments:propertycomments_reintentar")}</button>

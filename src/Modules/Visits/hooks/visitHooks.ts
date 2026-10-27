@@ -61,11 +61,11 @@ export function useLiveVisitForProperty(propertyId: number | undefined) {
 }
 
 /** Citas que recibió el propietario con sesión (pendientes primero, la más antigua arriba). */
-export function useReceivedVisits() {
+export function useReceivedVisits(enabled = true) {
   const { user } = useAuth()
   return useQuery({
     queryKey: visitKeys.received(user?.id),
-    enabled: user !== undefined,
+    enabled: enabled && user !== undefined,
     queryFn: ({ signal }) => getReceivedVisits(signal),
     refetchInterval: VISITS_POLL_MS,
   })

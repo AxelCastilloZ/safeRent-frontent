@@ -6,12 +6,12 @@ import { message } from '../../../i18n/messages';
 import { useMessageState } from '../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
-import LanguageSelector from '../../../i18n/LanguageSelector';
+
 import ServiceActions from '../components/ServiceActions'
 import EditServiceModal from '../components/EditServiceModal'
 import type { Service } from '../interfaces/service.interface'
 import { useRef, useState, type FormEvent } from 'react'
-import { Link } from '@tanstack/react-router'
+
 import {
   // ArrowLeft,
   // ArrowUpRight,
@@ -21,7 +21,7 @@ import {
   LoaderCircle,
   Plus,
   Search,
-  ShieldCheck,
+
   // Sparkles,
 } from 'lucide-react'
 import { useCreateService, useServices } from '../hooks/useServices'
@@ -100,20 +100,9 @@ export default function ServicesAdminPage() {
   }
 
   return (
-    <div className="services-admin">
+    <div className="services-admin services-admin--dashboard">
       {editing && <EditServiceModal key={editing.id} service={editing} catalog={catalog.data || []} onClose={() => setEditing(null)} onSaved={updated => { setEditing(null); setSuccess(message('catalog:updated', { name: updated.name })); }} />}
-      <header className="sa-header">
-        <Link to="/" className="sa-brand">
-          <img src="/LogoSafeRentAzul.png" alt="" />
-          SafeRent
-        </Link>
-        <span className="sa-admin-label">
-          <ShieldCheck size={15} />{' '}{i18n.t("services:servicesadminpage_administracion")}</span>
-        <div className="ml-auto"><LanguageSelector /></div>
-        {/* <Link to="/" className="sa-explore">
-          Ver hospedajes <ArrowUpRight size={16} />
-        </Link> */}
-      </header>
+
       <div className="sa-shell">
         {/* <aside className="sa-sidebar">
           <p className="sa-overline">ESPACIO DE ADMINISTRACIÓN</p>
@@ -138,11 +127,11 @@ export default function ServicesAdminPage() {
             Volver al inicio
           </Link>
         </aside> */}
-        <main className="sa-main">
+        <div className="sa-main">
           <div className="sa-heading">
             <div>
               <p className="sa-overline">{i18n.t("services:servicesadminpage_catalogo_de_hospedajes")}</p>
-              {/* <h1>Servicios que hacen la diferencia</h1> */}
+              <h1>{i18n.t("services:servicesadminpage_servicios_del_catalogo")}</h1>
               <p>{i18n.t("services:servicesadminpage_crea_las_opciones_que_los_propietarios_podran_agregar_a")}</p>
             </div>
             <span className="sa-count">
@@ -343,7 +332,7 @@ export default function ServicesAdminPage() {
               </div>
             )}
           </section>
-        </main>
+        </div>
       </div>
     </div>
   )

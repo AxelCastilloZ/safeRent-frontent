@@ -191,5 +191,7 @@
   "differentProfileCurrency": "Distinta a la moneda de tu perfil ({{currency}}).",
   "ownPropertyTitle": "Esta propiedad es tuya",
   "ownPropertyMessages": "Los interesados te escribirán y verás sus mensajes en tu panel.",
-  "goToMyProperties": "Ir a mis propiedades"
+  "goToMyProperties": "Ir a mis propiedades",
+  "ownerPreview": "Vista previa privada: así se presenta tu propiedad a los inquilinos. Las acciones para guardar o agendar se muestran a los visitantes cuando esté publicada.",
+  "ownerPreviewTitle": "Vista previa de la propiedad"
 }

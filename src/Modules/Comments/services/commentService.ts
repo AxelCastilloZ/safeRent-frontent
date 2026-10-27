@@ -18,6 +18,6 @@ export async function getPropertyComments(propertyId: number): Promise<PropertyC
   return response.data
 }
 
-export async function createPropertyComment(propertyId: number, content: string): Promise<void> {
-  await apiAxios.post(`/comments/property/${propertyId}`, { content })
+export async function createPropertyComment(propertyId: number, content: string, rating: number): Promise<void> {
+  await apiAxios.post(`/comments/property/${propertyId}`, { content, rating })
 }

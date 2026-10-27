@@ -55,7 +55,7 @@ export default function DashboardLayout() {
 
   return (
     <MessagesBasePathContext.Provider value={config.messagesPath}>
-      <div className="flex h-screen bg-surface text-primary">
+      <div className="fixed inset-0 flex overflow-hidden bg-surface text-primary">
         <aside className="hidden w-64 shrink-0 md:block">
           <DashboardSidebar area={area} />
         </aside>

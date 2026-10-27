@@ -3,9 +3,10 @@ import { useMessageState } from '../../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, Building2, EyeOff, MapPin, Plus } from 'lucide-react';
+import { AlertTriangle, Building2, EyeOff, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import PropertyThumbCard from '../../Components/PropertyThumbCard';
 import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
 import { propertyService } from '../../../Property/services/propertyService';
@@ -92,19 +93,15 @@ export default function OwnerPropertiesPage() {
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((property) => (
-            <li key={property.id} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="min-w-0">
+            <li key={property.id} className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <PropertyThumbCard property={property} to={'/dashboard/owner/properties/detail/' + property.id} className="rounded-none border-0" />
+              <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="truncate font-bold text-primary">{property.title}</h2>
                   <StatusBadge variant={statusBadgeVariant(property.status)} />
                   <ReservationLabel property={property} />
                 </div>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-ink">
-                  <MapPin size={15} className="shrink-0" aria-hidden="true" />
-                  <span className="truncate">{property.address}</span>
-                </p>
                 {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
@@ -112,8 +109,7 @@ export default function OwnerPropertiesPage() {
                     <span>{property.reviewNote}</span>
                   </p>
                 )}
-              </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="mt-auto flex flex-wrap gap-2 border-t border-slate-100 pt-3">
                 {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
                 <Link
                   to="/dashboard/owner/properties/detail/$propertyId"
@@ -133,6 +129,7 @@ export default function OwnerPropertiesPage() {
                   >
                     <EyeOff size={16} className="inline-block mr-1" aria-hidden="true" />{i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}</button>
                 )}
+              </div>
               </div>
             </li>
           ))}

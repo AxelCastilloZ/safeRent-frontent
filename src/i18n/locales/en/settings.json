@@ -50,5 +50,6 @@
   "currentPassword": "Current password",
   "newPassword": "New password",
   "confirmPassword": "Confirm new password",
-  "passwordHint": "8 to 72 characters, with an uppercase letter, lowercase letter, number and symbol. Maximum 72 UTF-8 bytes."
+  "passwordHint": "8 to 72 characters, with an uppercase letter, lowercase letter, number and symbol. Maximum 72 UTF-8 bytes.",
+  "currencySaveError": "Could not save the currency. Please try again."
 }

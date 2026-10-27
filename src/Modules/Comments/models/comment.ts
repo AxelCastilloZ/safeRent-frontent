@@ -13,6 +13,7 @@ export interface AdminPropertyComment extends PropertyComment {
 export interface PropertyComment {
   id: number
   content: string
+  rating?: number | null
   createdAt: string
   author: { id: number; name: string }
 }
