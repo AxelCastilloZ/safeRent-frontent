@@ -5,6 +5,8 @@ import { useConversations, useUnreadMessagesCount } from '../../../Messages/hook
 import RecentConversationsSection from '../../Components/ClientHome/RecentConversationsSection';
 import HomeAction from '../../Components/HomeAction';
 import AttentionSection from '../../Components/OwnerHome/AttentionSection';
+import PendingVisitsSection from '../../Components/VisitsHome/PendingVisitsSection';
+import UpcomingVisitsSection from '../../Components/VisitsHome/UpcomingVisitsSection';
 import OwnerReservedSection from '../../Components/OwnerHome/OwnerReservedSection';
 import RecentOwnerPropertiesSection from '../../Components/OwnerHome/RecentOwnerPropertiesSection';
 import PageContainer from '../../Components/PageContainer';
@@ -73,6 +75,10 @@ export default function OwnerHomePage() {
         />
       </StatGrid>
 
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <PendingVisitsSection />
+        <UpcomingVisitsSection role="owner" />
+      </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <AttentionSection />
         <RecentConversationsSection

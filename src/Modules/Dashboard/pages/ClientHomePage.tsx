@@ -7,6 +7,7 @@ import DiscoverSection from '../Components/ClientHome/DiscoverSection';
 import RecentConversationsSection from '../Components/ClientHome/RecentConversationsSection';
 import RecentSavedSection from '../Components/ClientHome/RecentSavedSection';
 import ReservedPropertySection from '../Components/ClientHome/ReservedPropertySection';
+import UpcomingVisitsSection from '../Components/VisitsHome/UpcomingVisitsSection';
 import PageContainer from '../Components/PageContainer';
 import PageHeader from '../Components/PageHeader';
 import HomeAction from '../Components/HomeAction';
@@ -65,9 +66,10 @@ export default function ClientHomePage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <ReservedPropertySection />
-        <RecentConversationsSection />
+        <UpcomingVisitsSection role="tenant" />
       </div>
       <div className="mt-6 space-y-6">
+        <RecentConversationsSection />
         <RecentSavedSection />
         <DiscoverSection />
       </div>
