@@ -114,5 +114,10 @@
   "autoConfirmNote": "Este propietario confirma las citas al instante: la tuya quedará confirmada apenas la pidas.",
   "requestConfirmedTitle": "Cita confirmada",
   "requestConfirmedDescription": "Tu cita quedó confirmada. Te enviamos los detalles por correo y puedes cancelarla desde Mis citas si no puedes asistir.",
-  "cancelledBySystem": "Cancelada: la propiedad fue reservada para otra persona"
+  "cancelledBySystem": "Cancelada: la propiedad fue reservada para otra persona",
+  "alreadyScheduled": "Ya tienes una cita en esta propiedad",
+  "viewThisVisit": "Ver mi cita",
+  "chatWithOwner": "Chatear con el propietario",
+  "chatOpening": "Abriendo chat…",
+  "chatError": "No pudimos abrir el chat. Intenta nuevamente."
 }

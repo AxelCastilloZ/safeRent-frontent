@@ -7,6 +7,7 @@ import {
   openVisitConversation, requestVisit, reserveFromVisit, setAvailability,
 } from '../services/visit.service'
 import type { AvailabilityRule, RequestVisitPayload } from '../types/visit'
+import { isLiveVisit } from '../utils/groupVisits'
 
 // Cuánto se refresca la lista: una respuesta de la otra persona aparece sin recargar (como la bandeja de mensajes).
 const VISITS_POLL_MS = 15000
@@ -38,14 +39,25 @@ export function useVisitSummary() {
 }
 
 /** Citas que pidió el inquilino con sesión. */
-export function useMyVisits() {
+export function useMyVisits(enabled = true) {
   const { user } = useAuth()
   return useQuery({
     queryKey: visitKeys.mine(user?.id),
-    enabled: user !== undefined,
+    enabled: enabled && user !== undefined,
     queryFn: ({ signal }) => getMyVisits(signal),
     refetchInterval: VISITS_POLL_MS,
   })
+}
+
+/**
+ * La cita viva (pendiente, contrapropuesta o confirmada por venir) que el inquilino con sesión ya tiene en una propiedad.
+ * Sirve para no dejarle iniciar otra: el backend solo permite una por propiedad. Sin sesión de inquilino no consulta nada.
+ */
+export function useLiveVisitForProperty(propertyId: number | undefined) {
+  const { user } = useAuth()
+  const isTenant = Boolean(user?.roles.includes('CLIENT'))
+  const visits = useMyVisits(isTenant)
+  return propertyId === undefined ? undefined : visits.data?.find((visit) => visit.property.id === propertyId && isLiveVisit(visit))
 }
 
 /** Citas que recibió el propietario con sesión (pendientes primero, la más antigua arriba). */

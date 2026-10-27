@@ -18,6 +18,7 @@ import { priceLabel } from '../Explore/utils/property.utils'
 import { useAuth } from '../Auth/hooks/authHooks'
 import PriceDetails from '../Explore/PriceDetails'
 import ScheduleVisitDialog from '../Visits/components/ScheduleVisitDialog'
+import { useLiveVisitForProperty } from '../Visits/hooks/visitHooks'
 import { clearPendingVisitProperty, peekPendingVisitProperty, setPendingVisitProperty } from '../Visits/utils/pendingVisit'
 import { useSavedPropertyIds, useToggleSavedProperty } from '../SavedProperties/hooks/savedPropertyHooks'
 import { consumePendingSaveProperty, setPendingSaveProperty } from '../SavedProperties/utils/pendingSave'
@@ -35,6 +36,8 @@ export default function PublicPropertyPage() {
   // Intención de agendar guardada antes de ir a iniciar sesión (se lee una vez, al abrir la página).
   const [pendingVisitId] = useState(peekPendingVisitProperty)
   const [pendingDismissed, setPendingDismissed] = useState(false)
+  // Si ya tiene una cita viva aquí, no puede iniciar otra: el botón se deshabilita y se le lleva a ella.
+  const liveVisit = useLiveVisitForProperty(property?.id)
   const savedIds = useSavedPropertyIds()
   const savedMutation = useToggleSavedProperty()
   const saved = property !== undefined && Boolean(savedIds.data?.includes(property.id))
@@ -156,18 +159,21 @@ export default function PublicPropertyPage() {
                 <Link to="/dashboard/owner/properties" className="mt-2 inline-block font-bold text-secondary hover:underline">{i18n.t("property:goToMyProperties")}</Link>
               </div>
             ) : (
-            <button
-              type="button"
-              onClick={scheduleVisit}
-              disabled={Boolean(property.reservedTenantId)}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"
-            ><CalendarCheck size={20} aria-hidden="true" />{i18n.t("visits:scheduleVisit")}</button>
+            <>
+              <button
+                type="button"
+                onClick={scheduleVisit}
+                disabled={Boolean(property.reservedTenantId) || Boolean(liveVisit)}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"
+              ><CalendarCheck size={20} aria-hidden="true" />{liveVisit ? i18n.t("visits:alreadyScheduled") : i18n.t("visits:scheduleVisit")}</button>
+              {liveVisit && <Link to="/dashboard/visits" className="mt-3 inline-block text-sm font-bold text-secondary hover:underline">{i18n.t("visits:viewThisVisit")}</Link>}
+            </>
             )}
           </aside>
         </div>
       </>}
     </main>
-    {(scheduling || resumeScheduling) && property && <ScheduleVisitDialog propertyId={property.id} onClose={() => { setScheduling(false); setPendingDismissed(true) }} />}
+    {(scheduling || resumeScheduling) && property && <ScheduleVisitDialog propertyId={property.id} ownerId={property.owner.id} onClose={() => { setScheduling(false); setPendingDismissed(true) }} />}
     <Footer />
   </div>
 }

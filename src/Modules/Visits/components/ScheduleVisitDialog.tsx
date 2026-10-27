@@ -1,9 +1,11 @@
-import { CalendarCheck, CheckCircle2, LoaderCircle } from 'lucide-react'
+import { CalendarCheck, CheckCircle2, LoaderCircle, MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
 import i18n from '../../../i18n/instance'
 import { errorMessage } from '../../../i18n/messages'
+import { useAuth } from '../../Auth/hooks/authHooks'
+import { useStartConversation } from '../../Messages/hooks/messageHooks'
 import { HOLD_HOURS } from '../constants'
 import { useRequestVisit } from '../hooks/visitHooks'
 import type { Slot } from '../types/visit'
@@ -13,13 +15,38 @@ import VisitDialog from './VisitDialog'
 
 interface ScheduleVisitDialogProps {
   propertyId: number
+  /** Propietario de la propiedad: con quien se abre el chat desde la esquina del modal. */
+  ownerId: number
   onClose: () => void
 }
 
+/** Chatear con el propietario sin salir del flujo de agendar: crea (o retoma) la conversación y entra a ella. */
+function ChatWithOwnerButton({ propertyId, ownerId }: { propertyId: number; ownerId: number }) {
+  useTranslation()
+  const { user } = useAuth()
+  const startConversation = useStartConversation()
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={!user || startConversation.isPending}
+        aria-busy={startConversation.isPending}
+        onClick={() => user && startConversation.mutate({ participantIds: [user.id, ownerId], propertyId })}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-primary transition hover:border-secondary disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {startConversation.isPending ? <LoaderCircle size={14} className="animate-spin" aria-hidden="true" /> : <MessageCircle size={14} aria-hidden="true" />}
+        {startConversation.isPending ? i18n.t('visits:chatOpening') : i18n.t('visits:chatWithOwner')}
+      </button>
+      {startConversation.isError && <p role="alert" className="absolute right-0 top-full z-10 mt-1 w-56 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700 shadow">{i18n.t('visits:chatError')}</p>}
+    </div>
+  )
+}
+
 /** "Agendar cita": el inquilino elige día y hora, deja un mensaje opcional y envía la solicitud. */
-export default function ScheduleVisitDialog({ propertyId, onClose }: ScheduleVisitDialogProps) {
+export default function ScheduleVisitDialog({ propertyId, ownerId, onClose }: ScheduleVisitDialogProps) {
   useTranslation()
   const request = useRequestVisit()
+  const chat = <ChatWithOwnerButton propertyId={propertyId} ownerId={ownerId} />
   const [picked, setPicked] = useState<{ slot: Slot; timezone: string } | null>(null)
   const [note, setNote] = useState('')
 
@@ -27,7 +54,7 @@ export default function ScheduleVisitDialog({ propertyId, onClose }: ScheduleVis
     // Con la confirmación automática la cita ya queda confirmada: no hay nada que esperar.
     const confirmed = request.data.status === 'CONFIRMED'
     return (
-      <VisitDialog title={i18n.t(confirmed ? 'visits:requestConfirmedTitle' : 'visits:requestSentTitle')} onClose={onClose}>
+      <VisitDialog title={i18n.t(confirmed ? 'visits:requestConfirmedTitle' : 'visits:requestSentTitle')} onClose={onClose} headerAction={chat}>
         <div className="flex flex-col items-center gap-3 py-4 text-center">
           <span className="grid size-14 place-items-center rounded-full bg-green-50 text-green-700"><CheckCircle2 size={30} aria-hidden="true" /></span>
           <p className="font-bold text-primary">{formatVisitDateTime(request.data.scheduledAt, request.data.timezone)}</p>
@@ -42,7 +69,7 @@ export default function ScheduleVisitDialog({ propertyId, onClose }: ScheduleVis
   }
 
   return (
-    <VisitDialog title={i18n.t('visits:scheduleTitle')} description={i18n.t('visits:scheduleHint')} onClose={onClose}>
+    <VisitDialog title={i18n.t('visits:scheduleTitle')} description={i18n.t('visits:scheduleHint')} onClose={onClose} headerAction={chat}>
       <SlotPicker propertyId={propertyId} showAutoConfirm value={picked?.slot.start ?? null} onChange={(slot, timezone) => { request.reset(); setPicked(slot && timezone ? { slot, timezone } : null) }} />
 
       {picked && (

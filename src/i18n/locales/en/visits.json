@@ -114,5 +114,10 @@
   "autoConfirmNote": "This owner confirms visits instantly: yours will be confirmed as soon as you request it.",
   "requestConfirmedTitle": "Visit confirmed",
   "requestConfirmedDescription": "Your visit is confirmed. We emailed you the details, and you can cancel it from My visits if you cannot attend.",
-  "cancelledBySystem": "Cancelled: the property was reserved for someone else"
+  "cancelledBySystem": "Cancelled: the property was reserved for someone else",
+  "alreadyScheduled": "You already have a visit at this property",
+  "viewThisVisit": "View my visit",
+  "chatWithOwner": "Chat with the owner",
+  "chatOpening": "Opening chat…",
+  "chatError": "Unable to open the chat. Please try again."
 }
