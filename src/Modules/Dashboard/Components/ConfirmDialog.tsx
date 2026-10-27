@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
 import { useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AlertTriangle, LoaderCircle } from 'lucide-react'
 
@@ -13,6 +14,8 @@ interface ConfirmDialogProps {
   danger?: boolean
   loading?: boolean
   error?: string | null
+  children?: ReactNode
+  confirmDisabled?: boolean
   onConfirm: () => void
   onCancel: () => void
 }
@@ -26,6 +29,8 @@ export default function ConfirmDialog({
   danger,
   loading,
   error,
+  children,
+  confirmDisabled,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -66,6 +71,7 @@ export default function ConfirmDialog({
           </div>
         </div>
 
+        {children}
         {error && (
           <p role="alert" className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
             {error}
@@ -86,7 +92,7 @@ export default function ConfirmDialog({
             className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition disabled:opacity-60 ${
               danger ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-primary-dark'
             }`}
-            disabled={loading}
+            disabled={loading || confirmDisabled}
             onClick={onConfirm}
           >
             {loading && <LoaderCircle size={15} className="animate-spin" />}

@@ -10,5 +10,7 @@
   "reservedForOther": "Reserved for someone else",
   "reserveForTenant": "Reserve for {{name}}",
   "reserveForPerson": "Reserve for this person",
-  "activeRequired": "The property must be approved and active to reserve it."
+  "activeRequired": "The property must be approved and active to reserve it.",
+  "cancellationReason": "Cancellation reason",
+  "cancellationReasonHint": "Enter the reason; it will be emailed to the tenant."
 }

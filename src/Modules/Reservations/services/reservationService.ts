@@ -1,8 +1,8 @@
 import apiAxios from '../../../api/apiConfig'
 import type { Reservation } from '../models/reservation'
 
-export async function releaseReservation(propertyId: number): Promise<Reservation> {
-  const response = await apiAxios.delete<Reservation>(`/reservations/property/${propertyId}`)
+export async function releaseReservation({ propertyId, reason }: { propertyId: number; reason: string }): Promise<Reservation> {
+  const response = await apiAxios.delete<Reservation>(`/reservations/property/${propertyId}`, { data: { reason } })
   return response.data
 }
 

@@ -38,6 +38,7 @@ export default function OwnerPropertiesPage() {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<PropertyFilter>('all');
   const [releasing, setReleasing] = useState<Property | null>(null);
+  const [releaseReason, setReleaseReason] = useState('');
   const release = useMutation({
     mutationFn: releaseReservation,
     onSuccess: async () => {
@@ -110,7 +111,7 @@ export default function OwnerPropertiesPage() {
                   </p>
                 )}
               <div className="mt-auto flex flex-wrap gap-2 border-t border-slate-100 pt-3">
-                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
+                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleaseReason(''); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
                 <Link
                   to="/dashboard/owner/properties/detail/$propertyId"
                   params={{ propertyId: String(property.id) }}
@@ -153,9 +154,24 @@ export default function OwnerPropertiesPage() {
         confirmLabel={i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}
         loading={release.isPending}
         error={release.isError ? i18n.t("dashboard:ownerpropertiespage_no_se_pudo_quitar_la_reserva_intenta_nuevamente") : null}
-        onConfirm={() => release.mutate(releasing.id)}
+        confirmDisabled={!releaseReason.trim()}
+        onConfirm={() => release.mutate({ propertyId: releasing.id, reason: releaseReason.trim() })}
         onCancel={() => { if (!release.isPending) setReleasing(null); }}
-      />}
+      >
+        <label className="mb-4 block text-sm font-semibold text-primary">
+          {i18n.t('reservations:cancellationReason')}
+          <textarea
+            value={releaseReason}
+            onChange={(event) => setReleaseReason(event.target.value)}
+            maxLength={500}
+            required
+            disabled={release.isPending}
+            aria-describedby="release-reason-hint"
+            className="mt-2 block w-full rounded-lg border border-slate-300 p-2 text-sm font-normal"
+          />
+          <span id="release-reason-hint" className="mt-1 block text-xs font-normal text-muted-ink">{i18n.t('reservations:cancellationReasonHint')}</span>
+        </label>
+      </ConfirmDialog>}
     </PageContainer>
   );
 }
