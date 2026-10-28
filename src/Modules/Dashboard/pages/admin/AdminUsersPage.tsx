@@ -4,11 +4,12 @@ import { currentLocale } from '../../../../i18n/formatters';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { useState } from 'react';
-import { Mail, ShieldCheck, UserCheck, UserX } from 'lucide-react';
+import { History, Mail, ShieldCheck, UserCheck, UserX } from 'lucide-react';
 import { ROLE_LABELS } from '../../../Auth/utils/roles';
 import type { AppRole } from '../../../Auth/types/roles';
 import { useStartDirectConversation } from '../../../Messages/hooks/messageHooks';
 import ManageRolesModal from '../../../Users/Components/ManageRolesModal';
+import UserActivityModal from '../../../Users/Components/UserActivityModal';
 import { useAdminUsers, useSetUserActive } from '../../../Users/hooks/useAdminUsers';
 import type { AdminUser } from '../../../Users/types/user';
 import EmptyPanel from '../../Components/EmptyPanel';
@@ -49,6 +50,7 @@ export default function AdminUsersPage() {
   useTranslation();
   const [filter, setFilter] = useState<UserFilter>('all');
   const [managingUser, setManagingUser] = useState<AdminUser | null>(null);
+  const [viewingUser, setViewingUser] = useState<AdminUser | null>(null);
   const [actionError, setActionError] = useMessageState('');
 
   const users = useAdminUsers();
@@ -167,6 +169,15 @@ export default function AdminUsersPage() {
                       </button>
                       <button
                         type="button"
+                        title={i18n.t('reservations:userActivityButton')}
+                        aria-label={i18n.t('reservations:userActivityButtonFor', { name: user.name })}
+                        className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-primary"
+                        onClick={() => setViewingUser(user)}
+                      >
+                        <History size={17} />
+                      </button>
+                      <button
+                        type="button"
                         title={i18n.t("dashboard:adminuserspage_gestionar_roles")}
                         aria-label={i18n.t("dashboard:adminuserspage_gestionar_roles_de", { v0: user.name })}
                         className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-primary"
@@ -194,6 +205,7 @@ export default function AdminUsersPage() {
       )}
 
       {managingUser && <ManageRolesModal user={managingUser} onClose={() => setManagingUser(null)} />}
+      {viewingUser && <UserActivityModal user={viewingUser} onClose={() => setViewingUser(null)} />}
     </PageContainer>
   );
 }

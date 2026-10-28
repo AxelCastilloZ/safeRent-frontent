@@ -19,6 +19,8 @@ import PageHeader from '../../Components/PageHeader';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
 import { releaseReservation } from '../../../Reservations/services/reservationService';
 import ReservationLabel from '../../../Reservations/Components/ReservationLabel';
+import { useOwnerRentalCounts } from '../../../Reservations/hooks/useReservationHistory';
+import { useDashboardUser } from '../../hooks/useDashboardUser';
 
 const filters = () => ([
   { value: 'all', label: i18n.t("dashboard:ownerpropertiespage_todas") },
@@ -35,6 +37,8 @@ const publishLinkClass = 'inline-flex items-center gap-2 rounded-xl bg-secondary
 export default function OwnerPropertiesPage() {
   useTranslation();
   const properties = useOwnerProperties();
+  const { userId } = useDashboardUser();
+  const rentalCounts = useOwnerRentalCounts(userId);
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<PropertyFilter>('all');
   const [releasing, setReleasing] = useState<Property | null>(null);
@@ -103,6 +107,9 @@ export default function OwnerPropertiesPage() {
                   <StatusBadge variant={statusBadgeVariant(property.status)} />
                   <ReservationLabel property={property} />
                 </div>
+                {rentalCounts.isSuccess && (
+                  <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
+                )}
                 {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
