@@ -21,7 +21,6 @@ import type { Property } from './interfaces/property.interface'
 import type { PropertyFilters } from './services/property.service'
 import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
-import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import PriceDetails from './PriceDetails'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select'
 
@@ -42,12 +41,7 @@ export default function ExplorePage() {
   useTranslation();
   const params = new URLSearchParams(window.location.search)
   const [query, setQuery] = useState(params.get('q') || '')
-  const [currency, setCurrency] = useState(params.get('currency') || '')
-  const [knownCurrencies, setKnownCurrencies] = useState(['CRC', 'USD', 'EUR'])
-  const { currency: displayCurrency } = useDisplayCurrency()
   const [sort, setSort] = useState<'newest' | 'price_asc' | 'price_desc'>('newest')
-  const [minPrice, setMinPrice] = useState(params.get('min') || '')
-  const [maxPrice, setMaxPrice] = useState(params.get('max') || '')
   const [rooms, setRooms] = useState('')
   const [services, setServices] = useState<number[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -58,21 +52,14 @@ export default function ExplorePage() {
 
   const debouncedQuery = useDebouncedValue(query, 400)
 
-  const priceRangeValid = !minPrice || !maxPrice || Number(minPrice) <= Number(maxPrice)
-
   const filters: PropertyFilters = useMemo(() => {
     const f: PropertyFilters = {}
     f.sort = sort
-    if (currency) f.sourceCurrency = currency
     if (services.length) f.serviceIds = services
     if (debouncedQuery.trim()) f.search = debouncedQuery.trim()
-    if (priceRangeValid) {
-      if (minPrice) f.minPrice = Number(minPrice)
-      if (maxPrice) f.maxPrice = Number(maxPrice)
-    }
     if (rooms) f.minRooms = Number(rooms)
     return f
-  }, [services, debouncedQuery, minPrice, maxPrice, rooms, priceRangeValid, currency, sort])
+  }, [services, debouncedQuery, rooms, sort])
 
   const { properties: loadedProperties, loading, error } = useProperties(filters, attempt)
   const {
@@ -83,28 +70,13 @@ export default function ExplorePage() {
 
   const properties = loading || error ? EMPTY_PROPERTIES : loadedProperties
 
-  const currencies = useMemo(
-    () =>
-      [
-        ...new Set([
-          ...knownCurrencies,
-          currency,
-          ...properties.map((p) => p.typeOfCoin),
-        ]),
-      ].filter(Boolean),
-    [properties, currency, knownCurrencies],
-  )
-
   const filtered = properties
 
   const activeProperty = filtered.find((p) => p.id === selected)
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
-  const activeFilterCount =
-    (services.length > 0 ? 1 : 0) +
-    (minPrice ? 1 : 0) +
-    (maxPrice ? 1 : 0)
+  const activeFilterCount = services.length > 0 ? 1 : 0
   const hasFilters = Boolean(
-    query || currency || minPrice || maxPrice || rooms || services.length,
+    query || rooms || services.length,
   )
   const selectFromMap = useCallback((id: number) => {
     setSelected(id)
@@ -114,9 +86,6 @@ export default function ExplorePage() {
   }, [])
   function resetFilters() {
     setQuery('')
-    setCurrency('')
-    setMinPrice('')
-    setMaxPrice('')
     setRooms('')
     setServices([])
     setSort('newest')
@@ -154,15 +123,8 @@ export default function ExplorePage() {
                 aria-controls="explore-filters"
                 onClick={() => setFiltersOpen(!filtersOpen)}
               >
-                <SlidersHorizontal size={16} />{i18n.t("explore:explorepage_filtros")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
+                <SlidersHorizontal size={16} />{i18n.t("dashboard:adminhomepage_servicios")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
-              <Select value={currency || 'all'} onValueChange={value => { setKnownCurrencies(currencies); setCurrency(value === 'all' ? '' : value) }}>
-                <SelectTrigger aria-label={i18n.t("explore:explorepage_moneda_de_publicacion")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{i18n.t("explore:explorepage_cualquier_moneda_publicada")}</SelectItem>
-                  {currencies.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
               <Select value={sort} onValueChange={value => setSort(value as typeof sort)}>
                 <SelectTrigger aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -182,33 +144,6 @@ export default function ExplorePage() {
             </div>
             {filtersOpen && (
               <div id="explore-filters" className="expanded-filters">
-                <p className="filter-section-label">{i18n.t("explore:explorepage_precio_mensual")}{' '}{i18n.t("explore:explorepage_en")}{' '}{displayCurrency}
-                </p>
-                <p className="text-xs text-neutral/70">{i18n.t("explore:explorepage_los_rangos_usan")}{' '}{displayCurrency}{i18n.t("common:missingRates")}</p>
-                <div className="price-inputs">
-                  <label>{i18n.t("explore:explorepage_desde")}<input
-                      type="number"
-                      min="0"
-                      placeholder={i18n.t("explore:explorepage_sin_minimo")}
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                  </label>
-                  <label>{i18n.t("explore:explorepage_hasta")}<input
-                      type="number"
-                      min="0"
-                      placeholder={i18n.t("explore:explorepage_sin_maximo")}
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                  </label>
-                </div>
-                {minPrice &&
-                  maxPrice &&
-                  Number(minPrice) > Number(maxPrice) && (
-                    <p role="status" className="filter-validation">{i18n.t("explore:explorepage_el_precio_minimo_debe_ser_menor_o_igual_al")}</p>
-                  )}
-
                 <fieldset aria-busy={servicesLoading}>
                   <legend className="filter-section-label">{i18n.t("explore:explorepage_servicios_incluidos")}</legend>
                   <p>{i18n.t("explore:explorepage_la_propiedad_debe_contar_con_todos_los_servicios_seleccionados")}</p>
