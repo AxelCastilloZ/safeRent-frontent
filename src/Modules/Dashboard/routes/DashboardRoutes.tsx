@@ -33,6 +33,11 @@ const clientReservationsRoute = createRoute({
   path: 'reservations',
   component: lazyRouteComponent(() => import('../pages/ReservationsPage')),
 });
+const clientVisitsRoute = createRoute({
+  getParentRoute: () => DashboardRoute,
+  path: 'visits',
+  component: lazyRouteComponent(() => import('../pages/VisitsPage')),
+});
 const clientSavedRoute = createRoute({
   getParentRoute: () => DashboardRoute,
   path: 'saved',
@@ -61,6 +66,11 @@ const ownerHomeRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: '/',
   component: lazyRouteComponent(() => import('../pages/owner/OwnerHomePage')),
+});
+const ownerVisitsRoute = createRoute({
+  getParentRoute: () => ownerAreaRoute,
+  path: 'visits',
+  component: lazyRouteComponent(() => import('../pages/owner/OwnerVisitsPage')),
 });
 const ownerPropertiesRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
@@ -134,6 +144,11 @@ const adminPropertiesRoute = createRoute({
   path: 'properties',
   component: lazyRouteComponent(() => import('../pages/admin/AdminPropertiesPage')),
 });
+const adminServicesRoute = createRoute({
+  getParentRoute: () => adminAreaRoute,
+  path: 'services',
+  component: lazyRouteComponent(() => import('../../Services/pages/ServicesAdminPage')),
+});
 const adminCommentsRoute = createRoute({
   getParentRoute: () => adminAreaRoute,
   path: 'comments',
@@ -170,12 +185,14 @@ const adminConversationRoute = createRoute({
 export const dashboardRoute = DashboardRoute.addChildren([
   clientHomeRoute,
   clientReservationsRoute,
+  clientVisitsRoute,
   clientSavedRoute,
   clientSettingsRoute,
   clientMessagesRoute.addChildren([clientMessagesIndexRoute, clientConversationRoute]),
   ownerAreaRoute.addChildren([
     ownerHomeRoute,
     ownerPropertiesRoute,
+    ownerVisitsRoute,
     ownerPropertyEditorRoute.addChildren([
       ownerPropertyNewRoute,
       ownerPropertyNewLocationRoute,
@@ -190,6 +207,7 @@ export const dashboardRoute = DashboardRoute.addChildren([
     adminPropertiesRoute,
     adminUsersRoute,
     adminCommentsRoute,
+    adminServicesRoute,
     adminReportsRoute,
     adminSettingsRoute,
     adminMessagesRoute.addChildren([adminMessagesIndexRoute, adminConversationRoute]),

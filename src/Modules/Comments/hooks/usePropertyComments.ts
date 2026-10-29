@@ -19,7 +19,7 @@ export function useOwnPropertyComment(propertyId: number, userId?: number) {
 export function useCreatePropertyComment(propertyId: number) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (content: string) => createPropertyComment(propertyId, content),
+    mutationFn: ({ content, rating }: { content: string; rating: number }) => createPropertyComment(propertyId, content, rating),
     onSuccess: () => Promise.all([
       queryClient.invalidateQueries({ queryKey: ['property-comments', propertyId] }),
       queryClient.invalidateQueries({ queryKey: ['own-property-comment', propertyId] }),

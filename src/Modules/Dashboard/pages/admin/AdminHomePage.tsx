@@ -36,7 +36,7 @@ export default function AdminHomePage() {
             <HomeAction to="/dashboard/admin/comments" icon={MessageSquare}>{i18n.t("dashboard:adminhomepage_moderar_comentarios")}</HomeAction>
             <HomeAction to="/dashboard/admin/users" icon={Users}>{i18n.t("dashboard:adminhomepage_usuarios")}</HomeAction>
             <HomeAction to="/dashboard/admin/messages" icon={Mail}>{i18n.t("dashboard:adminhomepage_mensajes")}</HomeAction>
-            <HomeAction to="/admin/services" icon={Settings}>{i18n.t("dashboard:adminhomepage_servicios")}</HomeAction>
+            <HomeAction to="/dashboard/admin/services" icon={Settings}>{i18n.t("dashboard:adminhomepage_servicios")}</HomeAction>
           </>
         }
       />

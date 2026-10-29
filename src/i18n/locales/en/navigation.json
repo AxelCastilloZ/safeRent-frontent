@@ -34,5 +34,7 @@
   "accountMenuUnread_many": "Menu for {{name}}, {{count}} unread messages",
   "unread_one": "{{count}} unread message",
   "unread_other": "{{count}} unread messages",
-  "unread_many": "{{count}} unread messages"
+  "unread_many": "{{count}} unread messages",
+  "myVisits": "My visits",
+  "visits": "Visits"
 }

@@ -29,7 +29,8 @@ export default function AuthActions({ onAction }: { onAction?: () => void }) {
         aria-haspopup="true" aria-expanded={Boolean(anchor)} onClick={(event) => setAnchor(event.currentTarget)}>
         <Avatar sx={{ bgcolor: '#0a2540', width: 40, height: 40, fontSize: 16, fontWeight: 600 }}>{initials}</Avatar>
       </IconButton>
-      <Menu id="account-menu" anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
+      <Menu id="account-menu" anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}
+        slotProps={{ paper: { sx: { mt: 0.75, minWidth: 224, borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0a2540', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)' } }, list: { sx: { p: '6px', '& .MuiMenuItem-root': { borderRadius: '8px', px: 1.5, py: 1, fontSize: '14px', '&:hover, &.Mui-focusVisible': { bgcolor: '#f1f5f9' } } } } }}>
         <MenuItem disabled>{fullName}</MenuItem>
         <MenuItem onClick={() => { setAnchor(null); logout(); onAction?.(); }}>{t("navigation:logout")}</MenuItem>
       </Menu>

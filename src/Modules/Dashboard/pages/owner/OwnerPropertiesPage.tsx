@@ -3,9 +3,10 @@ import { useMessageState } from '../../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, Building2, EyeOff, MapPin, Plus } from 'lucide-react';
+import { AlertTriangle, Building2, EyeOff, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import PropertyThumbCard from '../../Components/PropertyThumbCard';
 import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
 import { propertyService } from '../../../Property/services/propertyService';
@@ -18,6 +19,8 @@ import PageHeader from '../../Components/PageHeader';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
 import { releaseReservation } from '../../../Reservations/services/reservationService';
 import ReservationLabel from '../../../Reservations/Components/ReservationLabel';
+import { useOwnerRentalCounts } from '../../../Reservations/hooks/useReservationHistory';
+import { useDashboardUser } from '../../hooks/useDashboardUser';
 
 const filters = () => ([
   { value: 'all', label: i18n.t("dashboard:ownerpropertiespage_todas") },
@@ -34,9 +37,12 @@ const publishLinkClass = 'inline-flex items-center gap-2 rounded-xl bg-secondary
 export default function OwnerPropertiesPage() {
   useTranslation();
   const properties = useOwnerProperties();
+  const { userId } = useDashboardUser();
+  const rentalCounts = useOwnerRentalCounts(userId);
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<PropertyFilter>('all');
   const [releasing, setReleasing] = useState<Property | null>(null);
+  const [releaseReason, setReleaseReason] = useState('');
   const release = useMutation({
     mutationFn: releaseReservation,
     onSuccess: async () => {
@@ -92,19 +98,18 @@ export default function OwnerPropertiesPage() {
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((property) => (
-            <li key={property.id} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="min-w-0">
+            <li key={property.id} className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <PropertyThumbCard property={property} to={'/dashboard/owner/properties/detail/' + property.id} className="rounded-none border-0" />
+              <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="truncate font-bold text-primary">{property.title}</h2>
                   <StatusBadge variant={statusBadgeVariant(property.status)} />
                   <ReservationLabel property={property} />
                 </div>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-ink">
-                  <MapPin size={15} className="shrink-0" aria-hidden="true" />
-                  <span className="truncate">{property.address}</span>
-                </p>
+                {rentalCounts.isSuccess && (
+                  <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
+                )}
                 {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
@@ -112,9 +117,8 @@ export default function OwnerPropertiesPage() {
                     <span>{property.reviewNote}</span>
                   </p>
                 )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
+              <div className="mt-auto flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleaseReason(''); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
                 <Link
                   to="/dashboard/owner/properties/detail/$propertyId"
                   params={{ propertyId: String(property.id) }}
@@ -133,6 +137,7 @@ export default function OwnerPropertiesPage() {
                   >
                     <EyeOff size={16} className="inline-block mr-1" aria-hidden="true" />{i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}</button>
                 )}
+              </div>
               </div>
             </li>
           ))}
@@ -156,9 +161,24 @@ export default function OwnerPropertiesPage() {
         confirmLabel={i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}
         loading={release.isPending}
         error={release.isError ? i18n.t("dashboard:ownerpropertiespage_no_se_pudo_quitar_la_reserva_intenta_nuevamente") : null}
-        onConfirm={() => release.mutate(releasing.id)}
+        confirmDisabled={!releaseReason.trim()}
+        onConfirm={() => release.mutate({ propertyId: releasing.id, reason: releaseReason.trim() })}
         onCancel={() => { if (!release.isPending) setReleasing(null); }}
-      />}
+      >
+        <label className="mb-4 block text-sm font-semibold text-primary">
+          {i18n.t('reservations:cancellationReason')}
+          <textarea
+            value={releaseReason}
+            onChange={(event) => setReleaseReason(event.target.value)}
+            maxLength={500}
+            required
+            disabled={release.isPending}
+            aria-describedby="release-reason-hint"
+            className="mt-2 block w-full rounded-lg border border-slate-300 p-2 text-sm font-normal"
+          />
+          <span id="release-reason-hint" className="mt-1 block text-xs font-normal text-muted-ink">{i18n.t('reservations:cancellationReasonHint')}</span>
+        </label>
+      </ConfirmDialog>}
     </PageContainer>
   );
 }

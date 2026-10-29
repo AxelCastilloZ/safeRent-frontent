@@ -107,8 +107,7 @@
   gap: 8px;
   margin-top: 16px;
 }
-.filter-pill,
-.filter-toolbar select {
+.filter-pill {
   border: 1px solid #c8ced8;
   border-radius: 24px;
   background: #fff;

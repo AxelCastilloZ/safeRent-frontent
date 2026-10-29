@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
+import DisplayPreferences from '../../Auth/components/DisplayPreferences';
 import UserMenu from './UserMenu';
 
 interface DashboardHeaderProps {
@@ -12,7 +13,7 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderProps) {
   const { t } = useTranslation();
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
+    <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 py-2 sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
@@ -22,9 +23,9 @@ export default function DashboardHeader({ title, onMenuClick }: DashboardHeaderP
         >
           <Menu size={22} />
         </button>
-        <p className="truncate text-sm font-semibold text-primary">{t(title)}</p>
+        <p className="hidden truncate text-sm lg:block font-semibold text-primary">{t(title)}</p>
       </div>
-      <UserMenu />
+      <div className="flex items-center gap-2"><DisplayPreferences /><UserMenu /></div>
     </header>
   );
 }

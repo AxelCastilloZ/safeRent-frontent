@@ -1,4 +1,5 @@
-import { catalogText } from '../../i18n/catalog';
+import PropertyDescription from './Components/PropertyDescription';
+import PropertyGallery from './Components/PropertyGallery';
 import { messageFromError, message } from '../../i18n/messages';
 import { useMessageState } from '../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
@@ -7,15 +8,18 @@ import ReservationLabel from '../Reservations/Components/ReservationLabel'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { AlertTriangle, CheckCircle2, Circle, MapPin, BedDouble, DollarSign, Pencil } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Circle, Pencil, CalendarCheck } from 'lucide-react'
 import StatusBadge from './Components/StatusBadge'
 import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import { statusBadgeVariant } from './utils/propertyStatus'
 import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
-import { priceLabel } from '../Explore/utils/property.utils'
-import PriceDetails from '../Explore/PriceDetails'
+import PropertyPriceCard from './Components/PropertyPriceCard'
+import PropertyComments from '../Comments/Components/PropertyComments'
+
 import { useSessionToken } from '../Auth/services/authSession'
+import ReservationHistoryList from '../Reservations/Components/ReservationHistoryList'
+import { usePropertyRentalHistory } from '../Reservations/hooks/useReservationHistory'
 
 export default function PropertyDetailPage() {
   useTranslation();
@@ -30,6 +34,7 @@ export default function PropertyDetailPage() {
     retry: false,
   })
   const property = propertyQuery.data
+  const rentals = usePropertyRentalHistory(Number(propertyId), Boolean(token))
   const loading = propertyQuery.isPending
   const loadError = propertyQuery.isError ? i18n.t("property:createpropertystep1page_no_se_pudo_cargar_la_propiedad") : null
   const [error, setError] = useMessageState<string | null>(null)
@@ -72,14 +77,13 @@ export default function PropertyDetailPage() {
   const canSubmit = hasData && hasImages && hasServices && hasLocation
   const canPublish = canSubmit && (property.status === 'DRAFT' || property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE')
 
-  const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-6xl">
       {!hasLocation && <div className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{i18n.t("property:propertydetailpage_confirma_la_ubicacion_en_el_mapa_para_publicar")}<button type="button" className="ml-2 font-bold underline" onClick={() => navigate({ to: '/dashboard/owner/properties/new/location', search: { propertyId: property.id } })}>{i18n.t("property:propertydetailpage_completar_ubicacion")}</button>
       </div>}
-      <div className="mb-6 flex items-start justify-between">
-        <h1 className="text-2xl font-bold text-primary">{property.title || i18n.t("property:createpropertystep1page_sin_titulo")}</h1>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <p className="text-sm font-bold text-primary">{i18n.t("property:ownerPreviewTitle")}</p>
         <StatusBadge variant={statusBadgeVariant(property.status)} />
       </div>
 
@@ -108,93 +112,21 @@ export default function PropertyDetailPage() {
 
       <ReservationLabel property={property} />
 
-      {/* Property data */}
-      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-primary">{i18n.t("property:propertydetailpage_datos_de_la_propiedad")}</h3>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-slate-50"
-            onClick={() => navigate({ to: '/dashboard/owner/properties/new', search: { editId: property.id } })}
-          >
-            <Pencil size={13} />{i18n.t("property:propertydetailpage_editar_datos")}</button>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex items-start gap-2">
-            <MapPin size={16} className="mt-0.5 shrink-0 text-slate-400" />
-            <div>
-              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:createpropertylocationpage_direccion")}</span>
-              <span className="text-sm text-primary">{property.address || '—'}</span>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <DollarSign size={16} className="mt-0.5 shrink-0 text-slate-400" />
-            <div>
-              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:createpropertystep1page_precio_mes")}</span>
-              <div className="text-sm text-primary">{priceLabel(property)}<PriceDetails price={property.displayPrice} /></div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <BedDouble size={16} className="mt-0.5 shrink-0 text-slate-400" />
-            <div>
-              <span className="block text-xs font-medium text-slate-400">{i18n.t("explore:explorepage_habitaciones")}</span>
-              <span className="text-sm text-primary">{property.rooms ?? '—'}</span>
-            </div>
-          </div>
-          {property.typeOfProperty && (
-            <div>
-              <span className="block text-xs font-medium text-slate-400">{i18n.t("property:propertydetailpage_tipo")}</span>
-              <span className="text-sm text-primary">{catalogText(property.typeOfProperty)}</span>
-            </div>
-          )}
-        </div>
-
-        {property.description && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <span className="mb-1 block text-xs font-medium text-slate-400">{i18n.t("property:propertyformlayout_descripcion")}</span>
-            <p className="text-sm leading-relaxed text-slate-600">{property.description}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Image gallery */}
-      <div className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-primary">{i18n.t("property:propertydetailpage_imagenes")}{property.files?.length ?? 0})</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {property.files?.length > 0 ? (
-            property.files.map((file) => (
-              <div key={file.id} className="aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
-                <img
-                  src={file.url || `${API_BASE}/${file.path}`}
-                  alt={file.fileName}
-                  className="size-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full rounded-xl bg-slate-50 py-8 text-center text-sm text-slate-400">{i18n.t("property:propertydetailpage_sin_imagenes")}</div>
-          )}
-        </div>
-      </div>
-
-      {/* Service tags */}
-      <div className="mb-6">
-        <h3 className="mb-3 text-sm font-bold text-primary">{i18n.t("dashboard:adminhomepage_servicios")}</h3>
-        {property.services?.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {property.services.map((s) => (
-              <span key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                {catalogText(s)}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-slate-400">{i18n.t("property:propertydetailpage_sin_servicios_asignados")}</p>
-        )}
+      <p className="my-4 rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-secondary-dark">{i18n.t('property:ownerPreview')}</p>
+      <PropertyGallery key={property.id} property={{ ...property, typeOfProperty: property.typeOfProperty ?? undefined }} />
+      <div className="my-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <article className="min-w-0">
+          <PropertyDescription property={property} />
+          {property.status === 'ACTIVE' && <PropertyComments propertyId={property.id} />}
+        </article>
+        <PropertyPriceCard property={{ ...property, typeOfProperty: property.typeOfProperty ?? undefined }} ownerName={property.owner.name}>
+          <button type="button" disabled className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-60">
+            <CalendarCheck size={20} aria-hidden="true" />{i18n.t('visits:scheduleVisit')}
+          </button>
+          <button type="button" className="mt-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold" onClick={() => navigate({ to: '/dashboard/owner/properties/new', search: { editId: property.id } })}>
+            <Pencil size={16} />{i18n.t('property:propertydetailpage_editar_datos')}
+          </button>
+        </PropertyPriceCard>
       </div>
 
       {/* Pre-publish checklist */}
@@ -220,8 +152,21 @@ export default function PropertyDetailPage() {
         </div>
       )}
 
+      {/* Rental history */}
+      <section aria-labelledby="rental-history-title" className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 id="rental-history-title" className="text-sm font-bold text-primary">{i18n.t('reservations:rentalHistoryTitle')}</h3>
+          {rentals.isSuccess && (
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{i18n.t('reservations:timesRented', { count: rentals.data.timesRented })}</span>
+          )}
+        </div>
+        {rentals.isPending && <p role="status" className="text-sm text-muted-ink">{i18n.t('reservations:historyLoading')}</p>}
+        {rentals.isError && <p role="alert" className="text-sm text-red-700">{i18n.t('reservations:historyLoadError')}<button type="button" onClick={() => void rentals.refetch()} className="ml-3 font-semibold underline">{i18n.t('comments:propertycomments_reintentar')}</button></p>}
+        {rentals.isSuccess && <ReservationHistoryList reservations={rentals.data.reservations} show="tenant" />}
+      </section>
+
       {/* Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
           className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold text-primary transition hover:bg-slate-50"

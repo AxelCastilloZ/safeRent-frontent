@@ -1,0 +1,23 @@
+{
+  "fixtures": true,
+  "checks": [
+    "owner cards 1440",
+    "owner preview 1440",
+    "long appointment note 1440",
+    "settings editor scroll 1440",
+    "owner cards 375",
+    "owner preview 375",
+    "long appointment note 375",
+    "settings editor scroll 375",
+    "owner cards 320",
+    "owner preview 320",
+    "long appointment note 320",
+    "settings editor scroll 320",
+    "admin services legacy redirect",
+    "admin services mobile",
+    "conversation visit card mobile",
+    "rating average and accessible input",
+    "account currency refresh",
+    "guest currency persistence"
+  ]
+}

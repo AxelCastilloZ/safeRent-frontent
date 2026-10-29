@@ -1,6 +1,7 @@
 import {
   Building2,
   CalendarCheck,
+  CalendarClock,
   Heart,
   LayoutDashboard,
   Mail,
@@ -42,6 +43,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
     messagesPath: '/dashboard/messages',
     nav: [
       { to: '/dashboard', label: 'navigation:home', Icon: LayoutDashboard },
+      { to: '/dashboard/visits', label: 'navigation:myVisits', Icon: CalendarClock },
       { to: '/dashboard/reservations', label: 'navigation:reservations', Icon: CalendarCheck },
       { to: '/dashboard/messages', label: 'navigation:messages', Icon: MessageSquare },
       { to: '/dashboard/saved', label: 'navigation:saved', Icon: Heart },
@@ -56,6 +58,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
     nav: [
       { to: '/dashboard/owner', label: 'navigation:home', Icon: LayoutDashboard },
       { to: '/dashboard/owner/properties', label: 'navigation:properties', Icon: Building2 },
+      { to: '/dashboard/owner/visits', label: 'navigation:visits', Icon: CalendarClock },
       { to: '/dashboard/owner/messages', label: 'navigation:messages', Icon: MessageSquare },
       { to: '/dashboard/owner/settings', label: 'navigation:settings', Icon: Settings },
     ],
@@ -68,6 +71,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/admin', label: 'navigation:summary', Icon: LayoutDashboard },
       { to: '/dashboard/admin/properties', label: 'navigation:allProperties', Icon: Building2 },
       { to: '/dashboard/admin/comments', label: 'navigation:comments', Icon: MessageSquare },
+      { to: '/dashboard/admin/services', label: 'dashboard:adminhomepage_servicios', Icon: Building2 },
       { to: '/dashboard/admin/users', label: 'navigation:users', Icon: Users },
       // Icono distinto de "Comentarios" (MessageSquare) para no confundirlos.
       { to: '/dashboard/admin/messages', label: 'navigation:messages', Icon: Mail },

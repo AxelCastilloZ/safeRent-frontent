@@ -4,6 +4,8 @@ import { Compass, LogOut } from 'lucide-react';
 import { DASHBOARD_AREAS, isNavItemActive, type DashboardArea } from '../config/navigation';
 import { useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
 import UnreadBadge from '../../Messages/Components/UnreadBadge';
+import VisitCountBadge from '../../Visits/components/VisitCountBadge';
+import { useVisitSummary } from '../../Visits/hooks/visitHooks';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import AreaSwitcher from './AreaSwitcher';
 
@@ -23,7 +25,13 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
   const navigate = useNavigate();
   const { fullName, initials, logout } = useDashboardUser();
   const unreadMessages = useUnreadMessagesCount();
+  const visits = useVisitSummary();
   const config = DASHBOARD_AREAS[area];
+  // Citas que esperan respuesta: al propietario le llegan solicitudes; al inquilino, contrapropuestas.
+  const visitBadges: Record<string, number> = {
+    '/dashboard/visits': visits.data?.tenantNeedsAnswer ?? 0,
+    '/dashboard/owner/visits': visits.data?.ownerPending ?? 0,
+  };
 
   async function handleLogout() {
     onNavigate?.();
@@ -35,7 +43,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
   return (
     <div className="flex h-full w-full flex-col bg-primary text-white">
       <Link to="/" onClick={onNavigate} className="flex items-center gap-2 px-5 py-5" aria-label={t("navigation:brandHome")}>
-        <img src="/LogoSafeRentAzul.png" alt="" className="size-9 rounded-lg bg-white object-contain p-0.5" />
+        <img src="/LogoSafeRentAzul.png" alt="" className="size-9 object-contain" />
         <span className="text-xl font-bold tracking-tight">SafeRent</span>
       </Link>
 
@@ -68,6 +76,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
               <item.Icon size={18} aria-hidden="true" />
               {t(item.label)}
               {item.to === config.messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
+              <VisitCountBadge count={visitBadges[item.to] ?? 0} className="ml-auto" />
             </Link>
           );
         })}

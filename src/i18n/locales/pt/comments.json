@@ -31,5 +31,9 @@
   "admincommentspage_ocultar_comentario": "Ocultar comentário",
   "admincommentspage_cancelar": "Cancelar",
   "admincommentspage_guardando": "Salvando…",
-  "admincommentspage_restaurar_comentario": "Restaurar comentário"
+  "admincommentspage_restaurar_comentario": "Restaurar comentário",
+  "noRatings": "Ainda não há avaliações.",
+  "ratingSummary": "{{average}} / 5 · {{count}} avaliações",
+  "ratingValue": "{{count}} de 5 estrelas",
+  "yourRating": "Sua avaliação"
 }
