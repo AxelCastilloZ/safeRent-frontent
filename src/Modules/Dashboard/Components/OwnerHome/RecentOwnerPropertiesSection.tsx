@@ -31,7 +31,7 @@ export default function RecentOwnerPropertiesSection() {
           actionTo="/dashboard/owner/properties/new"
         />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-3">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-4">
           {recent.map((property) => (
             <li key={property.id} className="flex">
               <PropertyThumbCard

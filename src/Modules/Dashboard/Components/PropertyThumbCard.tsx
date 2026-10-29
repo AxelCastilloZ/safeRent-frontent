@@ -26,9 +26,10 @@ export default function PropertyThumbCard({ property, to, badge, footer, unavail
 
   const content = (
     <>
-      <div className="relative aspect-[16/10] bg-slate-100">
+      {/* La foto va en absoluto: una foto vertical no puede estirar el recuadro y todas las tarjetas conservan la misma proporción. */}
+      <div className="relative aspect-[16/10] shrink-0 overflow-hidden bg-slate-100">
         {photo ? (
-          <img src={photo} alt="" loading="lazy" className={`size-full object-cover transition group-hover:scale-[1.02] ${unavailable ? 'grayscale' : ''}`} />
+          <img src={photo} alt="" loading="lazy" className={`absolute inset-0 size-full object-cover transition group-hover:scale-[1.02] ${unavailable ? 'grayscale' : ''}`} />
         ) : (
           <span className="grid size-full place-items-center text-slate-300">
             <ImageOff size={28} aria-hidden="true" />

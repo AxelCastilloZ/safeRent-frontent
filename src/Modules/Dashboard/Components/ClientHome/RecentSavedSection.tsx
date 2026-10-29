@@ -29,7 +29,7 @@ export default function RecentSavedSection() {
           actionTo="/explorar"
         />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-3">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-4">
           {recent.map((property) => (
             <li key={property.id} className="flex">
               {/* Una guardada que ya no está activa no tiene página pública: se quita desde "Ver todas". */}

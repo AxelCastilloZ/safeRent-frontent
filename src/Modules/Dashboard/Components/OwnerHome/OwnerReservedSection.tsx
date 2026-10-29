@@ -23,7 +23,7 @@ export default function OwnerReservedSection() {
       ) : reserved.length === 0 ? (
         <SectionEmpty title={i18n.t("dashboard:ownerreservedsection_aun_no_tienes_propiedades_reservadas")} description={i18n.t("dashboard:ownerreservedsection_cuando_un_inquilino_reserve_una_de_tus_propiedades_la")} />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-4">
           {reserved.map((property) => (
             <li key={property.id} className="flex">
               <PropertyThumbCard
