@@ -1,4 +1,10 @@
 {
+  "adminpropertydialog_close": "Cerrar",
+  "adminpropertydialog_error": "No pudimos cargar el detalle de la propiedad.",
+  "adminpropertydialog_rooms": "Habitaciones",
+  "adminpropertydialog_capacity": "Capacidad (personas)",
+  "adminpropertydialog_created": "Fecha de registro",
+  "adminpropertydialog_reviewed": "Última revisión",
   "pendingreviewsection_pendientes_de_revision": "Pendientes de revisión",
   "pendingreviewsection_no_pudimos_cargar_la_cola_de_revision": "No pudimos cargar la cola de revisión.",
   "pendingreviewsection_no_hay_propiedades_por_revisar": "No hay propiedades por revisar",

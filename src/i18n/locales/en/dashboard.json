@@ -1,4 +1,10 @@
 {
+  "adminpropertydialog_close": "Close",
+  "adminpropertydialog_error": "We could not load the property details.",
+  "adminpropertydialog_rooms": "Bedrooms",
+  "adminpropertydialog_capacity": "Capacity (people)",
+  "adminpropertydialog_created": "Date registered",
+  "adminpropertydialog_reviewed": "Last review",
   "pendingreviewsection_pendientes_de_revision": "Pending review",
   "pendingreviewsection_no_pudimos_cargar_la_cola_de_revision": "Unable to load the review queue.",
   "pendingreviewsection_no_hay_propiedades_por_revisar": "No properties to review",
