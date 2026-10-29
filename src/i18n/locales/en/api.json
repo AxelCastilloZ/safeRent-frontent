@@ -97,5 +97,6 @@
   "API_ZONA_HORARIA_INVALIDA": "The time zone is not valid",
   "API_DISPONIBILIDAD_INVALIDA": "The availability windows are not valid",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Only the owner can set the availability",
-  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "The visit must be confirmed to reserve"
+  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "The visit must be confirmed to reserve",
+  "API_PROPIETARIO_NO_DISPONIBLE": "Owner unavailable"
 }

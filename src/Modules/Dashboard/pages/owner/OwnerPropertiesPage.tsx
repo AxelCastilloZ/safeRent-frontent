@@ -18,7 +18,6 @@ import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
 import { releaseReservation } from '../../../Reservations/services/reservationService';
-import ReservationLabel from '../../../Reservations/Components/ReservationLabel';
 import { useOwnerRentalCounts } from '../../../Reservations/hooks/useReservationHistory';
 import { useDashboardUser } from '../../hooks/useDashboardUser';
 
@@ -105,7 +104,7 @@ export default function OwnerPropertiesPage() {
               <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge variant={statusBadgeVariant(property.status)} />
-                  <ReservationLabel property={property} />
+                  {property.reservedTenantId && <span role="status" className="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">{i18n.t("dashboard:recentsavedsection_reservada")}</span>}
                 </div>
                 {rentalCounts.isSuccess && (
                   <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
@@ -117,26 +116,27 @@ export default function OwnerPropertiesPage() {
                     <span>{property.reviewNote}</span>
                   </p>
                 )}
-              <div className="mt-auto flex flex-wrap gap-2 border-t border-slate-100 pt-3">
-                {property.reservedTenantId && <button type="button" onClick={() => { release.reset(); setReleaseReason(''); setReleasing(property); }} className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>}
-                <Link
-                  to="/dashboard/owner/properties/detail/$propertyId"
-                  params={{ propertyId: String(property.id) }}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
-                >{i18n.t("dashboard:ownerpropertiespage_ver")}</Link>
-                <Link
-                  to="/dashboard/owner/properties/new"
-                  search={{ editId: property.id }}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-primary transition hover:border-secondary"
-                >{i18n.t("dashboard:ownerpropertiespage_editar")}</Link>
-                {property.status !== 'INACTIVE' && property.status !== 'DRAFT' && (
-                  <button
-                    type="button"
-                    onClick={() => { setDeactivating(property); setDeactivateError(null); }}
-                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-                  >
-                    <EyeOff size={16} className="inline-block mr-1" aria-hidden="true" />{i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}</button>
-                )}
+              <div className="mt-auto space-y-2 border-t border-slate-100 pt-3">
+                <div className="flex gap-2">
+                  <Link
+                    to="/dashboard/owner/properties/detail/$propertyId"
+                    params={{ propertyId: String(property.id) }}
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary"
+                  >{i18n.t("dashboard:ownerpropertiespage_ver")}</Link>
+                  <Link
+                    to="/dashboard/owner/properties/new"
+                    search={{ editId: property.id }}
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary"
+                  >{i18n.t("dashboard:ownerpropertiespage_editar")}</Link>
+                  {property.status !== 'INACTIVE' && property.status !== 'DRAFT' && (
+                    <button
+                      type="button"
+                      onClick={() => { setDeactivating(property); setDeactivateError(null); }}
+                      className="ml-auto inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                    >
+                      <EyeOff size={14} aria-hidden="true" />{i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}</button>
+                  )}
+                </div>
               </div>
               </div>
             </li>

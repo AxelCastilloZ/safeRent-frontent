@@ -97,5 +97,6 @@
   "API_ZONA_HORARIA_INVALIDA": "O fuso horário não é válido",
   "API_DISPONIBILIDAD_INVALIDA": "As janelas de atendimento não são válidas",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Somente o proprietário pode configurar a disponibilidade",
-  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "A visita deve estar confirmada para reservar"
+  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "A visita deve estar confirmada para reservar",
+  "API_PROPIETARIO_NO_DISPONIBLE": "Proprietário indisponível"
 }

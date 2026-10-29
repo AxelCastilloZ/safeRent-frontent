@@ -15,3 +15,9 @@ export const publicPropertyRoute = createRoute({
   path: 'property_detail/$propertyId',
   component: lazyRouteComponent(() => import('../PublicPropertyPage')),
 });
+
+export const publicOwnerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'owner_properties/$ownerId',
+  component: lazyRouteComponent(() => import('../PublicOwnerPage')),
+});

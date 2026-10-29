@@ -10,3 +10,15 @@ export async function getPublicProperty(id: number, signal: AbortSignal, display
   const response = await apiAxios.get<PublicProperty>(`/properties/active/${id}`, { signal, params: { displayCurrency } })
   return response.data
 }
+
+/** Lo único que se publica de un propietario: su nombre y cuántas propiedades publicadas tiene. */
+export interface PublicOwner {
+  id: number
+  name: string
+  activeProperties: number
+}
+
+export async function getPublicOwner(id: number, signal: AbortSignal): Promise<PublicOwner> {
+  const response = await apiAxios.get<PublicOwner>(`/properties/owners/${id}`, { signal })
+  return response.data
+}
