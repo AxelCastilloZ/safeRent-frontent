@@ -95,8 +95,7 @@
   min-width: 0;
 }
 .location-search:focus-within {
-  outline: 2px solid #6f9cba;
-  outline-offset: 2px;
+  border-color: var(--color-secondary);
 }
 .location-search button {
   display: flex;
@@ -544,6 +543,9 @@
 .explore-page input:focus-visible {
   outline: 2px solid #3b82b6;
   outline-offset: 3px;
+}
+.explore-page .location-search input:focus-visible {
+  outline: none;
 }
 @media (min-width: 1450px) {
   .explore-search {
