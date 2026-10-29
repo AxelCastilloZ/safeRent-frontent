@@ -193,5 +193,14 @@
   "ownPropertyMessages": "Los interesados te escribirán y verás sus mensajes en tu panel.",
   "goToMyProperties": "Ir a mis propiedades",
   "ownerPreview": "Vista previa privada: así se presenta tu propiedad a los inquilinos. Las acciones para guardar o agendar se muestran a los visitantes cuando esté publicada.",
-  "ownerPreviewTitle": "Vista previa de la propiedad"
+  "ownerPreviewTitle": "Vista previa de la propiedad",
+  "viewOwnerProperties": "Toca el nombre para ver todas sus propiedades",
+  "ownerPageKicker": "Propietario",
+  "ownerPageTitle": "Propiedades de {{name}}",
+  "ownerPageCount_one": "{{count}} propiedad publicada",
+  "ownerPageCount_many": "{{count}} propiedades publicadas",
+  "ownerPageCount_other": "{{count}} propiedades publicadas",
+  "ownerPageEmpty": "Este propietario no tiene propiedades publicadas por el momento.",
+  "ownerPageInvalid": "Propietario no válido",
+  "ownerPageLoading": "Cargando propietario…"
 }

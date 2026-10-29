@@ -10,6 +10,8 @@ export interface PropertyFilters {
   maxPrice?: number
   minRooms?: number
   typeOfPropertyId?: number
+  /** Solo las propiedades de este propietario. */
+  ownerId?: number
   displayCurrency?: string
   sourceCurrency?: string
   sort?: 'newest' | 'price_asc' | 'price_desc'
@@ -20,7 +22,7 @@ export async function getProperties(
   filters: PropertyFilters = {},
 ): Promise<Property[]> {
   const params = new URLSearchParams()
-  const { serviceIds = [], search, minPrice, maxPrice, minRooms, typeOfPropertyId } = filters
+  const { serviceIds = [], search, minPrice, maxPrice, minRooms, typeOfPropertyId, ownerId } = filters
 
   if (serviceIds.length) params.set('serviceIds', serviceIds.join(','))
   if (search) params.set('search', search)
@@ -28,6 +30,7 @@ export async function getProperties(
   if (maxPrice !== undefined) params.set('maxPrice', String(maxPrice))
   if (minRooms !== undefined) params.set('minRooms', String(minRooms))
   if (typeOfPropertyId !== undefined) params.set('typeOfPropertyId', String(typeOfPropertyId))
+  if (ownerId !== undefined) params.set('ownerId', String(ownerId))
   params.set('limit', '100')
   if (filters.displayCurrency) params.set('displayCurrency', filters.displayCurrency)
   if (filters.sourceCurrency) params.set('sourceCurrency', filters.sourceCurrency)

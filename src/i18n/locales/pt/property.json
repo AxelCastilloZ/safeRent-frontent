@@ -193,5 +193,14 @@
   "ownPropertyMessages": "Os interessados entrarão em contato e você verá as mensagens no seu painel.",
   "goToMyProperties": "Ir para minhas propriedades",
   "ownerPreview": "Prévia privada: apresentação do imóvel aos inquilinos. Os visitantes poderão salvar o imóvel e agendar visitas após a publicação.",
-  "ownerPreviewTitle": "Prévia do imóvel"
+  "ownerPreviewTitle": "Prévia do imóvel",
+  "viewOwnerProperties": "Toque no nome para ver todos os seus imóveis",
+  "ownerPageKicker": "Proprietário",
+  "ownerPageTitle": "Imóveis de {{name}}",
+  "ownerPageCount_one": "{{count}} imóvel publicado",
+  "ownerPageCount_many": "{{count}} imóveis publicados",
+  "ownerPageCount_other": "{{count}} imóveis publicados",
+  "ownerPageEmpty": "Este proprietário não tem imóveis publicados no momento.",
+  "ownerPageInvalid": "Proprietário inválido",
+  "ownerPageLoading": "Carregando proprietário…"
 }

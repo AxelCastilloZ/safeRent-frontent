@@ -97,5 +97,6 @@
   "API_ZONA_HORARIA_INVALIDA": "La zona horaria no es válida",
   "API_DISPONIBILIDAD_INVALIDA": "Las ventanas de atención no son válidas",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Solo el propietario puede configurar la disponibilidad",
-  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "La cita debe estar confirmada para reservar"
+  "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "La cita debe estar confirmada para reservar",
+  "API_PROPIETARIO_NO_DISPONIBLE": "Propietario no disponible"
 }

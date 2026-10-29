@@ -193,5 +193,14 @@
   "ownPropertyMessages": "Les locataires intéressés vous contacteront et leurs messages apparaîtront dans votre tableau de bord.",
   "goToMyProperties": "Voir mes biens",
   "ownerPreview": "Aperçu privé : présentation du logement aux locataires. Les visiteurs pourront enregistrer le logement et planifier une visite après sa publication.",
-  "ownerPreviewTitle": "Aperçu du logement"
+  "ownerPreviewTitle": "Aperçu du logement",
+  "viewOwnerProperties": "Touchez le nom pour voir tous ses biens",
+  "ownerPageKicker": "Propriétaire",
+  "ownerPageTitle": "Biens de {{name}}",
+  "ownerPageCount_one": "{{count}} bien publié",
+  "ownerPageCount_many": "{{count}} biens publiés",
+  "ownerPageCount_other": "{{count}} biens publiés",
+  "ownerPageEmpty": "Ce propriétaire n’a aucun bien publié pour le moment.",
+  "ownerPageInvalid": "Propriétaire non valide",
+  "ownerPageLoading": "Chargement du propriétaire…"
 }

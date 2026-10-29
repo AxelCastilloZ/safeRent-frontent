@@ -193,5 +193,14 @@
   "ownPropertyMessages": "Interested tenants will contact you and their messages will appear in your dashboard.",
   "goToMyProperties": "Go to my properties",
   "ownerPreview": "Private preview: this is how tenants see your property. Saving and scheduling actions are available to visitors once published.",
-  "ownerPreviewTitle": "Property preview"
+  "ownerPreviewTitle": "Property preview",
+  "viewOwnerProperties": "Tap the name to see all their properties",
+  "ownerPageKicker": "Owner",
+  "ownerPageTitle": "Properties by {{name}}",
+  "ownerPageCount_one": "{{count}} published property",
+  "ownerPageCount_many": "{{count}} published properties",
+  "ownerPageCount_other": "{{count}} published properties",
+  "ownerPageEmpty": "This owner has no published properties at the moment.",
+  "ownerPageInvalid": "Invalid owner",
+  "ownerPageLoading": "Loading owner…"
 }

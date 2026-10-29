@@ -136,7 +136,7 @@ export default function PublicPropertyPage() {
             <PropertyDescription property={property} />
             <PropertyComments propertyId={property.id} tenantId={property.reservedTenantId} />
           </article>
-          <PropertyPriceCard property={property} ownerName={property.owner.name}>
+          <PropertyPriceCard property={property} ownerName={property.owner.name} ownerId={property.owner.id}>
             {isOwnProperty ? (
               <div role="status" className="rounded-xl bg-slate-50 p-4 text-sm text-neutral">
                 <p className="font-bold text-primary">{i18n.t("property:ownPropertyTitle")}</p>
