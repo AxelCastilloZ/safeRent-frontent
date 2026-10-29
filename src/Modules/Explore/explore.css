@@ -61,8 +61,7 @@
 .explore-search {
   padding: 28px 26px 22px;
   border-bottom: 1px solid #d9dee7;
-  max-height: 60%;
-  overflow-y: auto;
+  flex-shrink: 0;
 }
 .explore-eyebrow {
   font-size: 10px;
@@ -126,8 +125,30 @@
   border-color: var(--color-secondary);
 }
 .expanded-filters {
-  margin-top: 18px;
+  order: 1;
+  flex-basis: 100%;
+  min-width: 0;
+  margin-top: 4px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(10 37 64 / 3%);
+  font-size: 14px;
+}
+.expanded-filters fieldset {
+  min-width: 0;
+}
+.expanded-filters .filter-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.service-filter-hint {
+  margin-top: 2px;
   font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-muted-ink);
 }
 .filter-section-label {
   font-weight: 600;
@@ -161,15 +182,102 @@
   background: #e9edf2;
 }
 .service-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 6px;
+  margin-top: 6px;
+  max-height: clamp(80px, 12dvh, 100px);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 transparent;
+  padding: 3px 6px 3px 3px;
 }
-.service-filters label {
+.service-filters:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+.service-filters::-webkit-scrollbar {
+  width: 6px;
+}
+.service-filters::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: #94a3b8;
+}
+.service-filters::-webkit-scrollbar-track {
+  background: transparent;
+}
+.service-filter-option {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-primary);
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.service-filter-option:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+.service-filter-option[aria-pressed="true"] {
+  border-color: var(--color-secondary);
+  background: #f0fdfa;
+  color: var(--color-secondary-dark);
+}
+.service-filter-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: var(--color-secondary);
+}
+.service-filter-option[aria-pressed="true"] .service-filter-icon {
+  background: #ccfbf1;
+}
+.service-filter-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.service-filter-check {
+  width: 16px;
+  flex-shrink: 0;
+  color: var(--color-secondary);
+}
+.service-filter-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px solid #f1f5f9;
+}
+.service-filter-clear {
+  padding: 2px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-secondary);
+}
+.service-filter-clear:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.service-filter-clear:disabled {
+  color: #94a3b8;
+  cursor: default;
 }
 .text-button {
   text-decoration: underline;
@@ -611,6 +719,17 @@
   .map-panel {
     height: 100%;
   }
+  .explore-layout[data-mobile-view='list'] {
+    height: auto;
+    min-height: calc(100dvh - 65px);
+  }
+  .explore-layout[data-mobile-view='list'] .explore-results {
+    height: auto;
+    min-height: calc(100dvh - 65px);
+  }
+  .explore-layout[data-mobile-view='list'] .property-list {
+    overflow: visible;
+  }
   .explore-layout[data-mobile-view='map'] .explore-results {
     display: none;
   }
@@ -625,7 +744,6 @@
   }
   .explore-search {
     padding: 22px 18px 18px;
-    max-height: 58%;
   }
   .explore-search h1 {
     font-size: 27px;
@@ -679,6 +797,19 @@
   }
   .map-notice {
     bottom: 160px;
+  }
+}
+@media (max-width: 639px) {
+  .expanded-filters {
+    order: 0;
+    margin-top: 0;
+    padding: 8px 10px;
+  }
+  .service-filters {
+    max-height: clamp(92px, 14dvh, 108px);
+  }
+  .service-filter-option {
+    min-height: 44px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

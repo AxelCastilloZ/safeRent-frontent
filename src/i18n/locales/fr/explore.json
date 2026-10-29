@@ -1,4 +1,6 @@
 {
+  "servicesFilterHint": "Afficher les logements avec tous ces équipements.",
+  "clearServicesSelection": "Effacer la sélection",
   "explorepage_saferent_inicio": "SafeRent, accueil",
   "explorepage_navegacion_principal": "Navigation principale",
   "explorepage_explorar": "Explorer",

@@ -1,4 +1,6 @@
 {
+  "servicesFilterHint": "Show properties with all these amenities.",
+  "clearServicesSelection": "Clear selection",
   "explorepage_saferent_inicio": "SafeRent, home",
   "explorepage_navegacion_principal": "Main navigation",
   "explorepage_explorar": "Explore",
