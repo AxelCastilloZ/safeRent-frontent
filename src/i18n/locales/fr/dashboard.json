@@ -1,4 +1,10 @@
 {
+  "adminpropertydialog_close": "Fermer",
+  "adminpropertydialog_error": "Impossible de charger les détails du logement.",
+  "adminpropertydialog_rooms": "Chambres",
+  "adminpropertydialog_capacity": "Capacité (personnes)",
+  "adminpropertydialog_created": "Date d’inscription",
+  "adminpropertydialog_reviewed": "Dernière révision",
   "pendingreviewsection_pendientes_de_revision": "En attente de vérification",
   "pendingreviewsection_no_pudimos_cargar_la_cola_de_revision": "Impossible de charger la file de vérification.",
   "pendingreviewsection_no_hay_propiedades_por_revisar": "Aucun bien à vérifier",

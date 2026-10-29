@@ -1,4 +1,6 @@
 {
+  "servicesFilterHint": "Mostrar propiedades con todos estos servicios.",
+  "clearServicesSelection": "Limpiar selección",
   "explorepage_saferent_inicio": "SafeRent, inicio",
   "explorepage_navegacion_principal": "Navegación principal",
   "explorepage_explorar": "Explorar",

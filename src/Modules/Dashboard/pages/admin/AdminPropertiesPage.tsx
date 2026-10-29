@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { useState } from 'react';
 import { Building2, Check, EyeOff, MapPin, MessageSquareWarning, XCircle } from 'lucide-react';
-import StatusBadge from '../../../Property/Components/StatusBadge';
-import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
+import AdminPropertyDialog from '../../Components/AdminPropertyDialog';
 import { useAdminProperties, useReviewProperty } from '../../../Property/hooks/useAdminProperties';
 import type { Property, PropertyStatus } from '../../../Property/types/property';
 import NoteDialog from '../../Components/NoteDialog';
@@ -41,6 +40,7 @@ function formatDate(value: string): string {
 export default function AdminPropertiesPage() {
   useTranslation();
   const [filter, setFilter] = useState<PropertyFilter>('active');
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [requestingChanges, setRequestingChanges] = useState<Property | null>(null);
   const [rejecting, setRejecting] = useState<Property | null>(null);
   const [actionError, setActionError] = useMessageState<Record<number, string>>({});
@@ -89,7 +89,7 @@ export default function AdminPropertiesPage() {
             <caption className="sr-only">{i18n.t("dashboard:adminpropertiespage_propiedades_71a805")}{' '}{filters().find((f) => f.value === filter)?.label}</caption>
             <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-muted-ink">
               <tr>
-                {[i18n.t("dashboard:adminpropertiespage_propiedad"), i18n.t("auth:roles_propietario"), i18n.t("dashboard:adminpropertiespage_ubicacion"), i18n.t("dashboard:adminpropertiespage_fecha"), i18n.t("dashboard:adminpropertiespage_estado"), i18n.t("dashboard:adminpropertiespage_acciones")].map((column) => (
+                {[i18n.t("dashboard:adminpropertiespage_propiedad"), i18n.t("auth:roles_propietario"), i18n.t("dashboard:adminpropertiespage_ubicacion"), i18n.t("dashboard:adminpropertiespage_fecha"), i18n.t("dashboard:adminpropertiespage_acciones")].map((column) => (
                   <th key={column} scope="col" className="px-4 py-3 font-semibold">
                     {column}
                   </th>
@@ -98,8 +98,10 @@ export default function AdminPropertiesPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {list.map((property) => (
-                <tr key={property.id}>
-                  <td className="px-4 py-3 font-semibold text-primary">{property.title}</td>
+                <tr key={property.id} className="cursor-pointer transition hover:bg-slate-50" onClick={() => setSelectedProperty(property)}>
+                  <td className="px-4 py-3 font-semibold text-primary">
+                    <button type="button" aria-haspopup="dialog" onClick={(event) => { event.stopPropagation(); setSelectedProperty(property); }} className="rounded text-left underline decoration-slate-300 underline-offset-4 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">{property.title}</button>
+                  </td>
                   <td className="px-4 py-3 text-muted-ink">
                     {property.owner.name} {property.owner.surname1}
                   </td>
@@ -110,10 +112,7 @@ export default function AdminPropertiesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-muted-ink">{formatDate(property.createdAt)}</td>
-                  <td className="px-4 py-3">
-                    <StatusBadge variant={statusBadgeVariant(property.status)} />
-                  </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(event) => event.stopPropagation()}>
                     {property.status === 'PENDING' ? (
                       <div className="flex items-center gap-1.5">
                         <button
@@ -168,6 +167,26 @@ export default function AdminPropertiesPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {selectedProperty && (
+        <AdminPropertyDialog
+          property={selectedProperty}
+          loading={review.isPending}
+          error={actionError[selectedProperty.id] || null}
+          onClose={() => setSelectedProperty(null)}
+          onApprove={async (property) => {
+            setActionError((prev) => ({ ...prev, [property.id]: '' }));
+            try {
+              await review.mutateAsync({ id: property.id, data: { status: 'ACTIVE' } });
+              setSelectedProperty(null);
+            } catch (err) {
+              setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? messageFromError(err) : message('dashboard:adminpropertiespage_no_se_pudo_aprobar_la_propiedad') }));
+            }
+          }}
+          onRequestChanges={(property) => { setSelectedProperty(null); setRequestingChanges(property); }}
+          onReject={(property) => { setSelectedProperty(null); setRejecting(property); }}
+        />
       )}
 
       {requestingChanges && (

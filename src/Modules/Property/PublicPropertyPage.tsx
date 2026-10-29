@@ -31,6 +31,7 @@ export default function PublicPropertyPage() {
   const property = query.data
   const navigate = useNavigate()
   const { user: currentUser, hasSession } = useAuth()
+  const isAdmin = Boolean(currentUser?.roles.includes('ADMIN'))
   const [scheduling, setScheduling] = useState(false)
   // Intención de agendar guardada antes de ir a iniciar sesión (se lee una vez, al abrir la página).
   const [pendingVisitId] = useState(peekPendingVisitProperty)
@@ -47,7 +48,7 @@ export default function PublicPropertyPage() {
 
   /** "Agendar cita": abre el calendario. Sin sesión se recuerda la intención y se vuelve aquí tras el login. */
   function scheduleVisit() {
-    if (!property) return
+    if (!property || isAdmin) return
     if (!hasSession) {
       // useAuth ya limpia el token vencido.
       setPendingVisitProperty(property.id)
@@ -69,7 +70,7 @@ export default function PublicPropertyPage() {
   const loadedPropertyId = property?.id
   const ownerId = property?.owner.id
   const currentUserId = currentUser?.roles.includes('CLIENT') ? currentUser.id : undefined
-  const resumeScheduling = !pendingDismissed && loadedPropertyId !== undefined && pendingVisitId === loadedPropertyId
+  const resumeScheduling = !isAdmin && !pendingDismissed && loadedPropertyId !== undefined && pendingVisitId === loadedPropertyId
     && currentUserId !== undefined && currentUserId !== ownerId
   useEffect(() => {
     if (resumeScheduling) clearPendingVisitProperty()
@@ -148,8 +149,8 @@ export default function PublicPropertyPage() {
               <button
                 type="button"
                 onClick={scheduleVisit}
-                disabled={Boolean(property.reservedTenantId) || Boolean(liveVisit)}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isAdmin || Boolean(property.reservedTenantId) || Boolean(liveVisit)}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 font-bold text-white transition enabled:hover:bg-secondary-dark disabled:cursor-not-allowed disabled:opacity-60"
               ><CalendarCheck size={20} aria-hidden="true" />{liveVisit ? i18n.t("visits:alreadyScheduled") : i18n.t("visits:scheduleVisit")}</button>
               {liveVisit && <Link to="/dashboard/visits" className="mt-3 inline-block text-sm font-bold text-secondary hover:underline">{i18n.t("visits:viewThisVisit")}</Link>}
             </>
@@ -158,7 +159,7 @@ export default function PublicPropertyPage() {
         </div>
       </>}
     </main>
-    {(scheduling || resumeScheduling) && property && <ScheduleVisitDialog propertyId={property.id} ownerId={property.owner.id} onClose={() => { setScheduling(false); setPendingDismissed(true) }} />}
+    {!isAdmin && (scheduling || resumeScheduling) && property && <ScheduleVisitDialog propertyId={property.id} ownerId={property.owner.id} onClose={() => { setScheduling(false); setPendingDismissed(true) }} />}
     <Footer />
   </div>
 }

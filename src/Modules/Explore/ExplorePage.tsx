@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BedDouble,
   Building2,
+  Check,
   LocateFixed,
   MapPin,
   Search,
@@ -21,7 +22,6 @@ import type { Property } from './interfaces/property.interface'
 import type { PropertyFilters } from './services/property.service'
 import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
-import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import PriceDetails from './PriceDetails'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select'
 
@@ -42,12 +42,7 @@ export default function ExplorePage() {
   useTranslation();
   const params = new URLSearchParams(window.location.search)
   const [query, setQuery] = useState(params.get('q') || '')
-  const [currency, setCurrency] = useState(params.get('currency') || '')
-  const [knownCurrencies, setKnownCurrencies] = useState(['CRC', 'USD', 'EUR'])
-  const { currency: displayCurrency } = useDisplayCurrency()
   const [sort, setSort] = useState<'newest' | 'price_asc' | 'price_desc'>('newest')
-  const [minPrice, setMinPrice] = useState(params.get('min') || '')
-  const [maxPrice, setMaxPrice] = useState(params.get('max') || '')
   const [rooms, setRooms] = useState('')
   const [services, setServices] = useState<number[]>([])
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -58,21 +53,14 @@ export default function ExplorePage() {
 
   const debouncedQuery = useDebouncedValue(query, 400)
 
-  const priceRangeValid = !minPrice || !maxPrice || Number(minPrice) <= Number(maxPrice)
-
   const filters: PropertyFilters = useMemo(() => {
     const f: PropertyFilters = {}
     f.sort = sort
-    if (currency) f.sourceCurrency = currency
     if (services.length) f.serviceIds = services
     if (debouncedQuery.trim()) f.search = debouncedQuery.trim()
-    if (priceRangeValid) {
-      if (minPrice) f.minPrice = Number(minPrice)
-      if (maxPrice) f.maxPrice = Number(maxPrice)
-    }
     if (rooms) f.minRooms = Number(rooms)
     return f
-  }, [services, debouncedQuery, minPrice, maxPrice, rooms, priceRangeValid, currency, sort])
+  }, [services, debouncedQuery, rooms, sort])
 
   const { properties: loadedProperties, loading, error } = useProperties(filters, attempt)
   const {
@@ -83,28 +71,13 @@ export default function ExplorePage() {
 
   const properties = loading || error ? EMPTY_PROPERTIES : loadedProperties
 
-  const currencies = useMemo(
-    () =>
-      [
-        ...new Set([
-          ...knownCurrencies,
-          currency,
-          ...properties.map((p) => p.typeOfCoin),
-        ]),
-      ].filter(Boolean),
-    [properties, currency, knownCurrencies],
-  )
-
   const filtered = properties
 
   const activeProperty = filtered.find((p) => p.id === selected)
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
-  const activeFilterCount =
-    (services.length > 0 ? 1 : 0) +
-    (minPrice ? 1 : 0) +
-    (maxPrice ? 1 : 0)
+  const activeFilterCount = services.length
   const hasFilters = Boolean(
-    query || currency || minPrice || maxPrice || rooms || services.length,
+    query || rooms || services.length,
   )
   const selectFromMap = useCallback((id: number) => {
     setSelected(id)
@@ -114,9 +87,6 @@ export default function ExplorePage() {
   }, [])
   function resetFilters() {
     setQuery('')
-    setCurrency('')
-    setMinPrice('')
-    setMaxPrice('')
     setRooms('')
     setServices([])
     setSort('newest')
@@ -149,20 +119,63 @@ export default function ExplorePage() {
             </label>
             <div className="filter-toolbar">
               <button
+                type="button"
                 className={filtersOpen ? 'filter-pill active' : 'filter-pill'}
                 aria-expanded={filtersOpen}
                 aria-controls="explore-filters"
                 onClick={() => setFiltersOpen(!filtersOpen)}
               >
-                <SlidersHorizontal size={16} />{i18n.t("explore:explorepage_filtros")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
+                <SlidersHorizontal size={16} />{i18n.t("dashboard:adminhomepage_servicios")}{activeFilterCount > 0 && ` (${activeFilterCount})`}
               </button>
-              <Select value={currency || 'all'} onValueChange={value => { setKnownCurrencies(currencies); setCurrency(value === 'all' ? '' : value) }}>
-                <SelectTrigger aria-label={i18n.t("explore:explorepage_moneda_de_publicacion")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{i18n.t("explore:explorepage_cualquier_moneda_publicada")}</SelectItem>
-                  {currencies.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
+            {filtersOpen && (
+              <div id="explore-filters" className="expanded-filters">
+                <fieldset aria-busy={servicesLoading}>
+                  <legend className="filter-section-label">{i18n.t("explore:explorepage_servicios_incluidos")}</legend>
+                  <p className="service-filter-hint">{i18n.t('explore:servicesFilterHint')}</p>
+                  {servicesLoading ? (
+                    <p role="status">{i18n.t("explore:explorepage_cargando_servicios")}</p>
+                  ) : servicesError ? (
+                    <div role="alert">
+                      <p>{servicesError}</p>
+                      <button
+                        className="text-button"
+                        onClick={() => {
+                          setServicesAttempt((n) => n + 1)
+                        }}
+                      >{i18n.t("explore:explorepage_reintentar_servicios")}</button>
+                    </div>
+                  ) : availableServices.length === 0 ? (
+                    <p>{i18n.t("explore:explorepage_no_hay_servicios_en_el_catalogo_todavia")}</p>
+                  ) : (
+                    <div className="service-filters" role="group" aria-label={i18n.t('explore:explorepage_servicios_incluidos')} tabIndex={0}>
+                      {availableServices.map((service) => (
+                        <button
+                          type="button"
+                          key={service.id}
+                          className="service-filter-option"
+                          aria-pressed={services.includes(service.id)}
+                          title={catalogText(service, 'description') || undefined}
+                          onClick={() =>
+                            setServices((current) =>
+                              current.includes(service.id)
+                                ? current.filter((id) => id !== service.id)
+                                : [...current, service.id],
+                            )
+                          }
+                        >
+                          <span className="service-filter-icon"><ServiceIcon name={service.icono} size={18} /></span>
+                          <span className="service-filter-name">{catalogText(service)}</span>
+                          <span className="service-filter-check">{services.includes(service.id) && <Check size={16} aria-hidden="true" />}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </fieldset>
+                <div className="service-filter-footer">
+                  <button type="button" className="service-filter-clear" disabled={!services.length} onClick={() => setServices([])}>{i18n.t('explore:clearServicesSelection')}</button>
+                </div>
+              </div>
+            )}
               <Select value={sort} onValueChange={value => setSort(value as typeof sort)}>
                 <SelectTrigger aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -180,79 +193,6 @@ export default function ExplorePage() {
                 </SelectContent>
               </Select>
             </div>
-            {filtersOpen && (
-              <div id="explore-filters" className="expanded-filters">
-                <p className="filter-section-label">{i18n.t("explore:explorepage_precio_mensual")}{' '}{i18n.t("explore:explorepage_en")}{' '}{displayCurrency}
-                </p>
-                <p className="text-xs text-neutral/70">{i18n.t("explore:explorepage_los_rangos_usan")}{' '}{displayCurrency}{i18n.t("common:missingRates")}</p>
-                <div className="price-inputs">
-                  <label>{i18n.t("explore:explorepage_desde")}<input
-                      type="number"
-                      min="0"
-                      placeholder={i18n.t("explore:explorepage_sin_minimo")}
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                  </label>
-                  <label>{i18n.t("explore:explorepage_hasta")}<input
-                      type="number"
-                      min="0"
-                      placeholder={i18n.t("explore:explorepage_sin_maximo")}
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                  </label>
-                </div>
-                {minPrice &&
-                  maxPrice &&
-                  Number(minPrice) > Number(maxPrice) && (
-                    <p role="status" className="filter-validation">{i18n.t("explore:explorepage_el_precio_minimo_debe_ser_menor_o_igual_al")}</p>
-                  )}
-
-                <fieldset aria-busy={servicesLoading}>
-                  <legend className="filter-section-label">{i18n.t("explore:explorepage_servicios_incluidos")}</legend>
-                  <p>{i18n.t("explore:explorepage_la_propiedad_debe_contar_con_todos_los_servicios_seleccionados")}</p>
-                  {servicesLoading ? (
-                    <p role="status">{i18n.t("explore:explorepage_cargando_servicios")}</p>
-                  ) : servicesError ? (
-                    <div role="alert">
-                      <p>{servicesError}</p>
-                      <button
-                        className="text-button"
-                        onClick={() => {
-                          setServicesAttempt((n) => n + 1)
-                        }}
-                      >{i18n.t("explore:explorepage_reintentar_servicios")}</button>
-                    </div>
-                  ) : availableServices.length === 0 ? (
-                    <p>{i18n.t("explore:explorepage_no_hay_servicios_en_el_catalogo_todavia")}</p>
-                  ) : (
-                    <div className="service-filters">
-                      {availableServices.map((service) => (
-                        <label
-                          key={service.id}
-                          title={catalogText(service, 'description') || undefined}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={services.includes(service.id)}
-                            onChange={() =>
-                              setServices((current) =>
-                                current.includes(service.id)
-                                  ? current.filter((id) => id !== service.id)
-                                  : [...current, service.id],
-                              )
-                            }
-                          />
-                          <ServiceIcon name={service.icono} size={15} className="inline-block shrink-0 align-middle" /> {catalogText(service)}
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </fieldset>
-                <button className="text-button" onClick={resetFilters}>{i18n.t("explore:explorepage_limpiar_filtros")}</button>
-              </div>
-            )}
           </div>
           <div className="result-summary" role="status">
             {loading

@@ -2,8 +2,10 @@ import { messageFromError, message } from '../../../../i18n/messages';
 import { useMessageState } from '../../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
-import { Link } from '@tanstack/react-router';
-import { AlertTriangle, Building2, EyeOff, Plus, UserCheck } from 'lucide-react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { AlertTriangle, Building2, CalendarX, Eye, EyeOff, MoreHorizontal, Pencil, Plus } from 'lucide-react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import PropertyThumbCard from '../../Components/PropertyThumbCard';
@@ -18,6 +20,8 @@ import PageContainer from '../../Components/PageContainer';
 import PageHeader from '../../Components/PageHeader';
 import { useOwnerProperties } from '../../hooks/useOwnerProperties';
 import { releaseReservation } from '../../../Reservations/services/reservationService';
+import { useOwnerRentalCounts } from '../../../Reservations/hooks/useReservationHistory';
+import { useDashboardUser } from '../../hooks/useDashboardUser';
 
 const filters = () => ([
   { value: 'all', label: i18n.t("dashboard:ownerpropertiespage_todas") },
@@ -34,7 +38,11 @@ const publishLinkClass = 'inline-flex items-center gap-2 rounded-xl bg-secondary
 export default function OwnerPropertiesPage() {
   useTranslation();
   const properties = useOwnerProperties();
+  const { userId } = useDashboardUser();
+  const rentalCounts = useOwnerRentalCounts(userId);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [propertyMenu, setPropertyMenu] = useState<{ anchor: HTMLElement; property: Property } | null>(null);
   const [filter, setFilter] = useState<PropertyFilter>('all');
   const [releasing, setReleasing] = useState<Property | null>(null);
   const [releaseReason, setReleaseReason] = useState('');
@@ -98,19 +106,14 @@ export default function OwnerPropertiesPage() {
             <li key={property.id} className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <PropertyThumbCard property={property} to={'/dashboard/owner/properties/detail/' + property.id} className="rounded-none border-0" />
               <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <StatusBadge variant={statusBadgeVariant(property.status)} />
+                {(property.status !== 'ACTIVE' || property.reservedTenantId) && <div className="flex flex-wrap items-center gap-2">
+                  {property.status !== 'ACTIVE' && <StatusBadge variant={statusBadgeVariant(property.status)} />}
                   {property.reservedTenantId && <span role="status" className="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">{i18n.t("dashboard:recentsavedsection_reservada")}</span>}
-                </div>
-                {property.reservedTenantId && (
-                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-900">
-                    <p className="flex min-w-0 items-center gap-1.5">
-                      <UserCheck size={14} className="shrink-0" aria-hidden="true" />
-                      <span className="min-w-0 break-words">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}<strong className="font-bold">{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</strong></span>
-                    </p>
-                    <button type="button" onClick={() => { release.reset(); setReleaseReason(''); setReleasing(property); }} className="rounded-md border border-amber-200 bg-white px-2.5 py-1 font-semibold text-amber-800 transition hover:bg-amber-100">{i18n.t("dashboard:ownerpropertiespage_quitar_reserva_61b7f5")}</button>
-                  </div>
+                </div>}
+                {rentalCounts.isSuccess && (
+                  <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
                 )}
+                {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
                     <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
@@ -119,16 +122,16 @@ export default function OwnerPropertiesPage() {
                 )}
               <div className="mt-auto space-y-2 border-t border-slate-100 pt-3">
                 <div className="flex gap-2">
-                  <Link
-                    to="/dashboard/owner/properties/detail/$propertyId"
-                    params={{ propertyId: String(property.id) }}
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary"
-                  >{i18n.t("dashboard:ownerpropertiespage_ver")}</Link>
-                  <Link
-                    to="/dashboard/owner/properties/new"
-                    search={{ editId: property.id }}
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-secondary"
-                  >{i18n.t("dashboard:ownerpropertiespage_editar")}</Link>
+                  <button
+                    id={`property-actions-${property.id}`}
+                    type="button"
+                    aria-label={`${i18n.t('dashboard:adminpropertiespage_acciones')}: ${property.title}`}
+                    aria-haspopup="menu"
+                    aria-expanded={propertyMenu?.property.id === property.id}
+                    aria-controls={propertyMenu?.property.id === property.id ? 'owner-property-menu' : undefined}
+                    onClick={(event) => setPropertyMenu({ anchor: event.currentTarget, property })}
+                    className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-3 py-1.5 text-primary transition hover:border-secondary hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+                  ><MoreHorizontal size={18} aria-hidden="true" /></button>
                   {property.status !== 'INACTIVE' && property.status !== 'DRAFT' && (
                     <button
                       type="button"
@@ -144,6 +147,37 @@ export default function OwnerPropertiesPage() {
           ))}
         </ul>
       )}
+      <Menu
+        id="owner-property-menu"
+        anchorEl={propertyMenu?.anchor ?? null}
+        open={Boolean(propertyMenu)}
+        onClose={() => setPropertyMenu(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        slotProps={{
+          list: { 'aria-labelledby': propertyMenu ? `property-actions-${propertyMenu.property.id}` : undefined },
+          paper: { sx: { mt: 0.75, minWidth: 190, borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 8px 24px rgb(10 37 64 / 10%)', color: 'var(--color-primary)', '& .MuiMenuItem-root': { gap: 1.5, fontFamily: 'inherit', fontSize: '0.875rem', minHeight: 40, '&:hover': { backgroundColor: 'var(--color-surface)' } } } },
+        }}
+      >
+        <MenuItem onClick={() => {
+          if (!propertyMenu) return;
+          const { property } = propertyMenu;
+          setPropertyMenu(null);
+          void navigate({ to: '/dashboard/owner/properties/new', search: { editId: property.id } });
+        }}><Pencil size={16} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_editar')}</MenuItem>
+        <MenuItem onClick={() => {
+          if (!propertyMenu) return;
+          const { property } = propertyMenu;
+          setPropertyMenu(null);
+          void navigate({ to: '/dashboard/owner/properties/detail/$propertyId', params: { propertyId: String(property.id) } });
+        }}><Eye size={16} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_ver')}</MenuItem>
+        {propertyMenu?.property.reservedTenantId && <MenuItem disabled={release.isPending} onClick={() => {
+          release.reset();
+          setReleaseReason('');
+          setReleasing(propertyMenu.property);
+          setPropertyMenu(null);
+        }} sx={{ color: 'var(--color-secondary)' }}><CalendarX size={16} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_quitar_reserva_61b7f5')}</MenuItem>}
+      </Menu>
       {deactivating && (
         <ConfirmDialog
           title={i18n.t("dashboard:ownerpropertiespage_desactivar", { v0: deactivating.title })}

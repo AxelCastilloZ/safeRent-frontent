@@ -18,6 +18,8 @@ import PropertyPriceCard from './Components/PropertyPriceCard'
 import PropertyComments from '../Comments/Components/PropertyComments'
 
 import { useSessionToken } from '../Auth/services/authSession'
+import ReservationHistoryList from '../Reservations/Components/ReservationHistoryList'
+import { usePropertyRentalHistory } from '../Reservations/hooks/useReservationHistory'
 
 export default function PropertyDetailPage() {
   useTranslation();
@@ -32,6 +34,7 @@ export default function PropertyDetailPage() {
     retry: false,
   })
   const property = propertyQuery.data
+  const rentals = usePropertyRentalHistory(Number(propertyId), Boolean(token))
   const loading = propertyQuery.isPending
   const loadError = propertyQuery.isError ? i18n.t("property:createpropertystep1page_no_se_pudo_cargar_la_propiedad") : null
   const [error, setError] = useMessageState<string | null>(null)
@@ -148,6 +151,19 @@ export default function PropertyDetailPage() {
           </ul>
         </div>
       )}
+
+      {/* Rental history */}
+      <section aria-labelledby="rental-history-title" className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 id="rental-history-title" className="text-sm font-bold text-primary">{i18n.t('reservations:rentalHistoryTitle')}</h3>
+          {rentals.isSuccess && (
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{i18n.t('reservations:timesRented', { count: rentals.data.timesRented })}</span>
+          )}
+        </div>
+        {rentals.isPending && <p role="status" className="text-sm text-muted-ink">{i18n.t('reservations:historyLoading')}</p>}
+        {rentals.isError && <p role="alert" className="text-sm text-red-700">{i18n.t('reservations:historyLoadError')}<button type="button" onClick={() => void rentals.refetch()} className="ml-3 font-semibold underline">{i18n.t('comments:propertycomments_reintentar')}</button></p>}
+        {rentals.isSuccess && <ReservationHistoryList reservations={rentals.data.reservations} show="tenant" />}
+      </section>
 
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-3">

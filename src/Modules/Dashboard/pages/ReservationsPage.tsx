@@ -9,10 +9,13 @@ import PageHeader from '../Components/PageHeader';
 import { useTenantProperties } from '../hooks/useTenantProperties';
 import { priceLabel } from '../../Explore/utils/property.utils';
 import PriceDetails from '../../Explore/PriceDetails';
+import ReservationHistoryList from '../../Reservations/Components/ReservationHistoryList';
+import { useMyReservationHistory } from '../../Reservations/hooks/useReservationHistory';
 
 export default function ReservationsPage() {
   useTranslation();
   const properties = useTenantProperties();
+  const history = useMyReservationHistory();
   return (
     <PageContainer>
       <PageHeader title={i18n.t("dashboard:reservationspage_mis_reservaciones")} description={i18n.t("dashboard:reservationspage_consulta_las_propiedades_reservadas_a_tu_nombre")} />
@@ -38,6 +41,14 @@ export default function ReservationsPage() {
           <Link to="/explorar" className="rounded-xl bg-secondary px-5 py-2.5 text-sm font-bold text-white hover:bg-secondary-dark">{i18n.t("about:aboutcta_explorar_propiedades")}</Link>
         } />
       ))}
+
+      <section aria-labelledby="reservation-history-title" className="mt-10">
+        <h2 id="reservation-history-title" className="text-xl font-bold text-primary">{i18n.t('reservations:historyTitle')}</h2>
+        <p className="mb-4 mt-1 text-sm text-muted-ink">{i18n.t('reservations:historyDescription')}</p>
+        {history.isPending && <p role="status" className="text-sm text-muted-ink">{i18n.t('reservations:historyLoading')}</p>}
+        {history.isError && <div role="alert" className="rounded-xl border border-red-200 bg-white p-5 text-red-700">{i18n.t('reservations:historyLoadError')}<button type="button" onClick={() => void history.refetch()} className="ml-3 font-semibold underline">{i18n.t('comments:propertycomments_reintentar')}</button></div>}
+        {history.isSuccess && <ReservationHistoryList reservations={history.data} show="property" />}
+      </section>
     </PageContainer>
   );
 }

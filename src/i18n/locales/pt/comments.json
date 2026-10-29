@@ -1,4 +1,7 @@
 {
+  "propertyCommentsCount_one": "{{count}} comentário",
+  "propertyCommentsCount_other": "{{count}} comentários",
+  "propertyCommentsCount_many": "{{count}} comentários",
   "propertycomments_no_se_pudo_publicar_el_comentario_intenta_nuevamente": "Não foi possível publicar o comentário. Tente novamente.",
   "propertycomments_comentarios_de_inquilinos": "Comentários de inquilinos",
   "propertycomments_cargando_comentarios": "Carregando comentários…",

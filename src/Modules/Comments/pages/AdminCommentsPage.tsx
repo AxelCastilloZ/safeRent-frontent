@@ -3,6 +3,7 @@ import { currentLocale } from '../../../i18n/formatters';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
 import { useState } from 'react'
+import { Building2, ChevronDown } from 'lucide-react'
 import { useAuth } from '../../Auth/hooks/authHooks'
 import PageContainer from '../../Dashboard/Components/PageContainer'
 import PageHeader from '../../Dashboard/Components/PageHeader'
@@ -24,6 +25,12 @@ export default function AdminCommentsPage() {
   const list = (comments.data ?? []).filter((comment) =>
     (filter === 'all' || comment.hidden === (filter === 'hidden')) &&
     [comment.content, comment.property.title, comment.author.name].join(' ').toLowerCase().includes(search.trim().toLowerCase()))
+  const groups = new Map<number, { property: AdminPropertyComment['property']; comments: AdminPropertyComment[] }>()
+  for (const comment of list) {
+    const group = groups.get(comment.property.id)
+    if (group) group.comments.push(comment)
+    else groups.set(comment.property.id, { property: comment.property, comments: [comment] })
+  }
 
   if (!user) return <p role="status">{i18n.t("comments:admincommentspage_verificando_sesion")}</p>
   if (!isAdmin) return <p role="alert">{i18n.t("comments:admincommentspage_solo_los_administradores_pueden_gestionar_comentarios")}</p>
@@ -46,10 +53,19 @@ export default function AdminCommentsPage() {
     {moderate.isError && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
     {comments.isSuccess && !list.length && <p className="py-8 text-center text-slate-500">{i18n.t("comments:admincommentspage_no_hay_comentarios_para_mostrar")}</p>}
     <ul className="space-y-4">
-      {list.map((comment) => <li key={comment.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      {[...groups.values()].map((group) => <li key={group.property.id}>
+        <details className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center gap-3 p-5 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-secondary [&::-webkit-details-marker]:hidden">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary"><Building2 size={20} aria-hidden="true" /></span>
+            <h2 className="min-w-0 flex-1 break-words font-bold text-primary">{group.property.title}</h2>
+            <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-muted-ink">{i18n.t('comments:propertyCommentsCount', { count: group.comments.length })}</span>
+            <ChevronDown size={18} aria-hidden="true" className="shrink-0 text-muted-ink transition-transform group-open:rotate-180" />
+          </summary>
+          <ul className="divide-y divide-slate-100 border-t border-slate-200">
+      {group.comments.map((comment) => <li key={comment.id} className="p-5 sm:pl-[72px]">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><h2 className="font-bold">{comment.property.title}</h2>
-            <p className="text-sm text-slate-500">{comment.author.name} · {new Date(comment.createdAt).toLocaleDateString(currentLocale())}</p>
+          <div><h3 className="text-sm font-semibold text-primary">{comment.author.name}</h3>
+            <p className="mt-1 text-xs text-slate-500">{new Date(comment.createdAt).toLocaleDateString(currentLocale())}</p>
           </div>
           <span className={comment.hidden ? 'text-sm font-semibold text-amber-700' : 'text-sm font-semibold text-green-700'}>{comment.hidden ? i18n.t("comments:admincommentspage_oculto") : i18n.t("comments:admincommentspage_visible")}</span>
         </div>
@@ -74,6 +90,9 @@ export default function AdminCommentsPage() {
             if (comment.hidden) moderate.mutate({ id: comment.id, data: { hidden: false } })
             else { setSelected(comment); setNote('') }
           }}>{moderate.isPending && moderate.variables?.id === comment.id ? i18n.t("comments:admincommentspage_guardando") : comment.hidden ? i18n.t("comments:admincommentspage_restaurar_comentario") : i18n.t("comments:admincommentspage_ocultar_comentario")}</button>}
+      </li>)}
+          </ul>
+        </details>
       </li>)}
     </ul>
   </PageContainer>
