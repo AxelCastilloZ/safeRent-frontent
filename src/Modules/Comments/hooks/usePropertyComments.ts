@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createPropertyComment, getOwnPropertyComment, getPropertyComments } from '../services/commentService'
+import { createPropertyComment, getOwnerPropertyRatings, getOwnPropertyComment, getPropertyComments } from '../services/commentService'
 
 export function usePropertyComments(propertyId: number) {
   return useQuery({
@@ -24,5 +24,14 @@ export function useCreatePropertyComment(propertyId: number) {
       queryClient.invalidateQueries({ queryKey: ['property-comments', propertyId] }),
       queryClient.invalidateQueries({ queryKey: ['own-property-comment', propertyId] }),
     ]),
+  })
+}
+
+/** Calificación de cada propiedad del propietario con la sesión, como mapa propiedad → calificación. */
+export function useOwnerPropertyRatings(enabled = true) {
+  return useQuery({
+    queryKey: ['owner-property-ratings'],
+    queryFn: async () => new Map((await getOwnerPropertyRatings()).map((row) => [row.propertyId, row])),
+    enabled,
   })
 }

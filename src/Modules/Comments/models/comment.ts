@@ -17,3 +17,6 @@ export interface PropertyComment {
   createdAt: string
   author: { id: number; name: string }
 }
+
+/** Calificación de una propiedad: promedio con un decimal y cuántas hay. */
+export interface PropertyRating { propertyId: number; average: number; count: number }

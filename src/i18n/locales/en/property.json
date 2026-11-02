@@ -202,5 +202,6 @@
   "ownerPageCount_other": "{{count}} published properties",
   "ownerPageEmpty": "This owner has no published properties at the moment.",
   "ownerPageInvalid": "Invalid owner",
-  "ownerPageLoading": "Loading owner…"
+  "ownerPageLoading": "Loading owner…",
+  "ownerLinkTitle": "See the properties of {{name}}"
 }

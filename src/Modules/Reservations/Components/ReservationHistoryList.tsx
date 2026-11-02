@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { formatDate } from '../../../i18n/formatters'
 import { useAuth } from '../../Auth/hooks/authHooks'
+import OwnerLink from '../../Property/Components/OwnerLink'
 import TenantLink, { WithNameLink } from '../../TenantRatings/components/TenantLink'
 import type { ReservationHistoryEntry } from '../models/reservation'
 
@@ -34,7 +35,11 @@ export default function ReservationHistoryList({ reservations, show }: Reservati
                     : i18n.t('reservations:historyTenant', { name: reservation.tenant.name })}
               </p>
               {show === 'property' && (
-                <p className="text-sm text-muted-ink">{i18n.t('reservations:historyOwner', { name: reservation.owner.name })}</p>
+                <p className="text-sm text-muted-ink">
+                  <WithNameLink phrase={(name) => i18n.t('reservations:historyOwner', { name })}>
+                    <OwnerLink ownerId={reservation.owner.id} name={reservation.owner.name} />
+                  </WithNameLink>
+                </p>
               )}
             </div>
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${reservation.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>

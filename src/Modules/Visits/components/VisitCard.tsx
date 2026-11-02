@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { errorMessage } from '../../../i18n/messages'
 import ReservedChip from '../../Reservations/Components/ReservedChip'
+import OwnerLink from '../../Property/Components/OwnerLink'
 import TenantLink, { WithNameLink } from '../../TenantRatings/components/TenantLink'
 import { useAcceptVisit, useConfirmVisit, useOpenVisitConversation, useReserveFromVisit } from '../hooks/visitHooks'
 import type { Visit } from '../types/visit'
@@ -53,7 +54,11 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
         <TenantLink tenantId={visit.tenant.id} name={`${visit.tenant.name} ${visit.tenant.surname1}`} />
       </WithNameLink>
     )
-    : i18n.t('visits:ownerName', { name: `${visit.owner.name} ${visit.owner.surname1}` })
+    : (
+      <WithNameLink phrase={(name) => i18n.t('visits:ownerName', { name })}>
+        <OwnerLink ownerId={visit.owner.id} name={`${visit.owner.name} ${visit.owner.surname1}`} />
+      </WithNameLink>
+    )
   const tenantName = visit.tenant.name
 
   return (

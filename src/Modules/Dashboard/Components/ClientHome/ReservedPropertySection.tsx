@@ -6,6 +6,7 @@ import { ImageOff, MessageCircle } from 'lucide-react';
 import PriceDetails from '../../../Explore/PriceDetails';
 import { photoUrl, priceLabel } from '../../../Explore/utils/property.utils';
 import { useStartConversation } from '../../../Messages/hooks/messageHooks';
+import OwnerLink from '../../../Property/Components/OwnerLink';
 import { useDashboardUser } from '../../hooks/useDashboardUser';
 import { useTenantProperties } from '../../hooks/useTenantProperties';
 import HomeSection from '../HomeSection';
@@ -45,7 +46,7 @@ export default function ReservedPropertySection() {
               {priceLabel(property)} <span className="text-[11px] font-normal text-muted-ink">{i18n.t("common:perMonth")}</span>
             </p>
             <PriceDetails price={property.displayPrice} />
-            <p className="mt-1 text-xs text-muted-ink">{i18n.t("dashboard:reservedpropertysection_propietario")}{' '}{property.owner.name}
+            <p className="mt-1 text-xs text-muted-ink">{i18n.t("dashboard:reservedpropertysection_propietario")}{' '}<OwnerLink ownerId={property.owner.id} name={property.owner.name} />
               {property.reservedAt && i18n.t("dashboard:reservedpropertysection_reservada_el", { v0: new Date(property.reservedAt).toLocaleDateString(currentLocale()) })}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">

@@ -202,5 +202,6 @@
   "ownerPageCount_other": "{{count}} biens publiés",
   "ownerPageEmpty": "Ce propriétaire n’a aucun bien publié pour le moment.",
   "ownerPageInvalid": "Propriétaire non valide",
-  "ownerPageLoading": "Chargement du propriétaire…"
+  "ownerPageLoading": "Chargement du propriétaire…",
+  "ownerLinkTitle": "Voir les biens de {{name}}"
 }

@@ -207,5 +207,10 @@
   "morePending_many": "e mais {{count}} imóveis na fila",
   "moreProperties_one": "e mais {{count}} imóvel em Meus imóveis",
   "moreProperties_other": "e mais {{count}} imóveis em Meus imóveis",
-  "moreProperties_many": "e mais {{count}} imóveis em Meus imóveis"
+  "moreProperties_many": "e mais {{count}} imóveis em Meus imóveis",
+  "moreOptions": "Mais opções",
+  "propertyNoRatings": "Sem avaliações",
+  "propertyRatingTitle_one": "{{average}} de 5 · {{count}} avaliação",
+  "propertyRatingTitle_many": "{{average}} de 5 · {{count}} avaliações",
+  "propertyRatingTitle_other": "{{average}} de 5 · {{count}} avaliações"
 }

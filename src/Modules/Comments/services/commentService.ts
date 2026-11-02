@@ -1,5 +1,5 @@
 import apiAxios from '../../../api/apiConfig'
-import type { AdminPropertyComment, ModerateCommentPayload, OwnPropertyComment, PropertyComment } from '../models/comment'
+import type { AdminPropertyComment, ModerateCommentPayload, OwnPropertyComment, PropertyComment, PropertyRating } from '../models/comment'
 
 export async function getAdminComments(): Promise<AdminPropertyComment[]> {
   return (await apiAxios.get<AdminPropertyComment[]>('/comments/admin')).data
@@ -20,4 +20,9 @@ export async function getPropertyComments(propertyId: number): Promise<PropertyC
 
 export async function createPropertyComment(propertyId: number, content: string, rating: number): Promise<void> {
   await apiAxios.post(`/comments/property/${propertyId}`, { content, rating })
+}
+
+/** Calificación (promedio y cantidad) de cada propiedad del propietario con la sesión; las que no tienen no aparecen. */
+export async function getOwnerPropertyRatings(): Promise<PropertyRating[]> {
+  return (await apiAxios.get<PropertyRating[]>('/comments/owner/ratings')).data
 }

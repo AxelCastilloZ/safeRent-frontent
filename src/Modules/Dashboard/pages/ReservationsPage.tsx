@@ -9,6 +9,7 @@ import PageHeader from '../Components/PageHeader';
 import { useTenantProperties } from '../hooks/useTenantProperties';
 import { priceLabel } from '../../Explore/utils/property.utils';
 import PriceDetails from '../../Explore/PriceDetails';
+import OwnerLink from '../../Property/Components/OwnerLink';
 import ReservationHistoryList from '../../Reservations/Components/ReservationHistoryList';
 import { useMyReservationHistory } from '../../Reservations/hooks/useReservationHistory';
 
@@ -30,7 +31,7 @@ export default function ReservationsPage() {
               <p className="text-sm text-muted-ink">{property.address}</p>
               <p className="font-semibold">{priceLabel(property)}{' '}{i18n.t('common:perMonth')}{' '}</p>
               <PriceDetails price={property.displayPrice} />
-              <p className="text-sm">{i18n.t("dashboard:reservedpropertysection_propietario")}{' '}{property.owner.name}</p>
+              <p className="text-sm">{i18n.t("dashboard:reservedpropertysection_propietario")}{' '}<OwnerLink ownerId={property.owner.id} name={property.owner.name} /></p>
               {property.reservedAt && <p className="text-sm text-muted-ink">{i18n.t("dashboard:ownerreservedsection_reservada_el")}{' '}{new Date(property.reservedAt).toLocaleDateString(currentLocale())}</p>}
               {property.status === 'ACTIVE' && <a href={`/property_detail/${property.id}`} className="mt-auto font-bold text-secondary hover:underline">{i18n.t("dashboard:reservedpropertysection_ver_detalles")}</a>}
             </li>

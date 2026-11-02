@@ -6,6 +6,8 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { formatDate } from '../../../i18n/formatters'
+import OwnerLink from '../../Property/Components/OwnerLink'
+import { WithNameLink } from '../../TenantRatings/components/TenantLink'
 import { getMyReservationHistory } from '../services/reservationService'
 import { hasSeenReservation, markReservationsSeen } from '../utils/seenReservations'
 
@@ -68,7 +70,12 @@ export default function NewReservationNotice({ userId }: { userId: number }) {
             <li key={reservation.id} className="rounded-xl border border-green-200 bg-green-50/60 p-3.5">
               <p className="font-bold text-primary">{reservation.property.title}</p>
               {reservation.property.address && <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-ink"><MapPin size={13} className="shrink-0" aria-hidden="true" /><span className="truncate">{reservation.property.address}</span></p>}
-              <p className="mt-1.5 text-xs text-primary">{i18n.t('reservations:newReservationBy', { owner: reservation.owner.name, date: formatDate(reservation.startedAt) })}</p>
+              <p className="mt-1.5 text-xs text-primary">
+                <WithNameLink phrase={(owner) => i18n.t('reservations:newReservationBy', { owner, date: formatDate(reservation.startedAt) })}>
+                  {/* La ventana vive en el marco del panel y no se cierra sola al navegar: se cierra (y se da por vista) al abrir al propietario. */}
+                  <OwnerLink ownerId={reservation.owner.id} name={reservation.owner.name} onNavigate={() => dismiss(false)} />
+                </WithNameLink>
+              </p>
             </li>
           ))}
         </ul>

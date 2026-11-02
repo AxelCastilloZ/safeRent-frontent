@@ -207,5 +207,10 @@
   "morePending_many": "and {{count}} more waiting",
   "moreProperties_one": "and {{count}} more in My properties",
   "moreProperties_other": "and {{count}} more in My properties",
-  "moreProperties_many": "and {{count}} more in My properties"
+  "moreProperties_many": "and {{count}} more in My properties",
+  "moreOptions": "More options",
+  "propertyNoRatings": "No ratings",
+  "propertyRatingTitle_one": "{{average}} out of 5 · {{count}} rating",
+  "propertyRatingTitle_many": "{{average}} out of 5 · {{count}} ratings",
+  "propertyRatingTitle_other": "{{average}} out of 5 · {{count}} ratings"
 }

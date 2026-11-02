@@ -41,5 +41,9 @@
   "newReservationDescription_other": "Owners reserved them for you. You can now see the details and message them.",
   "newReservationBy": "Reserved by {{owner}} on {{date}}",
   "newReservationView": "View my reservations",
-  "newReservationClose": "Got it"
+  "newReservationClose": "Got it",
+  "rentedTimes_one": "Rented {{count}} time",
+  "rentedTimes_many": "Rented {{count}} times",
+  "rentedTimes_other": "Rented {{count}} times",
+  "neverRented": "Not rented yet"
 }

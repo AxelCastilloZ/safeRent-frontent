@@ -207,5 +207,10 @@
   "morePending_many": "et {{count}} autres biens en attente",
   "moreProperties_one": "et {{count}} autre bien dans Mes biens",
   "moreProperties_other": "et {{count}} autres biens dans Mes biens",
-  "moreProperties_many": "et {{count}} autres biens dans Mes biens"
+  "moreProperties_many": "et {{count}} autres biens dans Mes biens",
+  "moreOptions": "Plus d’options",
+  "propertyNoRatings": "Aucune évaluation",
+  "propertyRatingTitle_one": "{{average}} sur 5 · {{count}} évaluation",
+  "propertyRatingTitle_many": "{{average}} sur 5 · {{count}} évaluations",
+  "propertyRatingTitle_other": "{{average}} sur 5 · {{count}} évaluations"
 }

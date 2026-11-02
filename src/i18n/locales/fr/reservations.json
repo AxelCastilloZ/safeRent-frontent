@@ -41,5 +41,9 @@
   "newReservationDescription_other": "Des propriétaires les ont réservés pour vous. Vous pouvez voir les détails et leur écrire.",
   "newReservationBy": "Réservé par {{owner}} le {{date}}",
   "newReservationView": "Voir mes réservations",
-  "newReservationClose": "Compris"
+  "newReservationClose": "Compris",
+  "rentedTimes_one": "Louée {{count}} fois",
+  "rentedTimes_many": "Louée {{count}} fois",
+  "rentedTimes_other": "Louée {{count}} fois",
+  "neverRented": "Pas encore louée"
 }

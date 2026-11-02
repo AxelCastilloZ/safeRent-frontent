@@ -3,7 +3,8 @@ import { useMessageState } from '../../../../i18n/useMessageState';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { AlertTriangle, Building2, CalendarX, Eye, EyeOff, MoreHorizontal, Pencil, Plus } from 'lucide-react';
+import { AlertTriangle, Building2, CalendarX, CheckCircle2, ChevronDown, Eye, EyeOff, History, Pencil, Plus, Star } from 'lucide-react';
+import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
@@ -13,7 +14,9 @@ import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
 import { propertyService } from '../../../Property/services/propertyService';
 import type { Property } from '../../../Property/types/property';
-import TenantLink from '../../../TenantRatings/components/TenantLink';
+import { useOwnerPropertyRatings } from '../../../Comments/hooks/usePropertyComments';
+import type { PropertyRating } from '../../../Comments/models/comment';
+import { formatScore } from '../../../TenantRatings/utils/format';
 import ConfirmDialog from '../../Components/ConfirmDialog';
 import EmptyPanel from '../../Components/EmptyPanel';
 import FilterTabs from '../../Components/FilterTabs';
@@ -33,6 +36,32 @@ const filters = () => ([
 
 type PropertyFilter = (ReturnType<typeof filters>)[number]['value'];
 
+const chip = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold';
+
+/** Cuántas veces se ha alquilado la propiedad, como una etiqueta corta. */
+function RentedTimes({ times }: { times: number }) {
+  useTranslation();
+  return (
+    <span className={`${chip} ${times > 0 ? 'bg-slate-100 text-primary' : 'bg-slate-50 text-muted-ink'}`}>
+      <History size={13} aria-hidden="true" />
+      {times > 0 ? i18n.t('reservations:rentedTimes', { count: times }) : i18n.t('reservations:neverRented')}
+    </span>
+  );
+}
+
+/** Calificación que los inquilinos le dieron a la propiedad: estrella, promedio y cuántas son. */
+function PropertyRatingChip({ rating }: { rating?: PropertyRating }) {
+  useTranslation();
+  if (!rating) return <span className={`${chip} bg-slate-50 text-muted-ink`}><Star size={13} aria-hidden="true" />{i18n.t('dashboard:propertyNoRatings')}</span>;
+  return (
+    <span title={i18n.t('dashboard:propertyRatingTitle', { average: formatScore(rating.average), count: rating.count })} className={`${chip} bg-slate-100 text-primary`}>
+      <Star size={13} aria-hidden="true" className="fill-amber-400 text-amber-500" />
+      {formatScore(rating.average)}
+      <span className="font-medium text-muted-ink">({rating.count})</span>
+    </span>
+  );
+}
+
 const publishLinkClass = 'inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-secondary-dark';
 
 /** Mis propiedades: lista real del propietario con el estado de revisión de cada una. */
@@ -41,6 +70,7 @@ export default function OwnerPropertiesPage() {
   const properties = useOwnerProperties();
   const { userId } = useDashboardUser();
   const rentalCounts = useOwnerRentalCounts(userId);
+  const ratings = useOwnerPropertyRatings();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [propertyMenu, setPropertyMenu] = useState<{ anchor: HTMLElement; property: Property } | null>(null);
@@ -105,18 +135,23 @@ export default function OwnerPropertiesPage() {
         <ul className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((property) => (
             <li key={property.id} className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <PropertyThumbCard property={property} to={'/dashboard/owner/properties/detail/' + property.id} className="rounded-none border-0" />
+              <PropertyThumbCard property={property} to={'/dashboard/owner/properties/detail/' + property.id} flush />
               <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
-                {(property.status !== 'ACTIVE' || property.reservedTenantId) && <div className="flex flex-wrap items-center gap-2">
-                  {property.status !== 'ACTIVE' && <StatusBadge variant={statusBadgeVariant(property.status)} />}
-                  {property.reservedTenantId && <span role="status" className="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">{i18n.t("dashboard:recentsavedsection_reservada")}</span>}
-                </div>}
-                {rentalCounts.isSuccess && (
-                  <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
-                )}
-                {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}<TenantLink tenantId={property.reservedTenantId} name={property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")} /></p>}
+                {property.status !== 'ACTIVE' && <div className="flex flex-wrap items-center gap-2"><StatusBadge variant={statusBadgeVariant(property.status)} /></div>}
+                {/* Quién la reservó se ve al abrir la propiedad (su historial de alquileres); aquí solo el resumen. */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {ratings.isSuccess && <PropertyRatingChip rating={ratings.data.get(property.id)} />}
+                  {rentalCounts.isSuccess && <RentedTimes times={rentalCounts.data.get(property.id) ?? 0} />}
+                  {property.reservedTenantId && (
+                    <span
+                      role="status"
+                      title={`${i18n.t("dashboard:ownerpropertiespage_reservada_para")} ${property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}`}
+                      className={`${chip} bg-secondary/10 text-secondary`}
+                    ><CheckCircle2 size={13} aria-hidden="true" />{i18n.t("dashboard:recentsavedsection_reservada")}</span>
+                  )}
+                </div>
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
-                  <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                  <p className="flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
                     <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
                     <span>{property.reviewNote}</span>
                   </p>
@@ -126,20 +161,20 @@ export default function OwnerPropertiesPage() {
                   <button
                     id={`property-actions-${property.id}`}
                     type="button"
-                    aria-label={`${i18n.t('dashboard:adminpropertiespage_acciones')}: ${property.title}`}
                     aria-haspopup="menu"
                     aria-expanded={propertyMenu?.property.id === property.id}
                     aria-controls={propertyMenu?.property.id === property.id ? 'owner-property-menu' : undefined}
                     onClick={(event) => setPropertyMenu({ anchor: event.currentTarget, property })}
-                    className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-3 py-1.5 text-primary transition hover:border-secondary hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
-                  ><MoreHorizontal size={18} aria-hidden="true" /></button>
-                  {property.status !== 'INACTIVE' && property.status !== 'DRAFT' && (
+                    title={property.title}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-primary transition hover:border-secondary hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+                  >{i18n.t('dashboard:moreOptions')}<ChevronDown size={15} aria-hidden="true" /></button>
+                  {property.reservedTenantId && (
                     <button
                       type="button"
-                      onClick={() => { setDeactivating(property); setDeactivateError(null); }}
-                      className="ml-auto inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-                    >
-                      <EyeOff size={14} aria-hidden="true" />{i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}</button>
+                      disabled={release.isPending}
+                      onClick={() => { release.reset(); setReleaseReason(''); setReleasing(property); }}
+                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary px-3 py-2 text-xs font-bold text-white transition hover:bg-secondary-dark disabled:opacity-60"
+                    ><CalendarX size={15} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_quitar_reserva_61b7f5')}</button>
                   )}
                 </div>
               </div>
@@ -172,12 +207,13 @@ export default function OwnerPropertiesPage() {
           setPropertyMenu(null);
           void navigate({ to: '/dashboard/owner/properties/detail/$propertyId', params: { propertyId: String(property.id) } });
         }}><Eye size={16} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_ver')}</MenuItem>
-        {propertyMenu?.property.reservedTenantId && <MenuItem disabled={release.isPending} onClick={() => {
-          release.reset();
-          setReleaseReason('');
-          setReleasing(propertyMenu.property);
+        {propertyMenu && propertyMenu.property.status !== 'INACTIVE' && propertyMenu.property.status !== 'DRAFT' && <Divider />}
+        {propertyMenu && propertyMenu.property.status !== 'INACTIVE' && propertyMenu.property.status !== 'DRAFT' && <MenuItem onClick={() => {
+          const { property } = propertyMenu;
           setPropertyMenu(null);
-        }} sx={{ color: 'var(--color-secondary)' }}><CalendarX size={16} aria-hidden="true" />{i18n.t('dashboard:ownerpropertiespage_quitar_reserva_61b7f5')}</MenuItem>}
+          setDeactivating(property);
+          setDeactivateError(null);
+        }} sx={{ color: '#dc2626' }}><EyeOff size={16} aria-hidden="true" />{i18n.t('dashboard:adminpropertiespage_desactivar_7ef1cd')}</MenuItem>}
       </Menu>
       {deactivating && (
         <ConfirmDialog
