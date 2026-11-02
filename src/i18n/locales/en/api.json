@@ -98,5 +98,8 @@
   "API_DISPONIBILIDAD_INVALIDA": "The availability windows are not valid",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Only the owner can set the availability",
   "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "The visit must be confirmed to reserve",
-  "API_PROPIETARIO_NO_DISPONIBLE": "Owner unavailable"
+  "API_PROPIETARIO_NO_DISPONIBLE": "Owner unavailable",
+  "API_RESERVA_NO_ENCONTRADA": "Reservation not found",
+  "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Only the owner of the reservation can rate its tenant",
+  "API_INQUILINO_NO_ENCONTRADO": "Tenant not found"
 }

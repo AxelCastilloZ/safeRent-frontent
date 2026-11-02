@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { errorMessage } from '../../../i18n/messages'
 import ReservedChip from '../../Reservations/Components/ReservedChip'
+import TenantLink, { WithNameLink } from '../../TenantRatings/components/TenantLink'
 import { useAcceptVisit, useConfirmVisit, useOpenVisitConversation, useReserveFromVisit } from '../hooks/visitHooks'
 import type { Visit } from '../types/visit'
 import { formatShortDateTime, formatVisitDateTime, zoneLabel } from '../utils/format'
@@ -45,8 +46,13 @@ export default function VisitCard({ visit, role, position, total }: VisitCardPro
   const waiting = status === 'PENDING' || status === 'COUNTER_PROPOSED'
   const cancellable = waiting || (status === 'CONFIRMED' && upcoming)
   const failure = [confirm, accept, reserve, startConversation].find((mutation) => mutation.isError)?.error
+  // El propietario puede abrir el perfil del interesado (su puntaje y lo que otros propietarios dijeron) antes de confirmar o reservar.
   const person = role === 'owner'
-    ? i18n.t('visits:requestedBy', { name: `${visit.tenant.name} ${visit.tenant.surname1}` })
+    ? (
+      <WithNameLink phrase={(name) => i18n.t('visits:requestedBy', { name })}>
+        <TenantLink tenantId={visit.tenant.id} name={`${visit.tenant.name} ${visit.tenant.surname1}`} />
+      </WithNameLink>
+    )
     : i18n.t('visits:ownerName', { name: `${visit.owner.name} ${visit.owner.surname1}` })
   const tenantName = visit.tenant.name
 

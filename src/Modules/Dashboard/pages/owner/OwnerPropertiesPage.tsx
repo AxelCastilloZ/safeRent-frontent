@@ -13,6 +13,7 @@ import StatusBadge from '../../../Property/Components/StatusBadge';
 import { statusBadgeVariant } from '../../../Property/utils/propertyStatus';
 import { propertyService } from '../../../Property/services/propertyService';
 import type { Property } from '../../../Property/types/property';
+import TenantLink from '../../../TenantRatings/components/TenantLink';
 import ConfirmDialog from '../../Components/ConfirmDialog';
 import EmptyPanel from '../../Components/EmptyPanel';
 import FilterTabs from '../../Components/FilterTabs';
@@ -113,7 +114,7 @@ export default function OwnerPropertiesPage() {
                 {rentalCounts.isSuccess && (
                   <p className="text-sm text-muted-ink">{i18n.t('reservations:timesRented', { count: rentalCounts.data.get(property.id) ?? 0 })}</p>
                 )}
-                {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}{property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")}</p>}
+                {property.reservedTenantId && <p className="mt-2 text-sm text-amber-900">{i18n.t("dashboard:ownerpropertiespage_reservada_para")}{' '}<TenantLink tenantId={property.reservedTenantId} name={property.reservedTenantName || i18n.t("dashboard:ownerpropertiespage_un_inquilino")} /></p>}
                 {property.reviewNote && (property.status === 'CHANGES_REQUESTED' || property.status === 'INACTIVE') && (
                   <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
                     <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />

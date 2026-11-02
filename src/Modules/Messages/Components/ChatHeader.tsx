@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/instance';
 import ReservePropertyButton from '../../Reservations/Components/ReservePropertyButton'
 import ReservedChip from '../../Reservations/Components/ReservedChip'
+import TenantLink from '../../TenantRatings/components/TenantLink'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Building2, ExternalLink, ShieldCheck } from 'lucide-react'
 import { useMessagesBasePath } from '../hooks/useMessagesBasePath'
@@ -34,7 +35,10 @@ export default function ChatHeader({ conversation, currentUserId }: ChatHeaderPr
           <ParticipantAvatar initials={participantInitials(other)} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h1 className="truncate font-semibold">{participantFullName(other)}</h1>
+              {/* Si quien escribe es el propietario, el otro es el inquilino: su nombre abre sus calificaciones antes de reservarle. */}
+              {conversation.property && conversation.property.owner.id === currentUserId
+                ? <h1 className="min-w-0 font-semibold"><TenantLink tenantId={other.id} name={participantFullName(other)} /></h1>
+                : <h1 className="truncate font-semibold">{participantFullName(other)}</h1>}
               <RoleBadge>{otherParticipantRole(conversation, currentUserId)}</RoleBadge>
             </div>
             <p className="flex items-center gap-1 truncate text-xs text-slate-500">

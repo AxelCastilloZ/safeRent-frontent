@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
+import TenantLink from '../../../TenantRatings/components/TenantLink';
 import { useReceivedVisits } from '../../../Visits/hooks/visitHooks';
 import { formatShortDateTime, formatVisitDateTime } from '../../../Visits/utils/format';
 import { SectionEmpty, SectionError, SectionLoading } from '../ClientHome/SectionStates';
@@ -28,7 +29,7 @@ export default function PendingVisitsSection() {
           {pending.slice(0, SHOWN).map((visit, index) => (
             <li key={visit.id} className="flex items-center justify-between gap-3 rounded-xl px-2 py-2.5">
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-primary">{visit.tenant.name} {visit.tenant.surname1} · {visit.property.title}</p>
+                <p className="text-sm font-bold text-primary"><TenantLink tenantId={visit.tenant.id} name={`${visit.tenant.name} ${visit.tenant.surname1}`} /> · {visit.property.title}</p>
                 <p className="truncate text-xs text-muted-ink first-letter:uppercase">{formatVisitDateTime(visit.scheduledAt, visit.timezone)}</p>
                 <p className="mt-0.5 text-xs text-muted-ink">
                   <span className="font-semibold text-amber-800">{i18n.t('visits:queuePosition', { position: index + 1, total: pending.length })}</span>

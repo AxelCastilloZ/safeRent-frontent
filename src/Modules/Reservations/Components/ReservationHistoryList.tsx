@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../i18n/instance'
 import { formatDate } from '../../../i18n/formatters'
+import { useAuth } from '../../Auth/hooks/authHooks'
+import TenantLink, { WithNameLink } from '../../TenantRatings/components/TenantLink'
 import type { ReservationHistoryEntry } from '../models/reservation'
 
 interface ReservationHistoryListProps {
@@ -12,6 +14,9 @@ interface ReservationHistoryListProps {
 /** Lista de reservas del historial: vigente o finalizada, fechas y motivo de cierre. */
 export default function ReservationHistoryList({ reservations, show }: ReservationHistoryListProps) {
   useTranslation()
+  const { user } = useAuth()
+  // El perfil con las calificaciones vive en el área del propietario: solo se enlaza si quien mira lo es.
+  const canOpenProfile = Boolean(user?.roles.includes('OWNER'))
   if (reservations.length === 0) {
     return <p className="rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-muted-ink">{i18n.t('reservations:historyEmpty')}</p>
   }
@@ -22,7 +27,11 @@ export default function ReservationHistoryList({ reservations, show }: Reservati
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="font-semibold text-primary">
-                {show === 'property' ? reservation.property.title : i18n.t('reservations:historyTenant', { name: reservation.tenant.name })}
+                {show === 'property'
+                  ? reservation.property.title
+                  : canOpenProfile
+                    ? <WithNameLink phrase={(name) => i18n.t('reservations:historyTenant', { name })}><TenantLink tenantId={reservation.tenant.id} name={reservation.tenant.name} /></WithNameLink>
+                    : i18n.t('reservations:historyTenant', { name: reservation.tenant.name })}
               </p>
               {show === 'property' && (
                 <p className="text-sm text-muted-ink">{i18n.t('reservations:historyOwner', { name: reservation.owner.name })}</p>

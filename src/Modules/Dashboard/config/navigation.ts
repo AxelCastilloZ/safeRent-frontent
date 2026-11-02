@@ -7,6 +7,7 @@ import {
   Mail,
   MessageSquare,
   Settings,
+  Star,
   Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -47,6 +48,7 @@ export const DASHBOARD_AREAS: Record<DashboardArea, DashboardAreaConfig> = {
       { to: '/dashboard/reservations', label: 'navigation:reservations', Icon: CalendarCheck },
       { to: '/dashboard/messages', label: 'navigation:messages', Icon: MessageSquare },
       { to: '/dashboard/saved', label: 'navigation:saved', Icon: Heart },
+      { to: '/dashboard/ratings', label: 'navigation:myRatings', Icon: Star },
       { to: '/dashboard/owner/properties', label: 'navigation:publications', Icon: Building2 },
       { to: '/dashboard/settings', label: 'navigation:settings', Icon: Settings },
     ],

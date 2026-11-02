@@ -98,5 +98,8 @@
   "API_DISPONIBILIDAD_INVALIDA": "As janelas de atendimento não são válidas",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Somente o proprietário pode configurar a disponibilidade",
   "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "A visita deve estar confirmada para reservar",
-  "API_PROPIETARIO_NO_DISPONIBLE": "Proprietário indisponível"
+  "API_PROPIETARIO_NO_DISPONIBLE": "Proprietário indisponível",
+  "API_RESERVA_NO_ENCONTRADA": "Reserva não encontrada",
+  "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Somente o proprietário da reserva pode avaliar o seu inquilino",
+  "API_INQUILINO_NO_ENCONTRADO": "Inquilino não encontrado"
 }

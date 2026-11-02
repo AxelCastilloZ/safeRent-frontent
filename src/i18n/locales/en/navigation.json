@@ -36,5 +36,6 @@
   "unread_other": "{{count}} unread messages",
   "unread_many": "{{count}} unread messages",
   "myVisits": "My visits",
-  "visits": "Visits"
+  "visits": "Visits",
+  "myRatings": "My ratings"
 }

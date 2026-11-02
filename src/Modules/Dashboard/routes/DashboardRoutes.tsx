@@ -38,6 +38,11 @@ const clientVisitsRoute = createRoute({
   path: 'visits',
   component: lazyRouteComponent(() => import('../pages/VisitsPage')),
 });
+const clientRatingsRoute = createRoute({
+  getParentRoute: () => DashboardRoute,
+  path: 'ratings',
+  component: lazyRouteComponent(() => import('../pages/MyRatingsPage')),
+});
 const clientSavedRoute = createRoute({
   getParentRoute: () => DashboardRoute,
   path: 'saved',
@@ -71,6 +76,11 @@ const ownerVisitsRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
   path: 'visits',
   component: lazyRouteComponent(() => import('../pages/owner/OwnerVisitsPage')),
+});
+const ownerTenantProfileRoute = createRoute({
+  getParentRoute: () => ownerAreaRoute,
+  path: 'tenants/$tenantId',
+  component: lazyRouteComponent(() => import('../pages/owner/OwnerTenantProfilePage')),
 });
 const ownerPropertiesRoute = createRoute({
   getParentRoute: () => ownerAreaRoute,
@@ -186,6 +196,7 @@ export const dashboardRoute = DashboardRoute.addChildren([
   clientHomeRoute,
   clientReservationsRoute,
   clientVisitsRoute,
+  clientRatingsRoute,
   clientSavedRoute,
   clientSettingsRoute,
   clientMessagesRoute.addChildren([clientMessagesIndexRoute, clientConversationRoute]),
@@ -193,6 +204,7 @@ export const dashboardRoute = DashboardRoute.addChildren([
     ownerHomeRoute,
     ownerPropertiesRoute,
     ownerVisitsRoute,
+    ownerTenantProfileRoute,
     ownerPropertyEditorRoute.addChildren([
       ownerPropertyNewRoute,
       ownerPropertyNewLocationRoute,

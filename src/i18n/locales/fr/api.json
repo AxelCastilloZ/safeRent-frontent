@@ -98,5 +98,8 @@
   "API_DISPONIBILIDAD_INVALIDA": "Les plages de disponibilité ne sont pas valides",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CONFIGURAR_LA_DISPONIBILIDAD": "Seul le propriétaire peut configurer la disponibilité",
   "API_LA_CITA_DEBE_ESTAR_CONFIRMADA_PARA_RESERVAR": "La visite doit être confirmée pour réserver",
-  "API_PROPIETARIO_NO_DISPONIBLE": "Propriétaire indisponible"
+  "API_PROPIETARIO_NO_DISPONIBLE": "Propriétaire indisponible",
+  "API_RESERVA_NO_ENCONTRADA": "Réservation introuvable",
+  "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Seul le propriétaire de la réservation peut évaluer son locataire",
+  "API_INQUILINO_NO_ENCONTRADO": "Locataire introuvable"
 }
