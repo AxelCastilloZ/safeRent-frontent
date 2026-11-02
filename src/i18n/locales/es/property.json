@@ -203,5 +203,9 @@
   "ownerPageEmpty": "Este propietario no tiene propiedades publicadas por el momento.",
   "ownerPageInvalid": "Propietario no válido",
   "ownerPageLoading": "Cargando propietario…",
-  "ownerLinkTitle": "Ver las propiedades de {{name}}"
+  "ownerLinkTitle": "Ver las propiedades de {{name}}",
+  "viewsCount_one": "{{count}} vista",
+  "viewsCount_many": "{{count}} vistas",
+  "viewsCount_other": "{{count}} vistas",
+  "viewsTitle": "Personas distintas que han abierto esta propiedad"
 }

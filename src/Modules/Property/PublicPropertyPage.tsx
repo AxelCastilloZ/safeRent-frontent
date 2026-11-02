@@ -17,6 +17,8 @@ import { usePublicProperty } from './hooks/usePublicProperty'
 import { useAuth } from '../Auth/hooks/authHooks'
 
 import ScheduleVisitDialog from '../Visits/components/ScheduleVisitDialog'
+import ViewsBadge from '../PropertyViews/components/ViewsBadge'
+import { usePropertyViews } from '../PropertyViews/hooks/usePropertyViews'
 import { useLiveVisitForProperty } from '../Visits/hooks/visitHooks'
 import { clearPendingVisitProperty, peekPendingVisitProperty, setPendingVisitProperty } from '../Visits/utils/pendingVisit'
 import { useSavedPropertyIds, useToggleSavedProperty } from '../SavedProperties/hooks/savedPropertyHooks'
@@ -45,6 +47,9 @@ export default function PublicPropertyPage() {
   const isOwnProperty = Boolean(property && currentUser && currentUser.id === property.owner.id)
   // Solo el inquilino guarda propiedades. Sin sesión (o mientras se verifica) el botón se muestra.
   const canShowSave = property !== undefined && !isOwnProperty && (!currentUser || currentUser.roles.includes('CLIENT'))
+  // Abrir la página cuenta como una vista, salvo la del propietario (o un administrador): se espera a saber quién es antes de contar.
+  const sessionResolved = !hasSession || currentUser !== undefined
+  const views = usePropertyViews(property?.id, property !== undefined && sessionResolved && !isOwnProperty && !isAdmin)
 
   /** "Agendar cita": abre el calendario. Sin sesión se recuerda la intención y se vuelve aquí tras el login. */
   function scheduleVisit() {
@@ -124,7 +129,8 @@ export default function PublicPropertyPage() {
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <a href="/#properties" className="inline-flex items-center gap-2 text-sm font-semibold text-neutral hover:text-secondary"><ArrowLeft size={18} />{i18n.t("property:publicpropertypage_volver_a_resultados")}</a>
-        {property && <div className="flex gap-2">
+        {property && <div className="flex flex-wrap items-center gap-2">
+          {views !== undefined && <ViewsBadge count={views} />}
           {canShowSave && <button type="button" onClick={toggleSaved} disabled={savedMutation.isPending} aria-pressed={saved} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary disabled:opacity-60"><Heart size={16} className={saved ? 'fill-secondary text-secondary' : ''} />{saved ? i18n.t("property:publicpropertypage_guardada") : i18n.t("property:publicpropertypage_guardar")}</button>}
           <button type="button" onClick={() => void share()} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm hover:border-secondary"><Share2 size={16} />{i18n.t("property:publicpropertypage_compartir")}</button>
         </div>}

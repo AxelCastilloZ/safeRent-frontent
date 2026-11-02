@@ -19,6 +19,8 @@ import PropertyComments from '../Comments/Components/PropertyComments'
 
 import { useSessionToken } from '../Auth/services/authSession'
 import ReservationHistoryList from '../Reservations/Components/ReservationHistoryList'
+import ViewsBadge from '../PropertyViews/components/ViewsBadge'
+import { usePropertyViews } from '../PropertyViews/hooks/usePropertyViews'
 import { usePropertyRentalHistory } from '../Reservations/hooks/useReservationHistory'
 
 export default function PropertyDetailPage() {
@@ -35,6 +37,8 @@ export default function PropertyDetailPage() {
   })
   const property = propertyQuery.data
   const rentals = usePropertyRentalHistory(Number(propertyId), Boolean(token))
+  // Solo consulta: abrir su propia propiedad no suma una vista. Si aún no está publicada no hay conteo y no se muestra.
+  const views = usePropertyViews(Number(propertyId), false)
   const loading = propertyQuery.isPending
   const loadError = propertyQuery.isError ? i18n.t("property:createpropertystep1page_no_se_pudo_cargar_la_propiedad") : null
   const [error, setError] = useMessageState<string | null>(null)
@@ -84,7 +88,10 @@ export default function PropertyDetailPage() {
       </div>}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <p className="text-sm font-bold text-primary">{i18n.t("property:ownerPreviewTitle")}</p>
-        <StatusBadge variant={statusBadgeVariant(property.status)} />
+        <div className="flex flex-wrap items-center gap-2">
+          {views !== undefined && <ViewsBadge count={views} />}
+          <StatusBadge variant={statusBadgeVariant(property.status)} />
+        </div>
       </div>
 
       {property.status === 'DRAFT' && (

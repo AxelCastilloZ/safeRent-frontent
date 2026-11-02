@@ -203,5 +203,9 @@
   "ownerPageEmpty": "This owner has no published properties at the moment.",
   "ownerPageInvalid": "Invalid owner",
   "ownerPageLoading": "Loading owner…",
-  "ownerLinkTitle": "See the properties of {{name}}"
+  "ownerLinkTitle": "See the properties of {{name}}",
+  "viewsCount_one": "{{count}} view",
+  "viewsCount_many": "{{count}} views",
+  "viewsCount_other": "{{count}} views",
+  "viewsTitle": "Different people who have opened this property"
 }

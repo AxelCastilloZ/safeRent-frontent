@@ -203,5 +203,9 @@
   "ownerPageEmpty": "Este proprietário não tem imóveis publicados no momento.",
   "ownerPageInvalid": "Proprietário inválido",
   "ownerPageLoading": "Carregando proprietário…",
-  "ownerLinkTitle": "Ver os imóveis de {{name}}"
+  "ownerLinkTitle": "Ver os imóveis de {{name}}",
+  "viewsCount_one": "{{count}} visualização",
+  "viewsCount_many": "{{count}} visualizações",
+  "viewsCount_other": "{{count}} visualizações",
+  "viewsTitle": "Pessoas diferentes que abriram este imóvel"
 }
