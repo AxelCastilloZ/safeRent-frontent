@@ -32,5 +32,14 @@
   "userProperties": "Imóveis cadastrados",
   "userPropertiesEmpty": "Nenhum imóvel cadastrado.",
   "userReservations": "Reservas como inquilino",
-  "historyLoading": "Carregando histórico…"
+  "historyLoading": "Carregando histórico…",
+  "newReservationTitle_one": "Um imóvel foi reservado para você!",
+  "newReservationTitle_many": "{{count}} imóveis foram reservados para você!",
+  "newReservationTitle_other": "{{count}} imóveis foram reservados para você!",
+  "newReservationDescription_one": "Um proprietário o reservou para você. Agora você pode ver os detalhes e escrever para ele.",
+  "newReservationDescription_many": "Proprietários os reservaram para você. Agora você pode ver os detalhes e escrever para eles.",
+  "newReservationDescription_other": "Proprietários os reservaram para você. Agora você pode ver os detalhes e escrever para eles.",
+  "newReservationBy": "Reservado por {{owner}} em {{date}}",
+  "newReservationView": "Ver minhas reservas",
+  "newReservationClose": "Entendi"
 }

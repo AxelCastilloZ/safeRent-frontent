@@ -6,6 +6,7 @@ import { Outlet, useLocation, useRouter } from '@tanstack/react-router';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MessagesBasePathContext } from '../../Messages/hooks/useMessagesBasePath';
+import NewReservationNotice from '../../Reservations/Components/NewReservationNotice';
 import { DASHBOARD_AREAS, getAreaFromPath } from '../config/navigation';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import DashboardHeader from './DashboardHeader';
@@ -84,6 +85,8 @@ export default function DashboardLayout() {
             <Outlet />
           </main>
         </div>
+        {/* Si un propietario le reservó una propiedad al usuario, se lo dice al entrar (una sola vez por reserva). */}
+        {user?.roles.includes('CLIENT') && <NewReservationNotice userId={user.id} />}
       </div>
     </MessagesBasePathContext.Provider>
   );

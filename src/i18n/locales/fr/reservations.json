@@ -32,5 +32,14 @@
   "userProperties": "Biens enregistrés",
   "userPropertiesEmpty": "Aucun bien enregistré.",
   "userReservations": "Réservations en tant que locataire",
-  "historyLoading": "Chargement de l’historique…"
+  "historyLoading": "Chargement de l’historique…",
+  "newReservationTitle_one": "Un bien a été réservé pour vous !",
+  "newReservationTitle_many": "{{count}} biens ont été réservés pour vous !",
+  "newReservationTitle_other": "{{count}} biens ont été réservés pour vous !",
+  "newReservationDescription_one": "Un propriétaire l’a réservé pour vous. Vous pouvez voir les détails et lui écrire.",
+  "newReservationDescription_many": "Des propriétaires les ont réservés pour vous. Vous pouvez voir les détails et leur écrire.",
+  "newReservationDescription_other": "Des propriétaires les ont réservés pour vous. Vous pouvez voir les détails et leur écrire.",
+  "newReservationBy": "Réservé par {{owner}} le {{date}}",
+  "newReservationView": "Voir mes réservations",
+  "newReservationClose": "Compris"
 }

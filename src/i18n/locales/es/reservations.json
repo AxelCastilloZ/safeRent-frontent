@@ -32,5 +32,14 @@
   "userProperties": "Propiedades registradas",
   "userPropertiesEmpty": "No tiene propiedades registradas.",
   "userReservations": "Reservas como inquilino",
-  "historyLoading": "Cargando historial…"
+  "historyLoading": "Cargando historial…",
+  "newReservationTitle_one": "¡Te reservaron una propiedad!",
+  "newReservationTitle_many": "¡Te reservaron {{count}} propiedades!",
+  "newReservationTitle_other": "¡Te reservaron {{count}} propiedades!",
+  "newReservationDescription_one": "Un propietario la reservó para ti. Ya puedes ver los detalles y escribirle.",
+  "newReservationDescription_many": "Varios propietarios las reservaron para ti. Ya puedes ver los detalles y escribirles.",
+  "newReservationDescription_other": "Varios propietarios las reservaron para ti. Ya puedes ver los detalles y escribirles.",
+  "newReservationBy": "Reservada por {{owner}} el {{date}}",
+  "newReservationView": "Ver mis reservaciones",
+  "newReservationClose": "Entendido"
 }

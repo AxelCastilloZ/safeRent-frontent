@@ -32,5 +32,14 @@
   "userProperties": "Registered properties",
   "userPropertiesEmpty": "No registered properties.",
   "userReservations": "Reservations as a tenant",
-  "historyLoading": "Loading history…"
+  "historyLoading": "Loading history…",
+  "newReservationTitle_one": "A property was reserved for you!",
+  "newReservationTitle_many": "{{count}} properties were reserved for you!",
+  "newReservationTitle_other": "{{count}} properties were reserved for you!",
+  "newReservationDescription_one": "An owner reserved it for you. You can now see the details and message them.",
+  "newReservationDescription_many": "Owners reserved them for you. You can now see the details and message them.",
+  "newReservationDescription_other": "Owners reserved them for you. You can now see the details and message them.",
+  "newReservationBy": "Reserved by {{owner}} on {{date}}",
+  "newReservationView": "View my reservations",
+  "newReservationClose": "Got it"
 }
