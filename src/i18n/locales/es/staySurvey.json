@@ -37,5 +37,16 @@
   "internetShort": "Velocidad de Internet",
   "universityShort": "Distancia a la universidad",
   "coworkingShort": "Distancia a un coworking",
-  "workAreaShort": "Área de trabajo"
+  "workAreaShort": "Área de trabajo",
+  "bannerSeeAll": "Ver las {{count}} pendientes",
+  "thanksTitle": "¡Gracias por responder!",
+  "thanksMore_one": "Te queda {{count}} encuesta pendiente. ¿Quieres seguir respondiendo?",
+  "thanksMore_many": "Te quedan {{count}} encuestas pendientes. ¿Quieres seguir respondiendo?",
+  "thanksMore_other": "Te quedan {{count}} encuestas pendientes. ¿Quieres seguir respondiendo?",
+  "thanksDone": "Tu encuesta ayuda a otros inquilinos a elegir.",
+  "thanksBack": "Volver al panel",
+  "thanksClose": "Cerrar",
+  "pendingBadge_one": "{{count}} encuesta de estadía pendiente",
+  "pendingBadge_many": "{{count}} encuestas de estadía pendientes",
+  "pendingBadge_other": "{{count}} encuestas de estadía pendientes"
 }

@@ -6,6 +6,7 @@ import { useUnreadMessagesCount } from '../../Messages/hooks/messageHooks';
 import UnreadBadge from '../../Messages/Components/UnreadBadge';
 import VisitCountBadge from '../../Visits/components/VisitCountBadge';
 import { useVisitSummary } from '../../Visits/hooks/visitHooks';
+import { useMyStays } from '../../StaySurvey/hooks/staySurveyHooks';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import AreaSwitcher from './AreaSwitcher';
 
@@ -26,11 +27,15 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
   const { fullName, initials, logout } = useDashboardUser();
   const unreadMessages = useUnreadMessagesCount();
   const visits = useVisitSummary();
+  // Encuestas de estadía sin responder (solo el inquilino las tiene).
+  const stays = useMyStays(area === 'client');
+  const pendingSurveys = (stays.data ?? []).filter((stay) => !stay.survey).length;
   const config = DASHBOARD_AREAS[area];
   // Citas que esperan respuesta: al propietario le llegan solicitudes; al inquilino, contrapropuestas.
   const visitBadges: Record<string, number> = {
     '/dashboard/visits': visits.data?.tenantNeedsAnswer ?? 0,
     '/dashboard/owner/visits': visits.data?.ownerPending ?? 0,
+    '/dashboard/reservations': pendingSurveys,
   };
 
   async function handleLogout() {
@@ -76,7 +81,7 @@ export default function DashboardSidebar({ area, onNavigate }: DashboardSidebarP
               <item.Icon size={18} aria-hidden="true" />
               {t(item.label)}
               {item.to === config.messagesPath && <UnreadBadge count={unreadMessages} className="ml-auto" />}
-              <VisitCountBadge count={visitBadges[item.to] ?? 0} className="ml-auto" />
+              <VisitCountBadge count={visitBadges[item.to] ?? 0} className="ml-auto" label={item.to === '/dashboard/reservations' ? t('staySurvey:pendingBadge', { count: pendingSurveys }) : undefined} />
             </Link>
           );
         })}

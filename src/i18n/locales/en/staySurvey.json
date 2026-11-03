@@ -37,5 +37,16 @@
   "internetShort": "Internet speed",
   "universityShort": "Distance to the university",
   "coworkingShort": "Distance to a coworking space",
-  "workAreaShort": "Work area"
+  "workAreaShort": "Work area",
+  "bannerSeeAll": "See all {{count}} pending",
+  "thanksTitle": "Thanks for answering!",
+  "thanksMore_one": "You have {{count}} survey left. Do you want to keep answering?",
+  "thanksMore_many": "You have {{count}} surveys left. Do you want to keep answering?",
+  "thanksMore_other": "You have {{count}} surveys left. Do you want to keep answering?",
+  "thanksDone": "Your survey helps other tenants choose.",
+  "thanksBack": "Back to the dashboard",
+  "thanksClose": "Close",
+  "pendingBadge_one": "{{count}} pending stay survey",
+  "pendingBadge_many": "{{count}} pending stay surveys",
+  "pendingBadge_other": "{{count}} pending stay surveys"
 }

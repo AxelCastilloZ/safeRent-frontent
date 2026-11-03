@@ -40,10 +40,12 @@ function parseDistance(text: string): number | null {
 interface StaySurveyDialogProps {
   stay: MyStay
   onClose: () => void
+  /** Se llama (en vez de onClose) cuando la encuesta se envió: permite agradecer y ofrecer seguir con otra. */
+  onSubmitted?: () => void
 }
 
 /** Encuesta que el inquilino responde al terminar su estadía: sus respuestas alimentan los filtros del explorador. */
-export default function StaySurveyDialog({ stay, onClose }: StaySurveyDialogProps) {
+export default function StaySurveyDialog({ stay, onClose, onSubmitted }: StaySurveyDialogProps) {
   useTranslation()
   const submit = useSubmitStaySurvey()
   const previous = stay.survey
@@ -72,7 +74,7 @@ export default function StaySurveyDialog({ stay, onClose }: StaySurveyDialogProp
         coworkingKm: parseDistance(coworking),
         hasWorkArea: workArea,
       },
-    }, { onSuccess: onClose })
+    }, { onSuccess: onSubmitted ?? onClose })
   }
 
   return (

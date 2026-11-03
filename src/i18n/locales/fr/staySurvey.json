@@ -37,5 +37,16 @@
   "internetShort": "Débit Internet",
   "universityShort": "Distance jusqu'à l'université",
   "coworkingShort": "Distance jusqu'à un coworking",
-  "workAreaShort": "Espace de travail"
+  "workAreaShort": "Espace de travail",
+  "bannerSeeAll": "Voir les {{count}} en attente",
+  "thanksTitle": "Merci pour votre réponse !",
+  "thanksMore_one": "Il vous reste {{count}} questionnaire. Voulez-vous continuer à répondre ?",
+  "thanksMore_many": "Il vous reste {{count}} questionnaires. Voulez-vous continuer à répondre ?",
+  "thanksMore_other": "Il vous reste {{count}} questionnaires. Voulez-vous continuer à répondre ?",
+  "thanksDone": "Votre questionnaire aide les autres locataires à choisir.",
+  "thanksBack": "Retour au tableau de bord",
+  "thanksClose": "Fermer",
+  "pendingBadge_one": "{{count}} questionnaire de séjour en attente",
+  "pendingBadge_many": "{{count}} questionnaires de séjour en attente",
+  "pendingBadge_other": "{{count}} questionnaires de séjour en attente"
 }
