@@ -43,6 +43,13 @@ export const propertyService = {
     return api.upload<PropertyFile[]>(`/properties/${propertyId}/files`, formData)
   },
 
+  /** Sube videos del recorrido (hasta 2 por propiedad, 30 MB cada uno). */
+  uploadVideos: (propertyId: number, videos: File[]) => {
+    const formData = new FormData()
+    videos.forEach((video) => formData.append('videos', video))
+    return api.upload<PropertyFile[]>(`/properties/${propertyId}/videos`, formData)
+  },
+
   getFiles: (propertyId: number) =>
     api.get<PropertyFile[]>(`/properties/${propertyId}/files`),
 

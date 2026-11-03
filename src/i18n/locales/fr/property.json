@@ -207,5 +207,20 @@
   "viewsCount_one": "{{count}} vue",
   "viewsCount_many": "{{count}} vues",
   "viewsCount_other": "{{count}} vues",
-  "viewsTitle": "Personnes différentes qui ont ouvert ce bien"
+  "viewsTitle": "Personnes différentes qui ont ouvert ce bien",
+  "videosTitle_one": "Vidéo de la visite",
+  "videosTitle_many": "Vidéos de la visite",
+  "videosTitle_other": "Vidéos de la visite",
+  "videoLabel": "Vidéo {{number}} du logement",
+  "videoLimit": "Un logement admet jusqu'à {{max}} vidéos.",
+  "videoFormat": "Seules les vidéos MP4, WebM ou MOV sont autorisées.",
+  "videoTooLarge": "Chaque vidéo peut peser jusqu'à {{size}} Mo.",
+  "videoUploadFailed": "La vidéo n'a pas pu être envoyée. Réessayez.",
+  "videoRemoveFailed": "La vidéo n'a pas pu être supprimée.",
+  "videoSectionTitle": "Vidéo de la visite (facultatif)",
+  "videoSectionDescription": "Une courte vidéo aide les locataires à découvrir le lieu. Jusqu'à {{max}} vidéos de {{size}} Mo (MP4, WebM ou MOV).",
+  "videoRemove": "Supprimer la vidéo",
+  "videoUploading": "Envoi de la vidéo…",
+  "videoAdd": "Ajouter une vidéo",
+  "videoCount": "{{current}} sur {{max}} vidéos"
 }

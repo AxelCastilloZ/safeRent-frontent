@@ -3,6 +3,7 @@ import i18n from '../../../i18n/instance';
 import { catalogText } from '../../../i18n/catalog';
 import { BedDouble, MapPin, Users } from 'lucide-react';
 import ServiceIcon from '../../Services/components/ServiceIcon';
+import PropertyVideos from './PropertyVideos';
 import type { Property } from '../../Explore/interfaces/property.interface';
 
 type DescriptionProperty = Omit<Property, 'typeOfProperty'> & {
@@ -25,5 +26,6 @@ export default function PropertyDescription({ property }: { property: Descriptio
               <ul className="mt-4 flex flex-wrap gap-3">{property.iconDescriptions?.map((detail) => <li key={detail.id} className="inline-flex items-center gap-2 text-sm"><ServiceIcon name={detail.icon} size={18} />{detail.title}</li>)}</ul>
             </section>
 
+            <PropertyVideos property={property} />
   </div>;
 }

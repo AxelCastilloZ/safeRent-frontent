@@ -207,5 +207,20 @@
   "viewsCount_one": "{{count}} visualização",
   "viewsCount_many": "{{count}} visualizações",
   "viewsCount_other": "{{count}} visualizações",
-  "viewsTitle": "Pessoas diferentes que abriram este imóvel"
+  "viewsTitle": "Pessoas diferentes que abriram este imóvel",
+  "videosTitle_one": "Vídeo do imóvel",
+  "videosTitle_many": "Vídeos do imóvel",
+  "videosTitle_other": "Vídeos do imóvel",
+  "videoLabel": "Vídeo {{number}} do imóvel",
+  "videoLimit": "Um imóvel admite até {{max}} vídeos.",
+  "videoFormat": "Só são permitidos vídeos MP4, WebM ou MOV.",
+  "videoTooLarge": "Cada vídeo pode ter até {{size}} MB.",
+  "videoUploadFailed": "Não foi possível enviar o vídeo. Tente novamente.",
+  "videoRemoveFailed": "Não foi possível eliminar o vídeo.",
+  "videoSectionTitle": "Vídeo do imóvel (opcional)",
+  "videoSectionDescription": "Um vídeo curto ajuda os inquilinos a conhecer o local. Até {{max}} vídeos de {{size}} MB (MP4, WebM ou MOV).",
+  "videoRemove": "Eliminar vídeo",
+  "videoUploading": "A enviar vídeo…",
+  "videoAdd": "Adicionar vídeo",
+  "videoCount": "{{current}} de {{max}} vídeos"
 }

@@ -13,6 +13,7 @@ import { propertyService } from './services/propertyService'
 import { ApiError } from './services/api'
 import type { LocationSuggestion } from './services/locationService'
 import type { Property, PropertyFile, PropertyStatus } from './types/property'
+import PropertyVideosSection from './Components/PropertyVideosSection'
 import UnsavedChangesDialog from './Components/UnsavedChangesDialog'
 import { useUnsavedChangesWarning } from './hooks/useUnsavedChangesWarning'
 
@@ -58,7 +59,8 @@ export default function CreatePropertyLocationPage() {
       setProperty(property)
       setAddress(property.address ?? '')
       setStatus(property.status)
-      setExistingFiles(files)
+      // Los videos se manejan aparte (PropertyVideosSection): aquí solo cuentan las imágenes.
+      setExistingFiles(files.filter(file => !file.mimeType.startsWith('video/')))
       if (typeof property.latitude === 'number' && typeof property.longitude === 'number') {
         setPoint({ latitude: property.latitude, longitude: property.longitude })
       }
@@ -249,5 +251,6 @@ export default function CreatePropertyLocationPage() {
       <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden
         onChange={(e) => { handleFilesSelected(e.target.files); e.target.value = '' }} />
     </FormSection>
+    {propertyId && <PropertyVideosSection propertyId={propertyId} disabled={disabled} />}
   </PropertyFormLayout>
 }

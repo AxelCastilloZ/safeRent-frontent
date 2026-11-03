@@ -27,10 +27,10 @@ export function priceLabel(property: Pick<Property, 'cost' | 'typeOfCoin' | 'dis
   return `${property.displayPrice?.approximate && converted ? '≈ ' : ''}${formatMoney(converted?.amount ?? property.cost, converted?.currency ?? property.typeOfCoin ?? 'CRC')}`
 }
 
-export function photoUrl(property: Pick<Property, 'files'>) {
-  const file = property.files?.find((file) =>
-    file.mimeType?.startsWith('image/'),
-  )
+type FileRef = { path: string; mimeType: string; url?: string | null }
+
+/** Dirección http(s) segura de un archivo de la propiedad (la del almacenamiento, o la ruta del servidor); undefined si no es válida. */
+function fileUrl(file: FileRef | undefined) {
   const path = file?.url || file?.path
   if (!path) return undefined
   try {
@@ -42,6 +42,18 @@ export function photoUrl(property: Pick<Property, 'files'>) {
   } catch {
     return undefined
   }
+}
+
+export function photoUrl(property: Pick<Property, 'files'>) {
+  return fileUrl(property.files?.find((file) => file.mimeType?.startsWith('image/')))
+}
+
+/** Direcciones de los videos de la propiedad, en el orden en que se subieron. */
+export function videoUrls(property: Pick<Property, 'files'>) {
+  return (property.files ?? [])
+    .filter((file) => file.mimeType?.startsWith('video/'))
+    .map(fileUrl)
+    .filter((url): url is string => Boolean(url))
 }
 
 export const normalize = (value: string) =>

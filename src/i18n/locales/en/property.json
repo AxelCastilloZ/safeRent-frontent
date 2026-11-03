@@ -207,5 +207,20 @@
   "viewsCount_one": "{{count}} view",
   "viewsCount_many": "{{count}} views",
   "viewsCount_other": "{{count}} views",
-  "viewsTitle": "Different people who have opened this property"
+  "viewsTitle": "Different people who have opened this property",
+  "videosTitle_one": "Property video",
+  "videosTitle_many": "Property videos",
+  "videosTitle_other": "Property videos",
+  "videoLabel": "Property video {{number}}",
+  "videoLimit": "A property allows up to {{max}} videos.",
+  "videoFormat": "Only MP4, WebM or MOV videos are allowed.",
+  "videoTooLarge": "Each video can be up to {{size}} MB.",
+  "videoUploadFailed": "The video could not be uploaded. Try again.",
+  "videoRemoveFailed": "The video could not be removed.",
+  "videoSectionTitle": "Walkthrough video (optional)",
+  "videoSectionDescription": "A short video helps tenants get to know the place. Up to {{max}} videos of {{size}} MB (MP4, WebM or MOV).",
+  "videoRemove": "Remove video",
+  "videoUploading": "Uploading video…",
+  "videoAdd": "Add video",
+  "videoCount": "{{current}} of {{max}} videos"
 }

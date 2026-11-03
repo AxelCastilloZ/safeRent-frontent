@@ -75,7 +75,7 @@ export default function PropertyDetailPage() {
   }
 
   const hasData = !!(property.title && property.description && property.address)
-  const hasImages = (property.files?.length ?? 0) >= 3
+  const hasImages = (property.files ?? []).filter(file => !file.mimeType?.startsWith('video/')).length >= 3
   const hasServices = (property.services?.length ?? 0) > 0
   const hasLocation = typeof property.latitude === 'number' && typeof property.longitude === 'number' && Number.isFinite(property.latitude) && Number.isFinite(property.longitude)
   const canSubmit = hasData && hasImages && hasServices && hasLocation

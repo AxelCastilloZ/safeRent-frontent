@@ -207,5 +207,20 @@
   "viewsCount_one": "{{count}} vista",
   "viewsCount_many": "{{count}} vistas",
   "viewsCount_other": "{{count}} vistas",
-  "viewsTitle": "Personas distintas que han abierto esta propiedad"
+  "viewsTitle": "Personas distintas que han abierto esta propiedad",
+  "videosTitle_one": "Video del recorrido",
+  "videosTitle_many": "Videos del recorrido",
+  "videosTitle_other": "Videos del recorrido",
+  "videoLabel": "Video {{number}} de la propiedad",
+  "videoLimit": "Una propiedad admite hasta {{max}} videos.",
+  "videoFormat": "Solo se permiten videos MP4, WebM o MOV.",
+  "videoTooLarge": "Cada video puede pesar hasta {{size}} MB.",
+  "videoUploadFailed": "No se pudo subir el video. Intenta de nuevo.",
+  "videoRemoveFailed": "No se pudo eliminar el video.",
+  "videoSectionTitle": "Video del recorrido (opcional)",
+  "videoSectionDescription": "Un video corto ayuda a los inquilinos a conocer el lugar. Hasta {{max}} videos de {{size}} MB (MP4, WebM o MOV).",
+  "videoRemove": "Eliminar video",
+  "videoUploading": "Subiendo video…",
+  "videoAdd": "Agregar video",
+  "videoCount": "{{current}} de {{max}} videos"
 }

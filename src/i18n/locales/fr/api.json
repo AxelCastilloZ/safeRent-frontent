@@ -103,5 +103,6 @@
   "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Seul le propriétaire de la réservation peut évaluer son locataire",
   "API_INQUILINO_NO_ENCONTRADO": "Locataire introuvable",
   "API_SOLO_EL_INQUILINO_PUEDE_RESPONDER_LA_ENCUESTA": "Seul le locataire de la réservation peut répondre au questionnaire de son séjour",
-  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "Le questionnaire peut être rempli une fois le séjour terminé"
+  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "Le questionnaire peut être rempli une fois le séjour terminé",
+  "API_MAXIMO_VIDEOS_POR_PROPIEDAD": "Impossible d'envoyer plus de vidéos : un logement admet jusqu'à {{v0}}."
 }

@@ -103,5 +103,6 @@
   "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Only the owner of the reservation can rate its tenant",
   "API_INQUILINO_NO_ENCONTRADO": "Tenant not found",
   "API_SOLO_EL_INQUILINO_PUEDE_RESPONDER_LA_ENCUESTA": "Only the tenant of the reservation can answer the survey for their stay",
-  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "The survey can be answered once the stay has ended"
+  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "The survey can be answered once the stay has ended",
+  "API_MAXIMO_VIDEOS_POR_PROPIEDAD": "No more videos can be uploaded: a property allows up to {{v0}}."
 }

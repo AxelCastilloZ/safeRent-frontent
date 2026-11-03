@@ -103,5 +103,6 @@
   "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Somente o proprietário da reserva pode avaliar o seu inquilino",
   "API_INQUILINO_NO_ENCONTRADO": "Inquilino não encontrado",
   "API_SOLO_EL_INQUILINO_PUEDE_RESPONDER_LA_ENCUESTA": "Só o inquilino da reserva pode responder ao questionário da sua estadia",
-  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "O questionário pode ser respondido quando a estadia terminar"
+  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "O questionário pode ser respondido quando a estadia terminar",
+  "API_MAXIMO_VIDEOS_POR_PROPIEDAD": "Não é possível enviar mais vídeos: um imóvel admite até {{v0}}."
 }
