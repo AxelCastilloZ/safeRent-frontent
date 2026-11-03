@@ -23,6 +23,9 @@ import type { PropertyFilters } from './services/property.service'
 import { coordinates, photoUrl, priceLabel } from './utils/property.utils'
 import './explore.css'
 import PriceDetails from './PriceDetails'
+import EnvironmentFilters from './EnvironmentFilters'
+import { EMPTY_ENVIRONMENT_FILTERS, activeEnvironmentFilterCount, environmentFilters, priceRangeInvalid, type EnvironmentFilterState } from './utils/environmentFilters'
+import { useDisplayCurrency } from '../Auth/hooks/useDisplayCurrency'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select'
 
 const EMPTY_PROPERTIES: Property[] = []
@@ -51,7 +54,12 @@ export default function ExplorePage() {
   const [attempt, setAttempt] = useState(0)
   const [mobileView, setMobileView] = useState('list')
 
+  // Precio y entorno; el presupuesto máximo puede venir de la búsqueda de la página de inicio (?max=).
+  const [environment, setEnvironment] = useState<EnvironmentFilterState>(() => ({ ...EMPTY_ENVIRONMENT_FILTERS, maxPrice: params.get('max') ?? '' }))
+  const { currency } = useDisplayCurrency()
+
   const debouncedQuery = useDebouncedValue(query, 400)
+  const debouncedEnvironment = useDebouncedValue(environment, 400)
 
   const filters: PropertyFilters = useMemo(() => {
     const f: PropertyFilters = {}
@@ -59,8 +67,11 @@ export default function ExplorePage() {
     if (services.length) f.serviceIds = services
     if (debouncedQuery.trim()) f.search = debouncedQuery.trim()
     if (rooms) f.minRooms = Number(rooms)
+    // Un rango de precio al revés no devolvería nada: se ignora hasta que se corrija.
+    if (!priceRangeInvalid(debouncedEnvironment)) Object.assign(f, environmentFilters(debouncedEnvironment))
+    else Object.assign(f, { ...environmentFilters(debouncedEnvironment), minPrice: undefined, maxPrice: undefined })
     return f
-  }, [services, debouncedQuery, rooms, sort])
+  }, [services, debouncedQuery, rooms, sort, debouncedEnvironment])
 
   const { properties: loadedProperties, loading, error } = useProperties(filters, attempt)
   const {
@@ -77,7 +88,7 @@ export default function ExplorePage() {
   const missingLocations = filtered.filter((p) => !coordinates(p)).length
   const activeFilterCount = services.length
   const hasFilters = Boolean(
-    query || rooms || services.length,
+    query || rooms || services.length || activeEnvironmentFilterCount(environment),
   )
   const selectFromMap = useCallback((id: number) => {
     setSelected(id)
@@ -89,6 +100,7 @@ export default function ExplorePage() {
     setQuery('')
     setRooms('')
     setServices([])
+    setEnvironment(EMPTY_ENVIRONMENT_FILTERS)
     setSort('newest')
   }
 
@@ -176,6 +188,7 @@ export default function ExplorePage() {
                 </div>
               </div>
             )}
+              <EnvironmentFilters state={environment} onChange={setEnvironment} currency={currency} />
               <Select value={sort} onValueChange={value => setSort(value as typeof sort)}>
                 <SelectTrigger aria-label={i18n.t("explore:explorepage_ordenar_propiedades")} className="w-full sm:w-auto sm:max-w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>

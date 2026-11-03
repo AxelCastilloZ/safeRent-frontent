@@ -17,6 +17,7 @@ import { usePublicProperty } from './hooks/usePublicProperty'
 import { useAuth } from '../Auth/hooks/authHooks'
 
 import ScheduleVisitDialog from '../Visits/components/ScheduleVisitDialog'
+import StaySurveySummaryView from '../StaySurvey/components/StaySurveySummaryView'
 import ViewsBadge from '../PropertyViews/components/ViewsBadge'
 import { usePropertyViews } from '../PropertyViews/hooks/usePropertyViews'
 import { useLiveVisitForProperty } from '../Visits/hooks/visitHooks'
@@ -141,6 +142,7 @@ export default function PublicPropertyPage() {
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <article>
             <PropertyDescription property={property} />
+            <StaySurveySummaryView propertyId={property.id} />
             <PropertyComments propertyId={property.id} tenantId={property.reservedTenantId} />
           </article>
           <PropertyPriceCard property={property} ownerName={property.owner.name} ownerId={property.owner.id}>

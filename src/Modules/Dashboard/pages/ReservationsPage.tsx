@@ -12,6 +12,7 @@ import PriceDetails from '../../Explore/PriceDetails';
 import OwnerLink from '../../Property/Components/OwnerLink';
 import ReservationHistoryList from '../../Reservations/Components/ReservationHistoryList';
 import { useMyReservationHistory } from '../../Reservations/hooks/useReservationHistory';
+import StaySurveyList from '../../StaySurvey/components/StaySurveyList';
 
 export default function ReservationsPage() {
   useTranslation();
@@ -50,6 +51,8 @@ export default function ReservationsPage() {
         {history.isError && <div role="alert" className="rounded-xl border border-red-200 bg-white p-5 text-red-700">{i18n.t('reservations:historyLoadError')}<button type="button" onClick={() => void history.refetch()} className="ml-3 font-semibold underline">{i18n.t('comments:propertycomments_reintentar')}</button></div>}
         {history.isSuccess && <ReservationHistoryList reservations={history.data} show="property" />}
       </section>
+
+      <StaySurveyList />
     </PageContainer>
   );
 }

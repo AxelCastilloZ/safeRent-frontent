@@ -101,5 +101,7 @@
   "API_PROPIETARIO_NO_DISPONIBLE": "Propietario no disponible",
   "API_RESERVA_NO_ENCONTRADA": "Reserva no encontrada",
   "API_SOLO_EL_PROPIETARIO_PUEDE_CALIFICAR_A_SU_INQUILINO": "Solo el propietario de la reserva puede calificar a su inquilino",
-  "API_INQUILINO_NO_ENCONTRADO": "Inquilino no encontrado"
+  "API_INQUILINO_NO_ENCONTRADO": "Inquilino no encontrado",
+  "API_SOLO_EL_INQUILINO_PUEDE_RESPONDER_LA_ENCUESTA": "Solo el inquilino de la reserva puede responder la encuesta de su estadía",
+  "API_LA_ESTADIA_AUN_NO_HA_TERMINADO": "La encuesta se responde cuando la estadía ya terminó"
 }

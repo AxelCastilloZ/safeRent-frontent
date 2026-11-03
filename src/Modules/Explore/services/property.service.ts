@@ -15,6 +15,13 @@ export interface PropertyFilters {
   displayCurrency?: string
   sourceCurrency?: string
   sort?: 'newest' | 'price_asc' | 'price_desc'
+  /** Entorno: promedio de lo que respondieron los inquilinos al terminar su estadía. */
+  minWaterStability?: number
+  minElectricityStability?: number
+  minInternetMbps?: number
+  maxUniversityKm?: number
+  maxCoworkingKm?: number
+  hasWorkArea?: boolean
 }
 
 export async function getProperties(
@@ -31,6 +38,12 @@ export async function getProperties(
   if (minRooms !== undefined) params.set('minRooms', String(minRooms))
   if (typeOfPropertyId !== undefined) params.set('typeOfPropertyId', String(typeOfPropertyId))
   if (ownerId !== undefined) params.set('ownerId', String(ownerId))
+  if (filters.minWaterStability !== undefined) params.set('minWaterStability', String(filters.minWaterStability))
+  if (filters.minElectricityStability !== undefined) params.set('minElectricityStability', String(filters.minElectricityStability))
+  if (filters.minInternetMbps !== undefined) params.set('minInternetMbps', String(filters.minInternetMbps))
+  if (filters.maxUniversityKm !== undefined) params.set('maxUniversityKm', String(filters.maxUniversityKm))
+  if (filters.maxCoworkingKm !== undefined) params.set('maxCoworkingKm', String(filters.maxCoworkingKm))
+  if (filters.hasWorkArea) params.set('hasWorkArea', 'true')
   params.set('limit', '100')
   if (filters.displayCurrency) params.set('displayCurrency', filters.displayCurrency)
   if (filters.sourceCurrency) params.set('sourceCurrency', filters.sourceCurrency)

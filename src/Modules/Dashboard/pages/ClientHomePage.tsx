@@ -13,6 +13,7 @@ import PageHeader from '../Components/PageHeader';
 import HomeAction from '../Components/HomeAction';
 import StatCard from '../Components/StatCard';
 import StatGrid from '../Components/StatGrid';
+import PendingSurveyBanner from '../../StaySurvey/components/PendingSurveyBanner';
 import { useDashboardUser } from '../hooks/useDashboardUser';
 import { useTenantProperties } from '../hooks/useTenantProperties';
 
@@ -38,6 +39,8 @@ export default function ClientHomePage() {
           </>
         }
       />
+
+      <PendingSurveyBanner />
 
       <StatGrid columns={3}>
         <StatCard
