@@ -31,12 +31,6 @@ function Scale({ label, value, onChange, disabled }: { label: string; value: num
   )
 }
 
-/** Convierte lo escrito en un número no negativo, o null si está vacío o no es válido. */
-function parseDistance(text: string): number | null {
-  const value = Number(text.replace(',', '.'))
-  return text.trim() !== '' && Number.isFinite(value) && value >= 0 ? Math.round(value * 10) / 10 : null
-}
-
 interface StaySurveyDialogProps {
   stay: MyStay
   onClose: () => void
@@ -52,15 +46,11 @@ export default function StaySurveyDialog({ stay, onClose, onSubmitted }: StaySur
   const [water, setWater] = useState(previous?.waterStability ?? 0)
   const [electricity, setElectricity] = useState(previous?.electricityStability ?? 0)
   const [internet, setInternet] = useState(previous ? String(previous.internetMbps) : '')
-  const [university, setUniversity] = useState(previous?.universityKm != null ? String(previous.universityKm) : '')
-  const [coworking, setCoworking] = useState(previous?.coworkingKm != null ? String(previous.coworkingKm) : '')
   const [workArea, setWorkArea] = useState<boolean | null>(previous ? previous.hasWorkArea : null)
 
   const internetMbps = Number(internet)
   const internetValid = internet.trim() !== '' && Number.isInteger(internetMbps) && internetMbps >= 0 && internetMbps <= 10000
-  const universityValid = university.trim() === '' || parseDistance(university) !== null
-  const coworkingValid = coworking.trim() === '' || parseDistance(coworking) !== null
-  const complete = water > 0 && electricity > 0 && internetValid && universityValid && coworkingValid && workArea !== null
+  const complete = water > 0 && electricity > 0 && internetValid && workArea !== null
 
   function send() {
     if (!complete || workArea === null) return
@@ -70,8 +60,6 @@ export default function StaySurveyDialog({ stay, onClose, onSubmitted }: StaySur
         waterStability: water,
         electricityStability: electricity,
         internetMbps,
-        universityKm: parseDistance(university),
-        coworkingKm: parseDistance(coworking),
         hasWorkArea: workArea,
       },
     }, { onSuccess: onSubmitted ?? onClose })
@@ -96,17 +84,6 @@ export default function StaySurveyDialog({ stay, onClose, onSubmitted }: StaySur
           <input type="number" inputMode="numeric" min={0} max={10000} step={1} value={internet} onChange={(event) => setInternet(event.target.value)} disabled={submit.isPending} placeholder="50" className={FIELD} />
           <span className="mt-1 block text-xs font-normal text-muted-ink">{i18n.t('staySurvey:internetHint')}</span>
         </label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block text-sm font-semibold text-primary">
-            {i18n.t('staySurvey:university')}
-            <input type="text" inputMode="decimal" value={university} onChange={(event) => setUniversity(event.target.value)} disabled={submit.isPending} placeholder="2.5" aria-invalid={!universityValid} className={FIELD} />
-          </label>
-          <label className="block text-sm font-semibold text-primary">
-            {i18n.t('staySurvey:coworking')}
-            <input type="text" inputMode="decimal" value={coworking} onChange={(event) => setCoworking(event.target.value)} disabled={submit.isPending} placeholder="4" aria-invalid={!coworkingValid} className={FIELD} />
-          </label>
-        </div>
-        <p className="-mt-2 text-xs text-muted-ink">{i18n.t('staySurvey:distanceHint')}</p>
         <fieldset>
           <legend className="text-sm font-semibold text-primary">{i18n.t('staySurvey:workArea')}</legend>
           <div className="mt-1 flex gap-2">

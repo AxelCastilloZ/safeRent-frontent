@@ -5,9 +5,6 @@ export interface StaySurveyAnswers {
   electricityStability: number
   /** Velocidad de Internet medida, en Mbps. */
   internetMbps: number
-  /** Distancia en kilómetros; vacío si no la sabe. */
-  universityKm: number | null
-  coworkingKm: number | null
   hasWorkArea: boolean
 }
 
