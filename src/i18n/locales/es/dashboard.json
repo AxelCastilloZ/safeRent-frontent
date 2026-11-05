@@ -1,4 +1,9 @@
 {
+  "propertyReview_approved": "Propiedad aprobada correctamente",
+  "propertyReview_rejected": "Propiedad rechazada correctamente",
+  "propertyReview_changesRequested": "Cambios solicitados correctamente",
+  "propertyReview_deactivated": "Propiedad desactivada correctamente",
+  "propertyReview_dismiss": "Cerrar confirmación",
   "adminpropertydialog_close": "Cerrar",
   "adminpropertydialog_error": "No pudimos cargar el detalle de la propiedad.",
   "adminpropertydialog_rooms": "Habitaciones",

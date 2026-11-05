@@ -1,4 +1,9 @@
 {
+  "propertyReview_approved": "Property approved successfully",
+  "propertyReview_rejected": "Property rejected successfully",
+  "propertyReview_changesRequested": "Changes requested successfully",
+  "propertyReview_deactivated": "Property deactivated successfully",
+  "propertyReview_dismiss": "Dismiss confirmation",
   "adminpropertydialog_close": "Close",
   "adminpropertydialog_error": "We could not load the property details.",
   "adminpropertydialog_rooms": "Bedrooms",

@@ -1,4 +1,9 @@
 {
+  "propertyReview_approved": "Bien approuvé avec succès",
+  "propertyReview_rejected": "Bien refusé avec succès",
+  "propertyReview_changesRequested": "Modifications demandées avec succès",
+  "propertyReview_deactivated": "Bien désactivé avec succès",
+  "propertyReview_dismiss": "Fermer la confirmation",
   "adminpropertydialog_close": "Fermer",
   "adminpropertydialog_error": "Impossible de charger les détails du logement.",
   "adminpropertydialog_rooms": "Chambres",

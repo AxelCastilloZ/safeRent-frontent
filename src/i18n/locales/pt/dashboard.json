@@ -1,4 +1,9 @@
 {
+  "propertyReview_approved": "Imóvel aprovado com sucesso",
+  "propertyReview_rejected": "Imóvel rejeitado com sucesso",
+  "propertyReview_changesRequested": "Alterações solicitadas com sucesso",
+  "propertyReview_deactivated": "Imóvel desativado com sucesso",
+  "propertyReview_dismiss": "Fechar confirmação",
   "adminpropertydialog_close": "Fechar",
   "adminpropertydialog_error": "Não foi possível carregar os detalhes da propriedade.",
   "adminpropertydialog_rooms": "Quartos",

@@ -4,7 +4,7 @@ import { currentLocale } from '../../../../i18n/formatters';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../i18n/instance';
 import { useState } from 'react';
-import { Building2, Check, EyeOff, MapPin, MessageSquareWarning, XCircle } from 'lucide-react';
+import { Building2, Check, EyeOff, MapPin, MessageSquareWarning, X, XCircle } from 'lucide-react';
 import AdminPropertyDialog from '../../Components/AdminPropertyDialog';
 import { useAdminProperties, useReviewProperty } from '../../../Property/hooks/useAdminProperties';
 import type { Property, PropertyStatus } from '../../../Property/types/property';
@@ -21,6 +21,14 @@ const filters = () => ([
 ] as const);
 
 type PropertyFilter = (ReturnType<typeof filters>)[number]['value'];
+
+const outcomes = {
+  approved: { style: 'bg-emerald-50 text-emerald-800', icon: Check },
+  rejected: { style: 'bg-red-50 text-red-800', icon: XCircle },
+  changesRequested: { style: 'bg-amber-50 text-amber-900', icon: MessageSquareWarning },
+  deactivated: { style: 'bg-red-50 text-red-800', icon: EyeOff },
+};
+type ReviewOutcome = { property: Property; filter: PropertyFilter; index: number; kind: keyof typeof outcomes };
 
 const STATUS_BY_FILTER: Record<PropertyFilter, PropertyStatus> = {
   active: 'ACTIVE',
@@ -44,25 +52,40 @@ export default function AdminPropertiesPage() {
   const [requestingChanges, setRequestingChanges] = useState<Property | null>(null);
   const [rejecting, setRejecting] = useState<Property | null>(null);
   const [actionError, setActionError] = useMessageState<Record<number, string>>({});
+  const [completed, setCompleted] = useState<ReviewOutcome[]>([]);
 
   const status = STATUS_BY_FILTER[filter];
   const properties = useAdminProperties(status);
   const review = useReviewProperty();
 
   const list = properties.data?.data ?? [];
+  const notices = completed.filter((item) => item.filter === filter);
+  const rows = list.filter((property) => !notices.some((item) => item.property.id === property.id));
+  for (const notice of [...notices].sort((a, b) => a.index - b.index)) {
+    rows.splice(notice.index, 0, notice.property);
+  }
+
+  function confirmAction(property: Property, kind: ReviewOutcome['kind']) {
+    const outcome = { property, kind, filter, index: rows.findIndex((row) => row.id === property.id) };
+    setCompleted((previous) => [...previous.filter((item) => item.property.id !== property.id), outcome]);
+  }
 
   async function approve(property: Property) {
     setActionError((prev) => ({ ...prev, [property.id]: '' }));
     try {
       await review.mutateAsync({ id: property.id, data: { status: 'ACTIVE' } });
+      confirmAction(property, 'approved');
+      setSelectedProperty(null);
     } catch (err) {
       setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? messageFromError(err) : message("dashboard:adminpropertiespage_no_se_pudo_aprobar_la_propiedad") }));
     }
   }
 
   async function submitNote(property: Property, status: 'CHANGES_REQUESTED' | 'INACTIVE', note: string) {
+    setActionError((prev) => ({ ...prev, [property.id]: '' }));
     try {
       await review.mutateAsync({ id: property.id, data: { status, note } });
+      confirmAction(property, status === 'CHANGES_REQUESTED' ? 'changesRequested' : property.status === 'ACTIVE' ? 'deactivated' : 'rejected');
       setRequestingChanges(null);
       setRejecting(null);
     } catch (err) {
@@ -73,7 +96,7 @@ export default function AdminPropertiesPage() {
   return (
     <PageContainer>
       <PageHeader title={i18n.t("dashboard:adminpropertiespage_propiedades_2b3936")} description={i18n.t("dashboard:adminpropertiespage_revisa_las_propiedades_enviadas_por_los_propietarios_y_aplica")} />
-      <FilterTabs label={i18n.t("dashboard:adminpropertiespage_estado_de_la_propiedad")} options={[...filters()]} value={filter} onChange={setFilter} />
+      <FilterTabs label={i18n.t("dashboard:adminpropertiespage_estado_de_la_propiedad")} options={[...filters()]} value={filter} onChange={(value) => { setFilter(value); setCompleted([]); }} />
 
       {properties.isPending ? (
         <p role="status" className="py-12 text-center text-sm text-muted-ink">{i18n.t("dashboard:adminpropertiespage_cargando_propiedades")}</p>
@@ -81,7 +104,7 @@ export default function AdminPropertiesPage() {
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">{i18n.t("dashboard:discoversection_no_pudimos_cargar_las_propiedades")}{' '}
           <button type="button" onClick={() => void properties.refetch()} className="font-semibold underline">{i18n.t("comments:propertycomments_reintentar")}</button>
         </div>
-      ) : list.length === 0 ? (
+      ) : rows.length === 0 ? (
         <EmptyPanel icon={Building2} title={i18n.t("dashboard:adminpropertiespage_no_hay_propiedades", { v0: filters().find((f) => f.value === filter)?.label.toLowerCase() })} description={i18n.t("dashboard:adminpropertiespage_las_propiedades_que_envien_los_propietarios_apareceran_aqui")} />
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -97,7 +120,28 @@ export default function AdminPropertiesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {list.map((property) => (
+              {rows.map((property) => {
+                const notice = notices.find((item) => item.property.id === property.id);
+                if (notice) {
+                  const { style, icon: Icon } = outcomes[notice.kind];
+                  return (
+                    <tr key={property.id} className={style}>
+                      <td colSpan={5} className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <div role="status" aria-atomic="true" className="flex min-w-0 flex-1 items-center gap-3">
+                            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/70"><Icon size={20} aria-hidden="true" /></span>
+                            <div className="min-w-0">
+                              <p className="font-semibold">{i18n.t(`dashboard:propertyReview_${notice.kind}`)}</p>
+                              <p className="mt-0.5 break-words text-xs opacity-80">{property.title}</p>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => setCompleted((previous) => previous.filter((item) => item.property.id !== property.id))} aria-label={i18n.t('dashboard:propertyReview_dismiss')} className="shrink-0 rounded-lg p-2 transition hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-2"><X size={18} aria-hidden="true" /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                }
+                return (
                 <tr key={property.id} className="cursor-pointer transition hover:bg-slate-50" onClick={() => setSelectedProperty(property)}>
                   <td className="px-4 py-3 font-semibold text-primary">
                     <button type="button" aria-haspopup="dialog" onClick={(event) => { event.stopPropagation(); setSelectedProperty(property); }} className="rounded text-left underline decoration-slate-300 underline-offset-4 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">{property.title}</button>
@@ -163,7 +207,8 @@ export default function AdminPropertiesPage() {
                     {actionError[property.id] && <p role="alert" className="mt-1 text-xs text-red-600">{actionError[property.id]}</p>}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -175,15 +220,7 @@ export default function AdminPropertiesPage() {
           loading={review.isPending}
           error={actionError[selectedProperty.id] || null}
           onClose={() => setSelectedProperty(null)}
-          onApprove={async (property) => {
-            setActionError((prev) => ({ ...prev, [property.id]: '' }));
-            try {
-              await review.mutateAsync({ id: property.id, data: { status: 'ACTIVE' } });
-              setSelectedProperty(null);
-            } catch (err) {
-              setActionError((prev) => ({ ...prev, [property.id]: err instanceof Error ? messageFromError(err) : message('dashboard:adminpropertiespage_no_se_pudo_aprobar_la_propiedad') }));
-            }
-          }}
+          onApprove={approve}
           onRequestChanges={(property) => { setSelectedProperty(null); setRequestingChanges(property); }}
           onReject={(property) => { setSelectedProperty(null); setRejecting(property); }}
         />
