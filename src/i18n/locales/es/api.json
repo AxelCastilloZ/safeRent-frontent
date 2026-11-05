@@ -1,4 +1,5 @@
 {
+  "API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA": "No se puede inactivar una propiedad mientras esté reservada.",
   "API_EL_ROL_NO_ESTA_DISPONIBLE": "El rol {{v0}} no está disponible",
   "IDENTITY_REGISTERED": "La identificación o el correo ya están registrados",
   "INVALID_CREDENTIALS": "Credenciales incorrectas",

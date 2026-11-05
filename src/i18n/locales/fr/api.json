@@ -1,4 +1,5 @@
 {
+  "API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA": "Un bien ne peut pas être désactivé tant qu’il est réservé.",
   "API_EL_ROL_NO_ESTA_DISPONIBLE": "Le rôle {{v0}} n’est pas disponible",
   "IDENTITY_REGISTERED": "Le numéro d’identité ou l’adresse e-mail est déjà enregistré",
   "INVALID_CREDENTIALS": "Identifiants incorrects",

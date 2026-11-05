@@ -105,7 +105,7 @@ export default function AdminPropertyDialog({ property, loading, error, onClose,
           <button type="button" disabled={loading} onClick={() => onRequestChanges(data)} className={buttonClass}>{t('dashboard:adminpropertiespage_solicitar_cambios_e1aab9')}</button>
           <button type="button" disabled={loading} onClick={() => void onApprove(data)} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50">{t('dashboard:adminpropertiespage_aprobar_10a00f')}</button>
         </>}
-        {data && !detail.isError && data.status === 'ACTIVE' && <button type="button" disabled={loading} onClick={() => onReject(data)} className={buttonClass}>{t('dashboard:adminpropertiespage_desactivar_7ef1cd')}</button>}
+        {data && !detail.isError && data.status === 'ACTIVE' && <button type="button" disabled={loading || data.reservedTenantId != null} title={data.reservedTenantId != null ? t('api:API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA') : undefined} onClick={() => onReject(data)} className={buttonClass}>{t('dashboard:adminpropertiespage_desactivar_7ef1cd')}</button>}
       </footer>
     </dialog>, document.body,
   );

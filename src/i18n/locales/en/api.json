@@ -1,4 +1,5 @@
 {
+  "API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA": "A property cannot be deactivated while it is reserved.",
   "API_EL_ROL_NO_ESTA_DISPONIBLE": "Role {{v0}} is unavailable",
   "IDENTITY_REGISTERED": "The ID number or email is already registered",
   "INVALID_CREDENTIALS": "Incorrect credentials",

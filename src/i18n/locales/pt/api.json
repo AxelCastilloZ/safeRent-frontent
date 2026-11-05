@@ -1,4 +1,5 @@
 {
+  "API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA": "Não é possível desativar um imóvel enquanto estiver reservado.",
   "API_EL_ROL_NO_ESTA_DISPONIBLE": "A função {{v0}} não está disponível",
   "IDENTITY_REGISTERED": "O documento de identidade ou e-mail já está cadastrado",
   "INVALID_CREDENTIALS": "Credenciais incorretas",

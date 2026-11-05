@@ -147,9 +147,9 @@ export default function AdminPropertiesPage() {
                     ) : property.status === 'ACTIVE' ? (
                       <button
                         type="button"
-                        title={i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}
+                        title={property.reservedTenantId != null ? i18n.t('api:API_NO_SE_PUEDE_INACTIVAR_UNA_PROPIEDAD_RESERVADA') : i18n.t("dashboard:adminpropertiespage_desactivar_7ef1cd")}
                         aria-label={i18n.t("dashboard:adminpropertiespage_desactivar_9a3405", { v0: property.title })}
-                        disabled={review.isPending}
+                        disabled={review.isPending || property.reservedTenantId != null}
                         className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                         onClick={() => setRejecting(property)}
                       >
